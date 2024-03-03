@@ -46,35 +46,35 @@
         { "baseSpecies": "SPECIES_POLIWHIRL", "evos":
             [
                 { "method": "EVO_STONE", "param": "ITEM_WATER_STONE", "target": "SPECIES_POLIWRATH" },
-                { "method": "EVO_TRADE_ITEM", "param": "ITEM_KINGS_ROCK", "target": "SPECIES_POLITOED" }
+                { "method": "EVO_ITEM_DAY", "param": "ITEM_KINGS_ROCK", "target": "SPECIES_POLITOED" }
             ]
         },
         { "baseSpecies": "SPECIES_ABRA", "evos": [ { "method": "EVO_LEVEL", "param": 16, "target": "SPECIES_KADABRA" } ] },
-        { "baseSpecies": "SPECIES_KADABRA", "evos": [ { "method": "EVO_TRADE", "param": 0, "target": "SPECIES_ALAKAZAM" } ] },
+        { "baseSpecies": "SPECIES_KADABRA", "evos": [ { "method": "EVO_LEVEL", "param": 37, "target": "SPECIES_ALAKAZAM" } ] },
         { "baseSpecies": "SPECIES_MACHOP", "evos": [ { "method": "EVO_LEVEL", "param": 28, "target": "SPECIES_MACHOKE" } ] },
-        { "baseSpecies": "SPECIES_MACHOKE", "evos": [ { "method": "EVO_TRADE", "param": 0, "target": "SPECIES_MACHAMP" } ] },
+        { "baseSpecies": "SPECIES_MACHOKE", "evos": [ { "method": "EVO_LEVEL", "param": 37, "target": "SPECIES_MACHAMP" } ] },
         { "baseSpecies": "SPECIES_BELLSPROUT", "evos": [ { "method": "EVO_LEVEL", "param": 21, "target": "SPECIES_WEEPINBELL" } ] },
         { "baseSpecies": "SPECIES_WEEPINBELL", "evos": [ { "method": "EVO_STONE", "param": "ITEM_LEAF_STONE", "target": "SPECIES_VICTREEBEL" } ] },
         { "baseSpecies": "SPECIES_WEEPINBELL", "evos": [ { "method": "EVO_STONE", "param": "ITEM_LEAF_STONE", "target": "SPECIES_VICTREEBEL" } ] },
         { "baseSpecies": "SPECIES_TENTACOOL", "evos": [ { "method": "EVO_LEVEL", "param": 30, "target": "SPECIES_TENTACRUEL" } ] },
         { "baseSpecies": "SPECIES_GEODUDE", "evos": [ { "method": "EVO_LEVEL", "param": 25, "target": "SPECIES_GRAVELER" } ] },
-        { "baseSpecies": "SPECIES_GRAVELER", "evos": [ { "method": "EVO_TRADE", "param": 0, "target": "SPECIES_GOLEM" } ] },
+        { "baseSpecies": "SPECIES_GRAVELER", "evos": [ { "method": "EVO_LEVEL", "param": 37, "target": "SPECIES_GOLEM" } ] },
         { "baseSpecies": "SPECIES_PONYTA", "evos": [ { "method": "EVO_LEVEL", "param": 40, "target": "SPECIES_RAPIDASH" } ] },
         { "baseSpecies": "SPECIES_SLOWPOKE", "evos":
             [
                 { "method": "EVO_LEVEL", "param": 37, "target": "SPECIES_SLOWBRO" },
-                { "method": "EVO_TRADE_ITEM", "param": "ITEM_KINGS_ROCK", "target": "SPECIES_SLOWKING" }
+                { "method": "EVO_ITEM_DAY", "param": "ITEM_KINGS_ROCK", "target": "SPECIES_SLOWKING" }
             ]
         },
         { "baseSpecies": "SPECIES_MAGNEMITE", "evos": [ { "method": "EVO_LEVEL", "param": 30, "target": "SPECIES_MAGNETON" } ] },
-        { "baseSpecies": "SPECIES_MAGNETON", "evos": [ { "method": "EVO_CORONET", "param": 0, "target": "SPECIES_MAGNEZONE" } ] },
+        { "baseSpecies": "SPECIES_MAGNETON", "evos": [ { "method": "EVO_STONE", "param": "ITEM_THUNDERSTONE", "target": "SPECIES_MAGNEZONE" } ] },
         { "baseSpecies": "SPECIES_DODUO", "evos": [ { "method": "EVO_LEVEL", "param": 31, "target": "SPECIES_DODRIO" } ] },
         { "baseSpecies": "SPECIES_SEEL", "evos": [ { "method": "EVO_LEVEL", "param": 34, "target": "SPECIES_DEWGONG" } ] },
         { "baseSpecies": "SPECIES_GRIMER", "evos": [ { "method": "EVO_LEVEL", "param": 38, "target": "SPECIES_MUK" } ] },
         { "baseSpecies": "SPECIES_SHELLDER", "evos": [ { "method": "EVO_STONE", "param": "ITEM_WATER_STONE", "target": "SPECIES_CLOYSTER" } ] },
         { "baseSpecies": "SPECIES_GASTLY", "evos": [ { "method": "EVO_LEVEL", "param": 25, "target": "SPECIES_HAUNTER" } ] },
-        { "baseSpecies": "SPECIES_HAUNTER", "evos": [ { "method": "EVO_TRADE", "param": 0, "target": "SPECIES_GENGAR" } ] },
-        { "baseSpecies": "SPECIES_ONIX", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_METAL_COAT", "target": "SPECIES_STEELIX" } ] },
+        { "baseSpecies": "SPECIES_HAUNTER", "evos": [ { "method": "EVO_LEVEL", "param": 37, "target": "SPECIES_GENGAR" } ] },
+        { "baseSpecies": "SPECIES_ONIX", "evos": [ { "method": "EVO_ITEM_DAY", "param": "ITEM_METAL_COAT", "target": "SPECIES_STEELIX" } ] },
         { "baseSpecies": "SPECIES_DROWZEE", "evos": [ { "method": "EVO_LEVEL", "param": 26, "target": "SPECIES_HYPNO" } ] },
         { "baseSpecies": "SPECIES_KRABBY", "evos": [ { "method": "EVO_LEVEL", "param": 28, "target": "SPECIES_KINGLER" } ] },
         { "baseSpecies": "SPECIES_VOLTORB", "evos": [ { "method": "EVO_LEVEL", "param": 30, "target": "SPECIES_ELECTRODE" } ] },
@@ -83,21 +83,21 @@
         { "baseSpecies": "SPECIES_LICKITUNG", "evos": [ { "method": "EVO_HAS_MOVE", "param": "MOVE_ROLLOUT", "target": "SPECIES_LICKILICKY" } ] },
         { "baseSpecies": "SPECIES_KOFFING", "evos": [ { "method": "EVO_LEVEL", "param": 35, "target": "SPECIES_WEEZING" } ] },
         { "baseSpecies": "SPECIES_RHYHORN", "evos": [ { "method": "EVO_LEVEL", "param": 42, "target": "SPECIES_RHYDON" } ] },
-        { "baseSpecies": "SPECIES_RHYDON", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_PROTECTOR", "target": "SPECIES_RHYPERIOR" } ] },
+        { "baseSpecies": "SPECIES_RHYDON", "evos": [ { "method": "EVO_ITEM_DAY", "param": "ITEM_PROTECTOR", "target": "SPECIES_RHYPERIOR" } ] },
         { "baseSpecies": "SPECIES_CHANSEY", "evos": [ { "method": "EVO_FRIENDSHIP", "param": 0, "target": "SPECIES_BLISSEY" } ] },
         { "baseSpecies": "SPECIES_TANGELA", "evos": [ { "method": "EVO_HAS_MOVE", "param": "MOVE_ANCIENT_POWER", "target": "SPECIES_TANGROWTH" } ] },
         { "baseSpecies": "SPECIES_HORSEA", "evos": [ { "method": "EVO_LEVEL", "param": 32, "target": "SPECIES_SEADRA" } ] },
-        { "baseSpecies": "SPECIES_SEADRA", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_DRAGON_SCALE", "target": "SPECIES_KINGDRA" } ] },
+        { "baseSpecies": "SPECIES_SEADRA", "evos": [ { "method": "EVO_ITEM_DAY", "param": "ITEM_DRAGON_SCALE", "target": "SPECIES_KINGDRA" } ] },
         { "baseSpecies": "SPECIES_GOLDEEN", "evos": [ { "method": "EVO_LEVEL", "param": 33, "target": "SPECIES_SEAKING" } ] },
         { "baseSpecies": "SPECIES_STARYU", "evos": [ { "method": "EVO_STONE", "param": "ITEM_WATER_STONE", "target": "SPECIES_STARMIE" } ] },
-        { "baseSpecies": "SPECIES_SCYTHER", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_METAL_COAT", "target": "SPECIES_SCIZOR" } ] },
-        { "baseSpecies": "SPECIES_ELECTABUZZ", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_ELECTIRIZER", "target": "SPECIES_ELECTIVIRE" } ] },
-        { "baseSpecies": "SPECIES_MAGMAR", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_MAGMARIZER", "target": "SPECIES_MAGMORTAR" } ] },
+        { "baseSpecies": "SPECIES_SCYTHER", "evos": [ { "method": "EVO_ITEM_DAY", "param": "ITEM_METAL_COAT", "target": "SPECIES_SCIZOR" } ] },
+        { "baseSpecies": "SPECIES_ELECTABUZZ", "evos": [ { "method": "EVO_ITEM_DAY", "param": "ITEM_ELECTIRIZER", "target": "SPECIES_ELECTIVIRE" } ] },
+        { "baseSpecies": "SPECIES_MAGMAR", "evos": [ { "method": "EVO_ITEM_DAY", "param": "ITEM_MAGMARIZER", "target": "SPECIES_MAGMORTAR" } ] },
         { "baseSpecies": "SPECIES_MAGIKARP", "evos": [ { "method": "EVO_LEVEL", "param": 20, "target": "SPECIES_GYARADOS" } ] },
         { "baseSpecies": "SPECIES_EEVEE", "evos":
             [
-                { "method": "EVO_ETERNA", "param": 0, "target": "SPECIES_LEAFEON" },
-                { "method": "EVO_ROUTE217", "param": 0, "target": "SPECIES_GLACEON" },
+                { "method": "EVO_STONE", "param": "ITEM_LEAF_STONE", "target": "SPECIES_LEAFEON" },
+                { "method": "EVO_STONE", "param": "ITEM_DAWN_STONE", "target": "SPECIES_GLACEON" },
                 { "method": "EVO_STONE", "param": "ITEM_THUNDERSTONE", "target": "SPECIES_JOLTEON" },
                 { "method": "EVO_STONE", "param": "ITEM_WATER_STONE", "target": "SPECIES_VAPOREON" },
                 { "method": "EVO_STONE", "param": "ITEM_FIRE_STONE", "target": "SPECIES_FLAREON" },
@@ -105,7 +105,7 @@
                 { "method": "EVO_FRIENDSHIP_NIGHT", "param": 0, "target": "SPECIES_UMBREON" }
             ]
         },
-        { "baseSpecies": "SPECIES_PORYGON", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_UPGRADE", "target": "SPECIES_PORYGON2" } ] },
+        { "baseSpecies": "SPECIES_PORYGON", "evos": [ { "method": "EVO_ITEM_DAY", "param": "ITEM_UPGRADE", "target": "SPECIES_PORYGON2" } ] },
         { "baseSpecies": "SPECIES_OMANYTE", "evos": [ { "method": "EVO_LEVEL", "param": 40, "target": "SPECIES_OMASTAR" } ] },
         { "baseSpecies": "SPECIES_KABUTO", "evos": [ { "method": "EVO_LEVEL", "param": 40, "target": "SPECIES_KABUTOPS" } ] },
         { "baseSpecies": "SPECIES_DRATINI", "evos": [ { "method": "EVO_LEVEL", "param": 30, "target": "SPECIES_DRAGONAIR" } ] },
@@ -152,7 +152,7 @@
         { "baseSpecies": "SPECIES_REMORAID", "evos": [ { "method": "EVO_LEVEL", "param": 25, "target": "SPECIES_OCTILLERY" } ] },
         { "baseSpecies": "SPECIES_HOUNDOUR", "evos": [ { "method": "EVO_LEVEL", "param": 24, "target": "SPECIES_HOUNDOOM" } ] },
         { "baseSpecies": "SPECIES_PHANPY", "evos": [ { "method": "EVO_LEVEL", "param": 25, "target": "SPECIES_DONPHAN" } ] },
-        { "baseSpecies": "SPECIES_PORYGON2", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_DUBIOUS_DISC", "target": "SPECIES_PORYGON_Z" } ] },
+        { "baseSpecies": "SPECIES_PORYGON2", "evos": [ { "method": "EVO_ITEM_DAY", "param": "ITEM_DUBIOUS_DISC", "target": "SPECIES_PORYGON_Z" } ] },
         { "baseSpecies": "SPECIES_TYROGUE", "evos":
             [
                 { "method": "EVO_LEVEL_ATK_LT_DEF", "param": "20", "target": "SPECIES_HITMONCHAN" },
@@ -202,10 +202,10 @@
         { "baseSpecies": "SPECIES_WAILMER", "evos": [ { "method": "EVO_LEVEL", "param": 40, "target": "SPECIES_WAILORD" } ] },
         { "baseSpecies": "SPECIES_SKITTY", "evos": [ { "method": "EVO_STONE", "param": "ITEM_MOON_STONE", "target": "SPECIES_DELCATTY" } ] },
         { "baseSpecies": "SPECIES_BALTOY", "evos": [ { "method": "EVO_LEVEL", "param": 36, "target": "SPECIES_CLAYDOL" } ] },
-        { "baseSpecies": "SPECIES_NOSEPASS", "evos": [ { "method": "EVO_CORONET", "param": 0, "target": "SPECIES_PROBOPASS" } ] },
+        { "baseSpecies": "SPECIES_NOSEPASS", "evos": [ { "method": "EVO_LEVEL", "param": 30, "target": "SPECIES_PROBOPASS" } ] },
         { "baseSpecies": "SPECIES_BARBOACH", "evos": [ { "method": "EVO_LEVEL", "param": 30, "target": "SPECIES_WHISCASH" } ] },
         { "baseSpecies": "SPECIES_CORPHISH", "evos": [ { "method": "EVO_LEVEL", "param": 30, "target": "SPECIES_CRAWDAUNT" } ] },
-        { "baseSpecies": "SPECIES_FEEBAS", "evos": [ { "method": "EVO_BEAUTY", "param": 170, "target": "SPECIES_MILOTIC" } ] },
+        { "baseSpecies": "SPECIES_FEEBAS", "evos": [ { "method": "EVO_LEVEL", "param": 20, "target": "SPECIES_MILOTIC" } ] },
         { "baseSpecies": "SPECIES_CARVANHA", "evos": [ { "method": "EVO_LEVEL", "param": 30, "target": "SPECIES_SHARPEDO" } ] },
         { "baseSpecies": "SPECIES_TRAPINCH", "evos": [ { "method": "EVO_LEVEL", "param": 35, "target": "SPECIES_VIBRAVA" } ] },
         { "baseSpecies": "SPECIES_VIBRAVA", "evos": [ { "method": "EVO_LEVEL", "param": 45, "target": "SPECIES_FLYGON" } ] },
@@ -227,7 +227,7 @@
         { "baseSpecies": "SPECIES_SWABLU", "evos": [ { "method": "EVO_LEVEL", "param": 35, "target": "SPECIES_ALTARIA" } ] },
         { "baseSpecies": "SPECIES_WYNAUT", "evos": [ { "method": "EVO_LEVEL", "param": 15, "target": "SPECIES_WOBBUFFET" } ] },
         { "baseSpecies": "SPECIES_DUSKULL", "evos": [ { "method": "EVO_LEVEL", "param": 37, "target": "SPECIES_DUSCLOPS" } ] },
-        { "baseSpecies": "SPECIES_DUSCLOPS", "evos": [ { "method": "EVO_TRADE_ITEM", "param": "ITEM_REAPER_CLOTH", "target": "SPECIES_DUSKNOIR" } ] },
+        { "baseSpecies": "SPECIES_DUSCLOPS", "evos": [ { "method": "EVO_ITEM_NIGHT", "param": "ITEM_REAPER_CLOTH", "target": "SPECIES_DUSKNOIR" } ] },
         { "baseSpecies": "SPECIES_ROSELIA", "evos": [ { "method": "EVO_STONE", "param": "ITEM_SHINY_STONE", "target": "SPECIES_ROSERADE" } ] },
         { "baseSpecies": "SPECIES_SLAKOTH", "evos": [ { "method": "EVO_LEVEL", "param": 18, "target": "SPECIES_VIGOROTH" } ] },
         { "baseSpecies": "SPECIES_VIGOROTH", "evos": [ { "method": "EVO_LEVEL", "param": 36, "target": "SPECIES_SLAKING" } ] },
@@ -236,8 +236,8 @@
         { "baseSpecies": "SPECIES_LOUDRED", "evos": [ { "method": "EVO_LEVEL", "param": 40, "target": "SPECIES_EXPLOUD" } ] },
         { "baseSpecies": "SPECIES_CLAMPERL", "evos":
             [
-                { "method": "EVO_TRADE_ITEM", "param": "ITEM_DEEPSEATOOTH", "target": "SPECIES_HUNTAIL" },
-                { "method": "EVO_TRADE_ITEM", "param": "ITEM_DEEPSEASCALE", "target": "SPECIES_GOREBYSS" }
+                { "method": "EVO_ITEM_DAY", "param": "ITEM_DEEPSEATOOTH", "target": "SPECIES_HUNTAIL" },
+                { "method": "EVO_ITEM_DAY", "param": "ITEM_DEEPSEASCALE", "target": "SPECIES_GOREBYSS" }
             ]
         },
         { "baseSpecies": "SPECIES_SHUPPET", "evos": [ { "method": "EVO_LEVEL", "param": 37, "target": "SPECIES_BANETTE" } ] },
