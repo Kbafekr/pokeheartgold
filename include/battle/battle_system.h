@@ -5,6 +5,7 @@
 #include "battle/battle.h"
 #include "battle/battle_setup.h"
 #include "pokemon.h"
+#include "text.h"
 
 BgConfig *BattleSystem_GetBgConfig(BattleSystem *bsys);
 Window *BattleSystem_GetWindow(BattleSystem *bsys, int index);
@@ -25,7 +26,7 @@ u32 *ov12_0223A908(BattleSystem *bsys, int index);
 void ov12_0223A914(BattleSystem *bsys, int index, u32 *a2);
 FontID *BattleSystem_GetHpFont(BattleSystem *bsys);
 FontID *BattleSystem_GetLevelFont(BattleSystem *bsys);
-u32 *ov12_0223A930(BattleSystem *bsys);
+MsgData *BattleSystem_GetMessageData(BattleSystem *bsys);
 u32 *ov12_0223A934(BattleSystem *bsys);
 PaletteData *BattleSystem_GetPaletteData(BattleSystem *bsys);
 Pokedex *BattleSystem_GetPokedex(BattleSystem *bsys);
@@ -38,7 +39,7 @@ u16 *ov12_0223A978(BattleSystem *bsys);
 u16 *ov12_0223A984(BattleSystem *bsys);
 u16 *ov12_0223A990(BattleSystem *bsys);
 UnkBattleSystemSub1D0 *ov12_0223A99C(BattleSystem *bsys);
-u32 *ov12_0223A9A4(BattleSystem *bsys);
+MessageFormat *BattleSystem_GetMessageFormat(BattleSystem *bsys);
 String *BattleSystem_GetMessageBuffer(BattleSystem *bsys);
 u16 BattleSystem_GetTrainerIndex(BattleSystem *bsys, int battlerId);
 Trainer *BattleSystem_GetTrainer(BattleSystem *bsys, int battlerId);
@@ -70,9 +71,9 @@ int BattleSystem_GetSafariBallCount(BattleSystem *bsys);
 void BattleSystem_SetSafariBallCount(BattleSystem *bsys, int item);
 Options *BattleSystem_GetOptions(BattleSystem *bsys);
 BOOL BattleSystem_AreBattleAnimationsOn(BattleSystem *bsys);
-u16 BattleSystem_GetFrame(BattleSystem *bsys);
+u32 BattleSystem_GetFrame(BattleSystem *bsys);
 u8 BattleSystem_GetTextFrameDelay(BattleSystem *bsys);
-u16 BattleSystem_GetBattleStyle(BattleSystem *bsys);
+u32 BattleSystem_GetBattleStyle(BattleSystem *bsys);
 void *ov12_0223B750(BattleSystem *bsys);
 SOUND_CHATOT *BattleSystem_GetChatotVoice(BattleSystem *bsys, int battlerId);
 void BattleSystem_TryChangeForm(BattleSystem *bsys);
@@ -112,7 +113,7 @@ void BattleSystem_HpBar_Delete(BattleSystem *bsys);
 u8 BattleSystem_GetBattleOutcomeFlags(BattleSystem *bsys);
 void BattleSystem_SetBattleOutcomeFlags(BattleSystem *bsys, u8 battleOutcomeFlag);
 u8 BattleSystem_GetCriticalHpMusicFlag(BattleSystem *bsys);
-u8 BattleSystem_SetCriticalHpMusicFlag(BattleSystem *bsys, u8 flag);
+void BattleSystem_SetCriticalHpMusicFlag(BattleSystem *bsys, u8 flag);
 u8 BattleSystem_GetCriticalHpMusicDelay(BattleSystem *bsys);
 void BattleSystem_SetCriticalHpMusicDelay(BattleSystem *bsys, u8 delay);
 void ov12_0223BD8C(BattleSystem *bsys, int a1);
@@ -138,16 +139,12 @@ void ov12_0223C1C4(BattleSystem *bsys, u8 *buffer);
 void ov12_0223C1F4(BattleSystem *bsys, void **a1);
 void ov12_0223C224(BattleSystem *bsys, int a1);
 u32 CalcMoneyLoss(Party *party, PlayerProfile *profile);
-
-//These functions haven't been decompiled
-void PokedexSetBattlerSeen(BattleSystem *bsys, int battlerId);
-BOOL Link_QueueNotEmpty(BattleContext *ctx);
-void ov12_02237ED0(BattleSystem *bsys, int a1);
-void ov12_022642F0(BattleSystem *bsys);
-BOOL ov12_022581BC(BattleSystem *bsys, BattleContext *ctx);
-void ov12_02263A1C(BattleSystem *bsys, BattleContext *ctx, int battlerId);
-void ov12_02266008(UnkBattleSystemSub17C *a0);
-BattleHpBar *OpponentData_GetHpBar(OpponentData *opponentData);
-void ov12_0226AA8C(u32 *a1, u32 flag);
+void BattleSystem_SetPokedexSeen(BattleSystem *bsys, int battlerId);
+void BattleSystem_SetPokedexCaught(BattleSystem *bsys, int battlerId);
+BOOL BattleSystem_CheckMonCaught(BattleSystem *bsys, int battlerId);
+void BattleSystem_SetDefaultBlend(void);
+u8 BattleSystem_PrintTrainerMessage(BattleSystem *bsys, int trainerId, int battlerId, int a2, int delay);
+u32 BattleSystem_PrintBattleMessage(BattleSystem *bsys, MsgData *data, BattleMessage *msg, u8 delay);
+u32 ov12_0223C4E8(BattleSystem *bsys, Window *window, MsgData *data, BattleMessage *msg, int x, int y, int flag, int width, int delay);
 
 #endif

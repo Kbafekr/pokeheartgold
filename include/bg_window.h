@@ -140,6 +140,21 @@ enum GFBgScreenSize {
     GF_BG_SCR_SIZE_1024x1024,
 };
 
+enum GFBgBufferSize {
+    GF_BG_BUF_SIZE_128x128_4BPP   = 128 * 128 / 32,
+    GF_BG_BUF_SIZE_256x256_4BPP   = 256 * 256 / 32,
+    GF_BG_BUF_SIZE_256x512_4BPP   = 256 * 512 / 32,
+    GF_BG_BUF_SIZE_512x256_4BPP   = 512 * 256 / 32,
+    GF_BG_BUF_SIZE_512x512_4BPP   = 512 * 512 / 32,
+    GF_BG_BUF_SIZE_1024x1024_4BPP = 1024 * 1024 / 32,
+    GF_BG_BUF_SIZE_128x128_8BPP   = 128 * 128 / 64,
+    GF_BG_BUF_SIZE_256x256_8BPP   = 256 * 256 / 64,
+    GF_BG_BUF_SIZE_256x512_8BPP   = 256 * 512 / 64,
+    GF_BG_BUF_SIZE_512x256_8BPP   = 512 * 256 / 64,
+    GF_BG_BUF_SIZE_512x512_8BPP   = 512 * 512 / 64,
+    GF_BG_BUF_SIZE_1024x1024_8BPP = 1024 * 1024 / 64,
+};
+
 enum BgPosAdjustOp {
     // Text layers
     BG_POS_OP_SET_X = 0,
@@ -207,8 +222,8 @@ void BG_LoadScreenTilemapData(BgConfig *bgConfig, u8 bgId, const void *data, u32
 void BG_LoadCharTilesData(BgConfig *bgConfig, u8 bgId, const void *data, u32 size, u32 tileStart);
 void BG_ClearCharDataRange(u8 bgId, u32 size, u32 offset, HeapID heapId);
 void BG_FillCharDataRange(BgConfig *bgConfig, enum GFBgLayer bgId, u32 fillValue, u32 ntiles, u32 offset);
-void BG_LoadPlttData(u32 location, const void *plttData, u32 size, enum GFPalSlotOffset offset);
-void BG_LoadBlankPltt(u32 location, u32 size, enum GFPalSlotOffset offset, HeapID heapId);
+void BG_LoadPlttData(u32 location, const void *plttData, u32 size, u32 offset);
+void BG_LoadBlankPltt(u32 location, u32 size, u32 offset, HeapID heapId);
 void BG_SetMaskColor(u8 bgId, u16 value);
 void LoadRectToBgTilemapRect(BgConfig *bgConfig, u8 bgId, const void *buffer, u8 destX, u8 destY, u8 width, u8 height);
 void CopyToBgTilemapRect(BgConfig *bgConfig, u8 bgId, u8 destX, u8 destY, u8 destWidth, u8 destHeight, const void *buffer, u8 srcX, u8 srcY, u8 srcWidth, u8 srcHeight);

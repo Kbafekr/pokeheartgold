@@ -1,17 +1,45 @@
 #include "global.h"
 #include "battle/battle_hp_bar.h"
+#include "battle/battle_controller.h"
 #include "battle/battle_controller_opponent.h"
 #include "battle/battle_system.h"
+#include "battle/battle_022378C0.h"
+#include "battle/battle_02265E28.h"
+#include "msgdata.h"
 #include "party.h"
 #include "pokemon_mood.h"
+#include "text.h"
 #include "battle/overlay_12_0224E4FC.h"
 #include "battle/overlay_12_0226BEC4.h"
+#include "battle/overlay_12_02266024.h"
 #include "constants/game_stats.h"
+#include "constants/message_tags.h"
+#include "constants/sndseq.h"
 #include "unk_0202FBCC.h"
 #include "unk_0200FA24.h"
 #include "unk_02005D10.h"
+#include "msgdata/msg/msg_0197.h"
 
 static u8 ov12_0223BFB0(u8 *buffer, u8 *index, u16 *size);
+static void BattleSystem_AdjustMessageForSide(BattleSystem *bsys, BattleMessage *msg);
+static void BattleSystem_BufferMessage(BattleSystem *bsys, BattleMessage *msg);
+static void BattleMessage_BufferNickname(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferMove(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferItem(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferNumber(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferNumbers(BattleSystem *bsys, int bufferIndex, int param, int numDigits);
+static void BattleMessage_BufferType(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferAbility(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferStat(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferStatus(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferPokemon(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferPoffin(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferFlavorPreference(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferTrainerClass(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferTrainerName(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_BufferBoxName(BattleSystem *bsys, int bufferIndex, int param);
+static void BattleMessage_ExpandPlaceholders(BattleSystem *bsys, MsgData *data, BattleMessage *msg);
+static BOOL ov12_0223CF14(struct TextPrinterTemplate *template, u16 glyphId);
 
 BgConfig *BattleSystem_GetBgConfig(BattleSystem *bsys) {
     return bsys->bgConfig;
@@ -107,8 +135,8 @@ FontID *BattleSystem_GetLevelFont(BattleSystem *bsys) {
     return bsys->levelFont;
 }
 
-u32 *ov12_0223A930(BattleSystem *bsys) {
-    return bsys->unkC;
+MsgData *BattleSystem_GetMessageData(BattleSystem *bsys) {
+    return bsys->msgData;
 }
 
 u32 *ov12_0223A934(BattleSystem *bsys) {
@@ -159,8 +187,8 @@ UnkBattleSystemSub1D0 *ov12_0223A99C(BattleSystem *bsys) {
     return &bsys->unk1D0[0];
 }
 
-u32 *ov12_0223A9A4(BattleSystem *bsys) {
-    return bsys->unk14;
+MessageFormat *BattleSystem_GetMessageFormat(BattleSystem *bsys) {
+    return bsys->msgFormat;
 }
 
 String *BattleSystem_GetMessageBuffer(BattleSystem *bsys) {
@@ -228,9 +256,9 @@ int ov12_0223AAD8(BattleSystem *bsys, int a1) {
             break;
         }
     }
-    
+
     GF_ASSERT(battlerId < bsys->maxBattlers);
-    
+
     return battlerId;
 }
 
@@ -269,17 +297,17 @@ int BattleSystem_GetBattlerIdPartner(BattleSystem *bsys, int battlerId) {
     int battlerIdPartner;
     int maxBattlers = BattleSystem_GetMaxBattlers(bsys);
     u32 battleType = BattleSystem_GetBattleType(bsys);
-    
+
     if (!(battleType & BATTLE_TYPE_DOUBLES)) {
         return battlerId;
     }
-    
+
     for (battlerIdPartner = 0; battlerIdPartner < maxBattlers; battlerIdPartner++) {
         if (battlerIdPartner != battlerId && BattleSystem_GetFieldSide(bsys, battlerIdPartner) == BattleSystem_GetFieldSide(bsys, battlerId)) {
             break;
         }
     }
-    
+
     return battlerIdPartner;
 }
 
@@ -287,17 +315,17 @@ int ov12_0223ABB8(BattleSystem *bsys, int battlerId, int side) {
     int battlerIdOpponent;
     int maxBattlers = BattleSystem_GetMaxBattlers(bsys);
     u32 battleType = BattleSystem_GetBattleType(bsys);
-    
+
     if (!(battleType & BATTLE_TYPE_DOUBLES)) {
         return battlerId ^ 1;
     }
-    
+
     for (battlerIdOpponent = 0; battlerIdOpponent < maxBattlers; battlerIdOpponent++) {
         if (battlerIdOpponent != battlerId && (ov12_0223AB0C(bsys, battlerIdOpponent) & 2) == side && BattleSystem_GetFieldSide(bsys, battlerIdOpponent) != BattleSystem_GetFieldSide(bsys, battlerId)) {
             break;
         }
     }
-    
+
     return battlerIdOpponent;
 }
 
@@ -309,7 +337,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
     int index1 = ov12_022581D4(bsys, ctx, 2, battlerId);
     int index2;
     int friendship;
-    
+
     if (BattleSystem_GetBattleType(bsys) == (BATTLE_TYPE_DOUBLES | BATTLE_TYPE_TRAINER) || ((BattleSystem_GetBattleType(bsys) & BATTLE_TYPE_INGAME_PARTNER) && !(ov12_0223AB0C(bsys, battlerId) & 1))) {
         index2 = ov12_022581D4(bsys, ctx, 2, BattleSystem_GetBattlerIdPartner(bsys, battlerId));
         if (index2 == selectedMonIndex) {
@@ -320,7 +348,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
     }
     mon = BattleSystem_GetPartyMon(bsys, battlerId, selectedMonIndex);
     friendship = 0;
-    
+
     if (GetItemAttr(item, ITEMATTR_SLP_HEAL, HEAP_ID_BATTLE)) {
         data = GetMonData(mon, MON_DATA_STATUS, NULL);
         if (data & STATUS_SLEEP) {
@@ -435,7 +463,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
             }
         }
     }
-  
+
     if (GetItemAttr(item, ITEMATTR_DEF_STAGES, HEAP_ID_BATTLE)) {
         if (index1 == selectedMonIndex || index2 == selectedMonIndex) {
             if (GetBattlerVar(ctx, battlerId, BMON_DATA_STAT_CHANGE_DEF, NULL) < STAT_UP_6) {
@@ -443,8 +471,8 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
                 ret = TRUE;
             }
         }
-    }  
-    
+    }
+
     if (GetItemAttr(item, ITEMATTR_SPATK_STAGES, HEAP_ID_BATTLE)) {
         if (index1 == selectedMonIndex || index2 == selectedMonIndex) {
             if (GetBattlerVar(ctx, battlerId, BMON_DATA_STAT_CHANGE_SPATK, NULL) < STAT_UP_6) {
@@ -453,7 +481,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
             }
         }
     }
-    
+
     if (GetItemAttr(item, ITEMATTR_SPDEF_STAGES, HEAP_ID_BATTLE)) {
         if (index1 == selectedMonIndex || index2 == selectedMonIndex) {
             if (GetBattlerVar(ctx, battlerId, BMON_DATA_STAT_CHANGE_SPDEF, NULL) < STAT_UP_6) {
@@ -471,7 +499,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
             }
         }
     }
-    
+
     if (GetItemAttr(item, ITEMATTR_ACCURACY_STAGES, HEAP_ID_BATTLE)) {
         if (index1 == selectedMonIndex || index2 == selectedMonIndex) {
             if (GetBattlerVar(ctx, battlerId, BMON_DATA_STAT_CHANGE_ACC, NULL) < STAT_UP_6) {
@@ -480,7 +508,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
             }
         }
     }
-    
+
     if (GetItemAttr(item, ITEMATTR_CRITRATE_STAGES, HEAP_ID_BATTLE)) {
         if (index1 == selectedMonIndex || index2 == selectedMonIndex) {
             data = GetBattlerVar(ctx, battlerId, BMON_DATA_STATUS2, NULL);
@@ -491,7 +519,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
             }
         }
     }
-    
+
     if (GetItemAttr(item, ITEMATTR_PP_RESTORE, HEAP_ID_BATTLE)) {
         data = GetItemAttr(item, ITEMATTR_PP_RESTORE_PARAM, HEAP_ID_BATTLE);
         if (GetMonData(mon, MON_DATA_MOVE1PP + movePos, NULL) != GetMonData(mon, MON_DATA_MOVE1MAXPP + movePos, NULL)) {
@@ -519,7 +547,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
             }
         }
     }
-    
+
     if (GetItemAttr(item, ITEMATTR_HP_RESTORE, HEAP_ID_BATTLE)) {
         data = 0;
         if (GetItemAttr(item, ITEMATTR_REVIVE, HEAP_ID_BATTLE)) {
@@ -561,7 +589,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
             ret = TRUE;
         }
     }
-    
+
     if (GetItemAttr(item, ITEMATTR_FRIENDSHIP_MOD_LO, HEAP_ID_BATTLE)) {
         if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) < 100 && ret == TRUE) {
             friendship = GetItemAttr(item, ITEMATTR_FRIENDSHIP_MOD_LO_PARAM, HEAP_ID_BATTLE);
@@ -579,7 +607,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
             friendship = GetItemAttr(item, ITEMATTR_FRIENDSHIP_MOD_HI_PARAM, HEAP_ID_BATTLE);
         }
     }
-    
+
     if (friendship) {
         if (friendship > 0) {
             if (BallToItemId(BattleSystem_GetMonBall(bsys, mon)) == ITEM_LUXURY_BALL) {
@@ -602,7 +630,7 @@ BOOL BattleSystem_RecoverStatus(BattleSystem *bsys, int battlerId, int selectedM
     if (ret == TRUE) {
         ApplyItemEffectOnMonMood(mon, item);
     }
-    
+
     return ret;
 }
 
@@ -616,7 +644,7 @@ int BattleSystem_GetTimezone(BattleSystem *bsys) {
 
 int ov12_0223B52C(BattleSystem *bsys) {
     int ret;
-    
+
     switch (bsys->unk2404) {
     case 0:
     case 1:
@@ -642,13 +670,13 @@ int ov12_0223B52C(BattleSystem *bsys) {
         ret = 0;
         break;
     }
-    
+
     return ret;
 }
 
 u8 ov12_0223B580(BattleSystem *bsys, int battlerId, u8 a2) {
     u16 item;
-    
+
     if (ov12_0223AB0C(bsys, battlerId) == 4 && !(bsys->battleType & BATTLE_TYPE_MULTI)) {
         if (bsys->battleType & BATTLE_TYPE_LINK) {
             if (!(a2 & MaskOfFlagNo(BattleSystem_GetBattlerIdPartner(bsys, battlerId)))) {
@@ -669,11 +697,11 @@ u8 ov12_0223B580(BattleSystem *bsys, int battlerId, u8 a2) {
 u16 BattleSystem_CheckEvolution(BattleSetup *setup, int *selectedMonIndex, int *evolutionCondition) {
     Pokemon *mon;
     u16 species = 0;
-    
+
     if (setup->winFlag != BATTLE_OUTCOME_WIN && setup->winFlag != BATTLE_OUTCOME_MON_CAUGHT && setup->winFlag != BATTLE_OUTCOME_PLAYER_FLED) {
         return 0;
     }
-    
+
     while (setup->levelUpFlag) {
         for (*selectedMonIndex = 0; *selectedMonIndex < PARTY_SIZE; (*selectedMonIndex)++) {
             if (setup->levelUpFlag & MaskOfFlagNo(*selectedMonIndex)) {
@@ -720,7 +748,7 @@ BOOL BattleSystem_AreBattleAnimationsOn(BattleSystem *bsys) {
     return (Options_GetBattleScene(bsys->options) == 0);
 }
 
-u16 BattleSystem_GetFrame(BattleSystem *bsys) {
+u32 BattleSystem_GetFrame(BattleSystem *bsys) {
     return Options_GetFrame(bsys->options);
 }
 
@@ -731,7 +759,7 @@ u8 BattleSystem_GetTextFrameDelay(BattleSystem *bsys) {
     return Options_GetTextFrameDelay(bsys->options);
 }
 
-u16 BattleSystem_GetBattleStyle(BattleSystem *bsys) {
+u32 BattleSystem_GetBattleStyle(BattleSystem *bsys) {
     return Options_GetBattleStyle(bsys->options);
 }
 
@@ -754,11 +782,11 @@ void BattleSystem_TryChangeForm(BattleSystem *bsys) {
     AlternateForms form;
     Pokemon *mon;
     u16 species;
-    
+
     if (bsys->battleType & BATTLE_TYPE_NO_EXP) {
         return;
     }
-    
+
     for (i = 0; i < BattleSystem_GetPartySize(bsys, BATTLER_PLAYER); i++) {
         mon = BattleSystem_GetPartyMon(bsys, BATTLER_PLAYER, i);
         species = GetMonData(mon, MON_DATA_SPECIES_OR_EGG, NULL);
@@ -807,7 +835,7 @@ void ov12_0223B854(BattleSystem *bsys, int battlerId, int selectedMonIndex) {
 
 //used to be related to poketch in dppt
 void ov12_0223B870() {
-    
+
 }
 
 void BattleSystem_SetBackground(BattleSystem *bsys) {
@@ -816,19 +844,19 @@ void BattleSystem_SetBackground(BattleSystem *bsys) {
     u8 *vram;
     u32* src;
     u32* dst;
-    
+
     bsys->unk230 = AllocFromHeap(HEAP_ID_BATTLE, 0x10000);
     bsys->unk234 = AllocFromHeap(HEAP_ID_BATTLE, 0x200);
-    
+
     MIi_CpuCopy32((void *)0x6010000, (u32 *)bsys->unk230, 0x10000);
     dst = (u32 *)bsys->unk234;
-    src = (u32 *)PaletteData_GetUnfadedBuf(bsys->palette, 0);
+    src = (u32 *)PaletteData_GetUnfadedBuf(bsys->palette, PLTTBUF_MAIN_BG);
     MIi_CpuCopy32(src, dst, 0x200);
 
     vram = (u8 *)0x6400000;
     image = sub_02024B1C(bsys->unk17C[1].unk0->sprite);
     vram += image->vramLocation.baseAddrOfVram[NNS_G2D_VRAM_TYPE_2DMAIN];
-    
+
     for (bgY = 20; bgY < 28; bgY++) {
         for (bgX = 16; bgX < 32; bgX++) {
             objX = bgX - 16;
@@ -851,11 +879,11 @@ void BattleSystem_SetBackground(BattleSystem *bsys) {
             }
         }
     }
-    
+
     vram = (u8 *)0x6400000;
     image = sub_02024B1C(bsys->unk17C[0].unk0->sprite);
     vram += image->vramLocation.baseAddrOfVram[NNS_G2D_VRAM_TYPE_2DMAIN];
-    
+
     for (i = 0; i < 0x800; i++) {
         if (i & 1) {
             data = (vram[i / 2] & 0xF0) >> 4;
@@ -866,7 +894,7 @@ void BattleSystem_SetBackground(BattleSystem *bsys) {
             bsys->unk230[0x9800 + i] = data + 0x70;
         }
     }
-    
+
     for (bgY = 28; bgY < 32; bgY++) {
         for (bgX = 0; bgX < 24; bgX++) {
             objX = bgX;
@@ -883,9 +911,9 @@ void BattleSystem_SetBackground(BattleSystem *bsys) {
             }
         }
     }
-    
+
     BG_LoadCharTilesData(bsys->bgConfig, 3, bsys->unk230, 0x10000, 0);
-    
+
     ov12_02266008(&bsys->unk17C[0]);
     ov12_02266008(&bsys->unk17C[1]);
 }
@@ -1007,7 +1035,7 @@ BattleHpBar *BattleSystem_GetHpBar(BattleSystem *bsys, int battlerId) {
 void BattleSystem_HpBar_Init(BattleSystem *bsys) {
     int i;
     BattleHpBar *hpBar;
-    
+
     for (i = 0; i < bsys->maxBattlers; i++) {
         hpBar = OpponentData_GetHpBar(bsys->opponentData[i]);
         hpBar->bsys = bsys;
@@ -1020,7 +1048,7 @@ void BattleSystem_HpBar_Init(BattleSystem *bsys) {
 void BattleSystem_SetHpBarEnabled(BattleSystem *bsys) {
     int i;
     BattleHpBar *hpBar;
-    
+
     for (i = 0; i < bsys->maxBattlers; i++) {
         hpBar = OpponentData_GetHpBar(bsys->opponentData[i]);
         if (hpBar->hp) {
@@ -1032,7 +1060,7 @@ void BattleSystem_SetHpBarEnabled(BattleSystem *bsys) {
 void BattleSystem_SetHpBarDisabled(BattleSystem *bsys) {
     int i;
     BattleHpBar *hpBar;
-    
+
     for (i = 0; i < bsys->maxBattlers; i++) {
         hpBar = OpponentData_GetHpBar(bsys->opponentData[i]);
         BattleHpBar_SetEnabled(hpBar, FALSE);
@@ -1061,7 +1089,7 @@ u8 BattleSystem_GetCriticalHpMusicFlag(BattleSystem *bsys) {
     return bsys->criticalHpMusic;
 }
 
-u8 BattleSystem_SetCriticalHpMusicFlag(BattleSystem *bsys, u8 flag) {
+void BattleSystem_SetCriticalHpMusicFlag(BattleSystem *bsys, u8 flag) {
     bsys->criticalHpMusic = flag;
 }
 
@@ -1115,7 +1143,7 @@ u8 ov12_0223BE68(BattleSystem *bsys, u8 *buffer) {
     u8 i;
     u8 battlerId;
     u8 index = 0;
-    
+
     for (battlerId = 0; battlerId < bsys->maxBattlers; battlerId++) {
         if (bsys->unk245C[battlerId] != bsys->unk244C[battlerId]) {
             buffer[index++] = battlerId;
@@ -1126,9 +1154,9 @@ u8 ov12_0223BE68(BattleSystem *bsys, u8 *buffer) {
             bsys->unk244C[battlerId] = bsys->unk245C[battlerId];
         }
     }
-    
+
     GF_ASSERT(index <= 28);
-    
+
     return index;
 }
 
@@ -1137,15 +1165,15 @@ void ov12_0223BF14(BattleSystem *bsys, u16 size, u8 *buffer) {
     u8 battlerId;
     u8 byte;
     u8 index = 0;
-    
+
     if (!(bsys->battleType & BATTLE_TYPE_LINK)) {
         return;
     }
-    
+
     if (bsys->unk23FC) {
         return;
     }
-    
+
     while (size) {
         battlerId = ov12_0223BFB0(buffer, &index, &size);
         byte = ov12_0223BFB0(buffer, &index, &size);
@@ -1178,13 +1206,13 @@ BOOL ov12_0223BFEC(BattleSystem *bsys) {
 }
 
 void ov12_0223BFFC(BattleSystem *bsys, u32 flag) {
-    if (!(bsys->battleSpecial & BATTLE_SPECIAL_RECORDED) || 
+    if (!(bsys->battleSpecial & BATTLE_SPECIAL_RECORDED) ||
         bsys->unk2474_0 ||
         ov12_022581D4(bsys, bsys->ctx, 13, 0) == 44 ||
         ov12_022581D4(bsys, bsys->ctx, 14, 0) == 44) {
         return;
     }
-    
+
     ov12_0226AA8C(bsys->unk19C, flag);
     BeginNormalPaletteFade(3, 0, 0, 0, 16, 2, HEAP_ID_BATTLE);
     Sound_Stop();
@@ -1193,7 +1221,7 @@ void ov12_0223BFFC(BattleSystem *bsys, u32 flag) {
 }
 
 BOOL ov12_0223C080(BattleSystem *bsys) {
-    if (!(bsys->battleSpecial & BATTLE_SPECIAL_RECORDED) || 
+    if (!(bsys->battleSpecial & BATTLE_SPECIAL_RECORDED) ||
         bsys->unk2474_0 ||
         ov12_022581D4(bsys, bsys->ctx, 13, 0) == 44 ||
         ov12_022581D4(bsys, bsys->ctx, 14, 0) == 44) {
@@ -1231,7 +1259,7 @@ u8 ov12_0223C140(BattleSystem *bsys, u32 battlerId) {
     if (bsys->battleType & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_TOWER | BATTLE_TYPE_PAL_PARK)) {
         return 0xFF;
     }
-    
+
     if ((bsys->battleType & BATTLE_TYPE_DOUBLES) && (ov12_0223AB0C(bsys, battlerId) & 1)) {
         return 0xFF;
     }
@@ -1254,11 +1282,11 @@ void ov12_0223C1A0(BattleSystem *bsys, u8 *buffer) {
 
 void ov12_0223C1C4(BattleSystem *bsys, u8 *buffer) {
     int i;
-    
+
     for (i = 0; i < 4; i++) {
         buffer[i] = 0xFF;
     }
-    
+
     for (i = 0; i < bsys->maxBattlers; i++) {
         buffer[i] = ov12_02261258(bsys->opponentData[i]);
     }
@@ -1266,11 +1294,11 @@ void ov12_0223C1C4(BattleSystem *bsys, u8 *buffer) {
 
 void ov12_0223C1F4(BattleSystem *bsys, void **a1) {
     int i;
-    
+
     for (i = 0; i < 4; i++) {
         a1[i] = NULL;
     }
-    
+
     for (i = 0; i < bsys->maxBattlers; i++) {
         a1[i] = ov12_02261270(bsys->opponentData[i]);
     }
@@ -1279,7 +1307,7 @@ void ov12_0223C1F4(BattleSystem *bsys, void **a1) {
 void ov12_0223C224(BattleSystem *bsys, int a1) {
     int i;
     BattleHpBar *hpBar;
-    
+
     for (i = 0; i < bsys->maxBattlers; i++) {
         hpBar = OpponentData_GetHpBar(bsys->opponentData[i]);
         ov12_02264EE0(hpBar, a1);
@@ -1296,10 +1324,641 @@ u32 CalcMoneyLoss(Party *party, PlayerProfile *profile) {
     }
     u32 loss = Party_GetMaxLevel(party) * 4 * sBadgePenalty[badgeCount];
     u32 money = PlayerProfile_GetMoney(profile);
-    
+
     if (loss > money) {
         loss = money;
     }
-    
+
     return loss;
+}
+
+void BattleSystem_SetPokedexSeen(BattleSystem *bsys, int battlerId) {
+    u32 flag = ov12_02261258(bsys->opponentData[battlerId]);
+    Pokemon *mon = BattleSystem_GetPartyMon(bsys, battlerId, ov12_022581D4(bsys, bsys->ctx, 2, battlerId));
+
+    if (!(bsys->battleType & (BATTLE_TYPE_LINK | BATTLE_TYPE_TOWER))) {
+        if ((flag & 1) || bsys->battleType == (BATTLE_TYPE_6 | BATTLE_TYPE_DOUBLES | BATTLE_TYPE_MULTI) || bsys->battleType == (BATTLE_TYPE_TRAINER | BATTLE_TYPE_6 | BATTLE_TYPE_DOUBLES | BATTLE_TYPE_MULTI)) {
+            Pokedex_SetMonSeenFlag(bsys->pokedex, mon);
+        }
+    }
+    if (!(flag & 1) && GetMonData(mon, MON_DATA_SPECIES_OR_EGG, NULL) == SPECIES_BURMY) {
+        Pokedex_SetMonCaughtFlag(bsys->pokedex, mon);
+    }
+}
+
+void BattleSystem_SetPokedexCaught(BattleSystem *bsys, int battlerId) {
+    u32 flag = ov12_02261258(bsys->opponentData[battlerId]);
+
+    if (!(bsys->battleType & (BATTLE_TYPE_LINK | BATTLE_TYPE_TOWER)) && (flag & 1)) {
+        int selectedMonIndex = ov12_022581D4(bsys, bsys->ctx, 2, battlerId);
+        Pokemon *mon = BattleSystem_GetPartyMon(bsys, battlerId, selectedMonIndex);
+        Pokedex_SetMonCaughtFlag(bsys->pokedex, mon);
+    }
+}
+
+BOOL BattleSystem_CheckMonCaught(BattleSystem *bsys, int battlerId) {
+    return Pokedex_CheckMonCaughtFlag(bsys->pokedex, battlerId);
+}
+
+void BattleSystem_SetDefaultBlend() {
+    G2_BlendNone();
+}
+
+u8 BattleSystem_PrintTrainerMessage(BattleSystem *bsys, int trainerId, int battlerId, int a2, int delay) {
+    Window *window = BattleSystem_GetWindow(bsys, 0);
+    int index;
+
+    if (bsys->battleType & BATTLE_TYPE_TOWER) {
+        if (trainerId == 0x2710 || bsys->battleType & BATTLE_TYPE_13) {
+            String *msg;
+
+            if (a2 == 0x64) {
+                msg = MailMsg_GetExpandedString(&bsys->trainers[battlerId].winMessage, HEAP_ID_BATTLE);
+            } else {
+                msg = MailMsg_GetExpandedString(&bsys->trainers[battlerId].loseMessage, HEAP_ID_BATTLE);
+            }
+            FillWindowPixelBuffer(window, 0xFF);
+            String_Copy(bsys->msgBuffer, msg);
+            index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, ov12_0223CF14);
+            String_Delete(msg);
+        } else {
+            MsgData *data;
+            String *msg;
+            int stringId;
+            u32 msgId;
+            int i;
+
+            if (a2 == 0x64) {
+                stringId = trainerId * 3 + 1;
+            } else {
+                stringId = trainerId * 3 + 2;
+            }
+
+            for (i = 0; i < 4; i++) {
+                if (PlayerProfile_GetVersion(bsys->playerProfile[i]) == 0) {
+                    break;
+                }
+            }
+
+            if (i == 4) {
+                msgId = msg_0197_00724;
+            } else {
+                msgId = msg_0197_00723;
+            }
+
+            data = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, NARC_msgdata_msg, msgId, HEAP_ID_BATTLE);
+            msg = NewString_ReadMsgData(data, stringId);
+            FillWindowPixelBuffer(window, 0xFF);
+            String_Copy(bsys->msgBuffer, msg);
+            index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, ov12_0223CF14);
+            String_Delete(msg);
+            DestroyMsgData(data);
+        }
+    } else {
+        GetTrainerMessageByIdPair(trainerId, a2, bsys->msgBuffer, HEAP_ID_BATTLE);
+        FillWindowPixelBuffer(window, 0xFF);
+        index = AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, ov12_0223CF14);
+    }
+    return index;
+}
+
+u32 BattleSystem_PrintBattleMessage(BattleSystem *bsys, MsgData *data, BattleMessage *msg, u8 delay) {
+    Window *window = BattleSystem_GetWindow(bsys, 0);
+    BattleSystem_AdjustMessageForSide(bsys, msg);
+    BattleSystem_BufferMessage(bsys, msg);
+    BattleMessage_ExpandPlaceholders(bsys, data, msg);
+    FillWindowPixelBuffer(window, 0xFF);
+    return AddTextPrinterParameterized(window, 1, bsys->msgBuffer, 0, 0, delay, ov12_0223CF14);
+}
+
+u32 ov12_0223C4E8(BattleSystem *bsys, Window *window, MsgData *data, BattleMessage *msg, int x, int y, int flag, int width, int delay) {
+    int dx;
+
+    BattleSystem_AdjustMessageForSide(bsys, msg);
+    BattleSystem_BufferMessage(bsys, msg);
+    BattleMessage_ExpandPlaceholders(bsys, data, msg);
+
+    if (flag & 1) {
+        FillWindowPixelBuffer(window, 0xFF);
+    }
+
+    if (flag & 2) {
+        dx = width - FontID_String_GetWidth(0, bsys->msgBuffer, 0);
+    } else {
+        dx = 0;
+    }
+
+    return AddTextPrinterParameterized(window, 0, bsys->msgBuffer, x + dx, y, delay, ov12_0223CF14);
+}
+
+static void BattleSystem_AdjustMessageForSide(BattleSystem *bsys, BattleMessage *msg) {
+    u32 battleType = BattleSystem_GetBattleType(bsys);
+
+    if (msg->tag & 0x80) {
+        return;
+    }
+
+    if (msg->tag & 0x40) {
+        if (BattleSystem_GetFieldSide(bsys, msg->battlerId)) {
+            msg->id++;
+        }
+        return;
+    }
+
+    switch (msg->tag & 0x3F) {
+    case TAG_NONE:
+    case TAG_MOVE:
+    case TAG_STAT:
+    case TAG_ITEM:
+    case TAG_NUMBER:
+    case TAG_NUMBERS:
+    case TAG_TRNAME:
+    case TAG_MOVE_MOVE:
+    case TAG_ITEM_MOVE:
+    case TAG_NUMBER_NUMBER:
+    case TAG_TRNAME_TRNAME:
+    case TAG_TRNAME_NICKNAME:
+    case TAG_TRNAME_ITEM:
+    case TAG_TRNAME_NUM:
+    case TAG_TRCLASS_TRNAME:
+    case TAG_TRNAME_NICKNAME_NICKNAME:
+    case TAG_TRCLASS_TRNAME_NICKNAME:
+    case TAG_TRCLASS_TRNAME_ITEM:
+    case TAG_TRNAME_NICKNAME_TRNAME_NICKNAME:
+    case TAG_TRCLASS_TRNAME_NICKNAME_NICKNAME:
+    case TAG_TRCLASS_TRNAME_NICKNAME_TRNAME:
+    case TAG_TRCLASS_TRNAME_TRCLASS_TRNAME:
+    case TAG_TRCLASS_TRNAME_NICKNAME_TRCLASS_TRNAME_NICKNAME:
+        break;
+    case TAG_NONE_SIDE:
+        if (BattleSystem_GetFieldSide(bsys, msg->param[0] & 0xFF)) {
+            msg->id++;
+        }
+        break;
+    case TAG_NICKNAME:
+    case TAG_NICKNAME_MOVE:
+    case TAG_NICKNAME_ABILITY:
+    case TAG_NICKNAME_STAT:
+    case TAG_NICKNAME_TYPE:
+    case TAG_NICKNAME_POKE:
+    case TAG_NICKNAME_ITEM:
+    case TAG_NICKNAME_POFFIN:
+    case TAG_NICKNAME_NUM:
+    case TAG_NICKNAME_TRNAME:
+    case TAG_NICKNAME_BOX:
+    case TAG_NICKNAME_MOVE_MOVE:
+    case TAG_NICKNAME_MOVE_NUMBER:
+    case TAG_NICKNAME_ABILITY_MOVE:
+    case TAG_NICKNAME_ABILITY_ITEM:
+    case TAG_NICKNAME_ABILITY_STAT:
+    case TAG_NICKNAME_ABILITY_TYPE:
+    case TAG_NICKNAME_ABILITY_STATUS:
+    case TAG_NICKNAME_ABILITY_NUMBER:
+    case TAG_NICKNAME_ITEM_MOVE:
+    case TAG_NICKNAME_ITEM_STAT:
+    case TAG_NICKNAME_ITEM_STATUS:
+    case TAG_NICKNAME_BOX_BOX:
+        if (BattleSystem_GetFieldSide(bsys, msg->param[0] & 0xFF)) {
+            msg->id++;
+            if (battleType & BATTLE_TYPE_TRAINER) {
+                msg->id++;
+            }
+        }
+        break;
+    case TAG_MOVE_SIDE:
+        if (BattleSystem_GetFieldSide(bsys, msg->param[1] & 0xFF)) {
+            msg->id++;
+        }
+        break;
+    case TAG_MOVE_NICKNAME:
+    case TAG_ABILITY_NICKNAME:
+    case TAG_ITEM_NICKNAME_FLAVOR:
+        if (BattleSystem_GetFieldSide(bsys, msg->param[1] & 0xFF)) {
+            msg->id++;
+            if (battleType & BATTLE_TYPE_TRAINER) {
+                msg->id++;
+            }
+        }
+        break;
+    case TAG_NICKNAME_NICKNAME:
+    case TAG_NICKNAME_NICKNAME_MOVE:
+    case TAG_NICKNAME_NICKNAME_ABILITY:
+    case TAG_NICKNAME_NICKNAME_ITEM:
+        if (BattleSystem_GetFieldSide(bsys, msg->param[0] & 0xFF)) {
+            msg->id += 3;
+            if (battleType & BATTLE_TYPE_TRAINER) {
+                msg->id += 2;
+            }
+            if (BattleSystem_GetFieldSide(bsys, msg->param[1] & 0xFF)) {
+                msg->id++;
+            }
+        } else if (BattleSystem_GetFieldSide(bsys, msg->param[1] & 0xFF)) {
+            msg->id++;
+            if (battleType & BATTLE_TYPE_TRAINER) {
+                msg->id++;
+            }
+        }
+        break;
+    case TAG_NICKNAME_ABILITY_NICKNAME:
+    case TAG_NICKNAME_ITEM_NICKNAME:
+    case TAG_NICKNAME_ABILITY_NICKNAME_MOVE:
+    case TAG_NICKNAME_ABILITY_NICKNAME_ABILITY:
+    case TAG_NICKNAME_ABILITY_NICKNAME_STAT:
+    case TAG_NICKNAME_ITEM_NICKNAME_ITEM:
+        if (BattleSystem_GetFieldSide(bsys, msg->param[0] & 0xFF)) {
+            msg->id += 3;
+            if (battleType & BATTLE_TYPE_TRAINER) {
+                msg->id += 2;
+            }
+            if (BattleSystem_GetFieldSide(bsys, msg->param[2] & 0xFF)) {
+                msg->id++;
+            }
+        } else if (BattleSystem_GetFieldSide(bsys, msg->param[2] & 0xFF)) {
+            msg->id++;
+            if (battleType & BATTLE_TYPE_TRAINER) {
+                msg->id++;
+            }
+        }
+        break;
+    default:
+        GF_ASSERT(FALSE);
+    }
+}
+
+static void BattleSystem_BufferMessage(BattleSystem *bsys, BattleMessage *msg) {
+    switch (msg->tag & 0x3F) {
+    case TAG_NONE:
+    case TAG_NONE_SIDE:
+        break;
+    case TAG_NICKNAME:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        break;
+    case TAG_MOVE:
+    case TAG_MOVE_SIDE:
+        BattleMessage_BufferMove(bsys, 0, msg->param[0]);
+        break;
+    case TAG_STAT:
+        BattleMessage_BufferStat(bsys, 0, msg->param[0]);
+        break;
+    case TAG_ITEM:
+        BattleMessage_BufferItem(bsys, 0, msg->param[0]);
+        break;
+    case TAG_NUMBER:
+        BattleMessage_BufferNumber(bsys, 0, msg->param[0]);
+        break;
+    case TAG_NUMBERS:
+        BattleMessage_BufferNumbers(bsys, 0, msg->param[0], msg->numDigits);
+        break;
+    case TAG_TRNAME:
+        BattleMessage_BufferTrainerName(bsys, 0, msg->param[0]);
+        break;
+    case TAG_NICKNAME_NICKNAME:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_MOVE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferMove(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_ABILITY:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_STAT:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferStat(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_TYPE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferType(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_POKE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferPokemon(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_ITEM:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferItem(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_POFFIN: //unused
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferPoffin(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_NUM:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNumber(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_TRNAME:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_BOX:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferBoxName(bsys, 1, msg->param[1]);
+        break;
+    case TAG_MOVE_NICKNAME:
+        BattleMessage_BufferMove(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        break;
+    case TAG_MOVE_MOVE:
+        BattleMessage_BufferMove(bsys, 0, msg->param[0]);
+        BattleMessage_BufferMove(bsys, 1, msg->param[1]);
+        break;
+    case TAG_ABILITY_NICKNAME:
+        BattleMessage_BufferAbility(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        break;
+    case TAG_ITEM_MOVE:
+        BattleMessage_BufferItem(bsys, 0, msg->param[0]);
+        BattleMessage_BufferMove(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NUMBER_NUMBER:
+        BattleMessage_BufferNumber(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNumber(bsys, 1, msg->param[1]);
+        break;
+    case TAG_TRNAME_TRNAME:
+        BattleMessage_BufferTrainerName(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        break;
+    case TAG_TRNAME_NICKNAME:
+        BattleMessage_BufferTrainerName(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        break;
+    case TAG_TRNAME_ITEM:
+        BattleMessage_BufferTrainerName(bsys, 0, msg->param[0]);
+        BattleMessage_BufferItem(bsys, 1, msg->param[1]);
+        break;
+    case TAG_TRNAME_NUM:
+        BattleMessage_BufferTrainerName(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNumber(bsys, 1, msg->param[1]);
+        break;
+    case TAG_TRCLASS_TRNAME:
+        BattleMessage_BufferTrainerClass(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        break;
+    case TAG_NICKNAME_NICKNAME_MOVE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        BattleMessage_BufferMove(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_NICKNAME_ABILITY:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        BattleMessage_BufferAbility(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_NICKNAME_ITEM:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        BattleMessage_BufferItem(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_MOVE_MOVE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferMove(bsys, 1, msg->param[1]);
+        BattleMessage_BufferMove(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_MOVE_NUMBER:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferMove(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNumber(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ABILITY_NICKNAME:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ABILITY_MOVE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferMove(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ABILITY_ITEM:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferItem(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ABILITY_STAT:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferStat(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ABILITY_TYPE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferType(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ABILITY_STATUS:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferStatus(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ABILITY_NUMBER:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNumber(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ITEM_NICKNAME:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferItem(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ITEM_MOVE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferItem(bsys, 1, msg->param[1]);
+        BattleMessage_BufferMove(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ITEM_STAT:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferItem(bsys, 1, msg->param[1]);
+        BattleMessage_BufferStat(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ITEM_STATUS:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferItem(bsys, 1, msg->param[1]);
+        BattleMessage_BufferStatus(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_BOX_BOX:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferBoxName(bsys, 1, msg->param[1]);
+        BattleMessage_BufferBoxName(bsys, 2, msg->param[2]);
+        break;
+    case TAG_ITEM_NICKNAME_FLAVOR:
+        BattleMessage_BufferItem(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        BattleMessage_BufferFlavorPreference(bsys, 2, msg->param[2]);
+        break;
+    case TAG_TRNAME_NICKNAME_NICKNAME:
+        BattleMessage_BufferTrainerName(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        break;
+    case TAG_TRCLASS_TRNAME_NICKNAME:
+        BattleMessage_BufferTrainerClass(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        break;
+    case TAG_TRCLASS_TRNAME_ITEM:
+        BattleMessage_BufferTrainerClass(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        BattleMessage_BufferItem(bsys, 2, msg->param[2]);
+        break;
+    case TAG_NICKNAME_ABILITY_NICKNAME_MOVE:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        BattleMessage_BufferMove(bsys, 3, msg->param[3]);
+        break;
+    case TAG_NICKNAME_ABILITY_NICKNAME_ABILITY:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        BattleMessage_BufferAbility(bsys, 3, msg->param[3]);
+        break;
+    case TAG_NICKNAME_ABILITY_NICKNAME_STAT:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferAbility(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        BattleMessage_BufferStat(bsys, 3, msg->param[3]);
+        break;
+    case TAG_NICKNAME_ITEM_NICKNAME_ITEM:
+        BattleMessage_BufferNickname(bsys, 0, msg->param[0]);
+        BattleMessage_BufferItem(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        BattleMessage_BufferItem(bsys, 3, msg->param[3]);
+        break;
+    case TAG_TRNAME_NICKNAME_TRNAME_NICKNAME:
+        BattleMessage_BufferTrainerName(bsys, 0, msg->param[0]);
+        BattleMessage_BufferNickname(bsys, 1, msg->param[1]);
+        BattleMessage_BufferTrainerName(bsys, 2, msg->param[2]);
+        BattleMessage_BufferNickname(bsys, 3, msg->param[3]);
+        break;
+    case TAG_TRCLASS_TRNAME_NICKNAME_NICKNAME:
+        BattleMessage_BufferTrainerClass(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        BattleMessage_BufferNickname(bsys, 3, msg->param[3]);
+        break;
+    case TAG_TRCLASS_TRNAME_NICKNAME_TRNAME:
+        BattleMessage_BufferTrainerClass(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        BattleMessage_BufferTrainerName(bsys, 3, msg->param[3]);
+        break;
+    case TAG_TRCLASS_TRNAME_TRCLASS_TRNAME:
+        BattleMessage_BufferTrainerClass(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        BattleMessage_BufferTrainerClass(bsys, 2, msg->param[2]);
+        BattleMessage_BufferTrainerName(bsys, 3, msg->param[3]);
+        break;
+    case TAG_TRCLASS_TRNAME_NICKNAME_TRCLASS_TRNAME_NICKNAME:
+        BattleMessage_BufferTrainerClass(bsys, 0, msg->param[0]);
+        BattleMessage_BufferTrainerName(bsys, 1, msg->param[1]);
+        BattleMessage_BufferNickname(bsys, 2, msg->param[2]);
+        BattleMessage_BufferTrainerClass(bsys, 3, msg->param[3]);
+        BattleMessage_BufferTrainerName(bsys, 4, msg->param[4]);
+        BattleMessage_BufferNickname(bsys, 5, msg->param[5]);
+        break;
+    default:
+        GF_ASSERT(FALSE);
+    }
+}
+
+static void BattleMessage_BufferNickname(BattleSystem *bsys, int bufferIndex, int param) {
+    Pokemon *mon = BattleSystem_GetPartyMon(bsys, param & 0xFF, (param & 0xFF00) >> 8);
+    BufferBoxMonNickname(bsys->msgFormat, bufferIndex, &mon->box);
+}
+
+static void BattleMessage_BufferMove(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferMoveName(bsys->msgFormat, bufferIndex, param);
+}
+
+static void BattleMessage_BufferItem(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferItemName(bsys->msgFormat, bufferIndex, param);
+}
+
+static void BattleMessage_BufferNumber(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferIntegerAsString(bsys->msgFormat, bufferIndex, param, 5, PRINTING_MODE_LEFT_ALIGN, TRUE);
+}
+
+static void BattleMessage_BufferNumbers(BattleSystem *bsys, int bufferIndex, int param, int numDigits) {
+    if (numDigits) {
+        BufferIntegerAsString(bsys->msgFormat, bufferIndex, param, numDigits, PRINTING_MODE_RIGHT_ALIGN, TRUE);
+    } else {
+        BufferIntegerAsString(bsys->msgFormat, bufferIndex, param, 5, PRINTING_MODE_RIGHT_ALIGN, TRUE);
+    }
+
+}
+
+static void BattleMessage_BufferType(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferTypeName(bsys->msgFormat, bufferIndex, param);
+}
+
+static void BattleMessage_BufferAbility(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferAbilityName(bsys->msgFormat, bufferIndex, param);
+}
+
+static void BattleMessage_BufferStat(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferStatName(bsys->msgFormat, bufferIndex, param);
+}
+
+static void BattleMessage_BufferStatus(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferStatusName(bsys->msgFormat, bufferIndex, param);
+}
+
+static void BattleMessage_BufferPokemon(BattleSystem *bsys, int bufferIndex, int param) {
+    Pokemon *mon = BattleSystem_GetPartyMon(bsys, param & 0xFF, (param & 0xFF00) >> 8);
+    BufferBoxMonSpeciesName(bsys->msgFormat, bufferIndex, &mon->box);
+}
+
+static void BattleMessage_BufferPoffin(BattleSystem *bsys, int bufferIndex, int param) {
+    //poffins don't exist in HGSS
+}
+
+static void BattleMessage_BufferFlavorPreference(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferFlavorDislikeText(bsys->msgFormat, bufferIndex, param);
+}
+
+static void BattleMessage_BufferTrainerClass(BattleSystem *bsys, int bufferIndex, int param) {
+    Trainer *trainer = BattleSystem_GetTrainer(bsys, param);
+    BufferTrainerClassNameFromDataStruct(bsys->msgFormat, bufferIndex, trainer);
+}
+
+static void BattleMessage_BufferTrainerName(BattleSystem *bsys, int bufferIndex, int param) {
+    Trainer *trainer = BattleSystem_GetTrainer(bsys, param);
+    BufferTrainerNameFromDataStruct(bsys->msgFormat, bufferIndex, trainer);
+}
+
+static void BattleMessage_BufferBoxName(BattleSystem *bsys, int bufferIndex, int param) {
+    BufferPCBoxName(bsys->msgFormat, bufferIndex, bsys->storage, param);
+}
+
+static void BattleMessage_ExpandPlaceholders(BattleSystem *bsys, MsgData *data, BattleMessage *msg) {
+    String *str = NewString_ReadMsgData(data, msg->id);
+    StringExpandPlaceholders(bsys->msgFormat, bsys->msgBuffer, str);
+    String_Delete(str);
+}
+
+static BOOL ov12_0223CF14(struct TextPrinterTemplate *template, u16 glyphId) {
+    BOOL ret = FALSE;
+
+    switch (glyphId) {
+    case 1:
+        ret = GF_IsAnySEPlaying();
+        break;
+    case 2:
+        ret = IsFanfarePlaying();
+        break;
+    case 3:
+        PlayFanfare(SEQ_ME_POKEGET);
+        break;
+    case 4:
+        PlaySE(SEQ_SE_DP_KON);
+        break;
+    case 5:
+        PlayFanfare(SEQ_ME_LVUP);
+        break;
+    default:
+        break;
+    }
+
+    return ret;
 }

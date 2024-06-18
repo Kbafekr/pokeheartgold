@@ -3,7 +3,7 @@
 
 #include "battle/battle_setup.h"
 #include "script.h"
-#include "unk_0201F79C.h"
+#include "sys_task.h"
 #include "unk_0203BC10.h"
 
 struct FieldLongWarpTaskData;
@@ -35,9 +35,9 @@ typedef struct UnkStruct_Ov02_0224E4EC {
     u8 *unk20; // points to fieldSystem->unk_111
 } UnkStruct_Ov02_0224E4EC;
 
-UNK_0201F79C_Sub *ov02_0224B418(FieldSystem *fieldSystem, int gender);
-BOOL ov02_0224B43C(UNK_0201F79C_Sub *unk);
-void ov02_0224B448(UNK_0201F79C_Sub *unk);
+SysTask *ov02_0224B418(FieldSystem *fieldSystem, int gender);
+BOOL ov02_0224B43C(SysTask *unk);
+void ov02_0224B448(SysTask *unk);
 struct FieldLongWarpTaskData *CreateFieldEscapeRopeTaskEnv(FieldSystem *fieldSystem, HeapID heapId);
 struct FieldLongWarpTaskData *CreateFieldTeleportTaskEnv(FieldSystem *fieldSystem, Pokemon *mon, u8 slotno, HeapID heapId);
 struct FieldLongWarpTaskData *CreateFieldDigTaskEnv(FieldSystem *fieldSystem, Pokemon *mon, u8 slotno, HeapID heapId);
@@ -68,7 +68,7 @@ void ov02_0224CDB0(FieldSystem *fieldSystem, u8 a1);
 void ov02_0224E074(FieldSystem *fieldSystem, u16 *p_ret, int a2, HeapID heapId);
 void ov02_0224E0BC(LocalMapObject *obj1, LocalMapObject *obj2, TaskManager *taskManager);
 void ov02_02251EB8(GearPhoneRingManager *phoneRingManager, u8 a1, u8 a2, u8 a3, u8 a4, u8 a5);
-void FieldSystem_FollowPokeInteract(FieldSystem *fieldSystem);
+void FieldSystem_FollowMonInteract(FieldSystem *fieldSystem);
 BOOL ov02_02250780(FieldSystem *fieldSystem, u8 a1);
 void ov02_022507B4(FieldSystem *fieldSystem, u8 a1);
 void ov02_022508B4(FieldSystem *fieldSystem);

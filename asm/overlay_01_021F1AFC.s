@@ -888,7 +888,7 @@ _021F21A8:
 	lsl r0, r0, #2
 	ldr r0, [r1, r0]
 	mov r1, #1
-	bl FieldSystemUnkSub108_AddMonMood
+	bl FieldSystem_UnkSub108_AddMonMood
 	mov r1, #2
 	b _021F21C6
 _021F21C4:
@@ -1026,7 +1026,7 @@ _021F22C2:
 	ldr r0, [r4, #0x20]
 	bl ov01_021F3084
 	ldr r0, [r4, #0x1c]
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _021F2312
 	ldr r1, [r4, #4]
@@ -1035,7 +1035,7 @@ _021F22C2:
 	lsr r1, r1, #0x18
 	bl ov01_02205790
 	ldr r0, [r4, #0x1c]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	mov r1, #0x38
 	bl sub_0205FC94
 _021F2312:
@@ -1186,7 +1186,7 @@ _021F2412:
 	mov r1, #0
 	bl ov01_021E7F00
 	ldr r0, [r4, #8]
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _021F2476
 	ldr r1, [r4, #4]
@@ -1195,14 +1195,14 @@ _021F2412:
 	lsr r1, r1, #0x18
 	bl ov01_02205790
 	ldr r0, [r4, #8]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	mov r1, #1
 	bl sub_02069DC8
 	ldr r0, [r4, #8]
 	mov r1, #1
 	bl ov01_0220609C
 	ldr r0, [r4, #8]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	mov r1, #0x30
 	bl sub_0205FC94
 _021F2476:
@@ -1470,7 +1470,7 @@ _021F2656:
 	lsr r1, r1, #0x18
 	bl ov01_02205790
 	ldr r0, [r4, #0xc]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	mov r1, #1
 	bl sub_02069DC8
 	ldr r0, [r4, #0xc]
@@ -1534,7 +1534,7 @@ ov01_021F26CC: ; 0x021F26CC
 	lsl r0, r0, #2
 	ldr r0, [r1, r0]
 	mov r1, #1
-	bl FieldSystemUnkSub108_AddMonMood
+	bl FieldSystem_UnkSub108_AddMonMood
 	mov r1, #2
 	b _021F26F0
 _021F26EE:
@@ -1622,11 +1622,11 @@ ov01_021F2758: ; 0x021F2758
 	bl ov01_021FEAB0
 	str r0, [r5, #0x18]
 	ldr r0, [r5, #0xc]
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _021F27A2
 	ldr r0, [r5, #0xc]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_UnpauseMovement
 _021F27A2:
 	ldr r0, [r5, #0xc]
@@ -2513,11 +2513,11 @@ ov01_021F2E38: ; 0x021F2E38
 	push {r4, lr}
 	add r4, r0, #0
 	ldr r0, [r4, #0x34]
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _021F2E50
 	ldr r0, [r4, #0x34]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_UnpauseMovement
 _021F2E50:
 	ldr r0, [r4, #0x34]
@@ -2711,7 +2711,7 @@ _021F2FBC:
 	ldr r0, _021F2FE8 ; =ov01_021F3030
 	ldr r2, _021F2FEC ; =0x0000FFFF
 	add r1, r5, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	add r4, r0, #0
 	bne _021F2FE2
 	bl GF_AssertFail
@@ -2728,7 +2728,7 @@ Field_PlayerMovementSavingClear: ; 0x021F2FF0
 	push {r4, r5, r6, lr}
 	add r5, r0, #0
 	beq _021F302E
-	bl sub_0201F988
+	bl SysTask_GetData
 	add r6, r0, #0
 	ldr r0, [r6, #4]
 	ldr r4, [r6, #0xc]
@@ -2751,7 +2751,7 @@ _021F3022:
 	add r0, r6, #0
 	bl FreeToHeap
 	add r0, r5, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 _021F302E:
 	pop {r4, r5, r6, pc}
 	thumb_func_end Field_PlayerMovementSavingClear

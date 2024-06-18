@@ -889,7 +889,7 @@ _0224623A:
 	ldr r0, _022462D4 ; =ov02_022462DC
 	add r1, r4, #0
 	mov r2, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	mov r2, #0
 	str r0, [r4, #0xc]
 	add r0, r5, #0
@@ -902,7 +902,7 @@ _0224623A:
 	b _022462C0
 _02246276:
 	ldr r0, [r4, #0xc]
-	bl DestroySysTask
+	bl SysTask_Destroy
 	ldrh r0, [r4, #0x12]
 	add r0, r0, #1
 	strh r0, [r4, #0x12]
@@ -1755,7 +1755,7 @@ ov02_0224686C: ; 0x0224686C
 	add r0, #8
 	mov r1, #3
 	asr r3, r3, #1
-	bl AddTextPrinterParameterized2
+	bl AddTextPrinterParameterizedWithColor
 	add r5, #8
 	add r0, r5, #0
 	bl ScheduleWindowCopyToVram
@@ -4765,7 +4765,7 @@ _02248058:
 	pop {r3, r4, r5, pc}
 _02248060:
 	add r0, r5, #0
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _0224808A
 	ldr r0, [r5, #0xc]
@@ -7490,26 +7490,26 @@ ov02_02249458: ; 0x02249458
 	ldr r0, _022494B8 ; =ov02_02249584
 	add r1, r4, #0
 	mov r2, #0x86
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	pop {r3, r4, r5, r6, r7, pc}
 _02249490:
 	cmp r5, #2
 	bne _022494AC
 	ldr r0, [sp]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	mov r1, #0x83
 	lsl r1, r1, #2
 	str r0, [r4, r1]
 	ldr r0, _022494BC ; =ov02_022499B8
 	add r1, r4, #0
 	mov r2, #0x86
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	pop {r3, r4, r5, r6, r7, pc}
 _022494AC:
 	ldr r0, _022494C0 ; =ov02_02249984
 	add r1, r4, #0
 	mov r2, #0x86
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
 _022494B8: .word ov02_02249584
@@ -7567,7 +7567,7 @@ ov02_022494C4: ; 0x022494C4
 	ldr r0, _02249538 ; =ov02_022499B8
 	add r1, r4, #0
 	mov r2, #0x86
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	add sp, #0x18
 	pop {r3, r4, r5, r6, r7, pc}
 	nop
@@ -7577,7 +7577,7 @@ _02249538: .word ov02_022499B8
 	thumb_func_start ov02_0224953C
 ov02_0224953C: ; 0x0224953C
 	push {r3, lr}
-	bl sub_0201F988
+	bl SysTask_GetData
 	ldr r0, [r0, #4]
 	pop {r3, pc}
 	.balign 4, 0
@@ -7587,10 +7587,10 @@ ov02_0224953C: ; 0x0224953C
 ov02_02249548: ; 0x02249548
 	push {r4, lr}
 	add r4, r0, #0
-	bl sub_0201F988
+	bl SysTask_GetData
 	bl ov02_0224957C
 	add r0, r4, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 	pop {r4, pc}
 	thumb_func_end ov02_02249548
 
@@ -8684,7 +8684,7 @@ ov02_02249CF0: ; 0x02249CF0
 	ldr r0, _02249D14 ; =ov02_02249D5C
 	add r1, r4, #0
 	mov r2, #0x80
-	bl sub_0200E33C
+	bl SysTask_CreateOnVBlankQueue
 	mov r1, #0x22
 	lsl r1, r1, #4
 	str r0, [r4, r1]
@@ -8706,7 +8706,7 @@ ov02_02249D18: ; 0x02249D18
 	ldr r0, _02249D3C ; =ov02_02249E58
 	add r1, r4, #0
 	mov r2, #0x80
-	bl sub_0200E33C
+	bl SysTask_CreateOnVBlankQueue
 	mov r1, #0x22
 	lsl r1, r1, #4
 	str r0, [r4, r1]
@@ -8724,7 +8724,7 @@ ov02_02249D40: ; 0x02249D40
 	ldr r0, [r4, r0]
 	cmp r0, #0
 	beq _02249D5A
-	bl DestroySysTask
+	bl SysTask_Destroy
 	mov r0, #0x22
 	mov r1, #0
 	lsl r0, r0, #4
@@ -8794,7 +8794,7 @@ _02249DBE:
 	str r1, [r6, r0]
 	ldr r0, _02249DD4 ; =ov02_02249DD8
 	add r1, r6, #0
-	bl sub_0200E374
+	bl SysTask_CreateOnVWaitQueue
 _02249DD2:
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -8866,7 +8866,7 @@ _02249E48:
 	lsl r0, r0, #2
 	str r1, [r6, r0]
 	ldr r0, [sp]
-	bl DestroySysTask
+	bl SysTask_Destroy
 _02249E56:
 	pop {r3, r4, r5, r6, r7, pc}
 	thumb_func_end ov02_02249DD8
@@ -8889,7 +8889,7 @@ ov02_02249E58: ; 0x02249E58
 	ldr r0, _02249E8C ; =ov02_02249E90
 	add r1, r4, #0
 	mov r2, #0x80
-	bl sub_0200E374
+	bl SysTask_CreateOnVWaitQueue
 	mov r0, #0x21
 	lsl r0, r0, #4
 	ldr r1, [r4, r0]
@@ -8922,7 +8922,7 @@ ov02_02249E90: ; 0x02249E90
 	lsl r0, r0, #2
 	str r1, [r4, r0]
 	add r0, r5, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 _02249EBE:
 	pop {r3, r4, r5, pc}
 	thumb_func_end ov02_02249E90
@@ -9969,7 +9969,7 @@ _0224A6BA:
 	ldr r0, _0224A6CC ; =ov02_0224A700
 	add r1, r4, #0
 	mov r2, #0x81
-	bl sub_0200E33C
+	bl SysTask_CreateOnVBlankQueue
 	mov r1, #0x89
 	lsl r1, r1, #2
 	str r0, [r4, r1]
@@ -9992,7 +9992,7 @@ _0224A6E2:
 	mov r0, #0x89
 	lsl r0, r0, #2
 	ldr r0, [r4, r0]
-	bl DestroySysTask
+	bl SysTask_Destroy
 	mov r2, #1
 	lsl r2, r2, #0x1a
 	ldr r1, [r2]
@@ -11765,7 +11765,7 @@ ov02_0224B418: ; 0x0224B418
 	ldr r0, _0224B438 ; =ov02_0224B45C
 	mov r2, #0x86
 	str r5, [r1, #0x14]
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
 _0224B438: .word ov02_0224B45C
@@ -11774,7 +11774,7 @@ _0224B438: .word ov02_0224B45C
 	thumb_func_start ov02_0224B43C
 ov02_0224B43C: ; 0x0224B43C
 	push {r3, lr}
-	bl sub_0201F988
+	bl SysTask_GetData
 	ldr r0, [r0, #4]
 	pop {r3, pc}
 	.balign 4, 0
@@ -11784,10 +11784,10 @@ ov02_0224B43C: ; 0x0224B43C
 ov02_0224B448: ; 0x0224B448
 	push {r4, lr}
 	add r4, r0, #0
-	bl sub_0201F988
+	bl SysTask_GetData
 	bl FreeToHeap
 	add r0, r4, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 	pop {r4, pc}
 	thumb_func_end ov02_0224B448
 
@@ -13305,7 +13305,7 @@ CreateFieldEscapeRopeTaskEnv: ; 0x0224BFD8
 	b _0224C01A
 _0224C006:
 	add r0, r5, #0
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _0224C016
 	mov r0, #1
@@ -13835,7 +13835,7 @@ _0224C3F8:
 	ldr r0, [r6, r0]
 	mov r1, #1
 	mov r4, #2
-	bl FieldSystemUnkSub108_AddMonMood
+	bl FieldSystem_UnkSub108_AddMonMood
 	b _0224C420
 _0224C41E:
 	mov r4, #1
@@ -14058,7 +14058,7 @@ _0224C5A4:
 	ldr r0, [r6, r0]
 	mov r1, #1
 	mov r4, #2
-	bl FieldSystemUnkSub108_AddMonMood
+	bl FieldSystem_UnkSub108_AddMonMood
 	b _0224C5CC
 _0224C5CA:
 	mov r4, #1
@@ -17508,7 +17508,7 @@ ov02_0224DF1C: ; 0x0224DF1C
 	beq _0224DFC6
 	sub r0, #0x22
 	ldr r0, [r4, r0]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	add r1, sp, #0
 	bl MapObject_GetPositionVec
 	mov r5, #0
@@ -17659,7 +17659,7 @@ _0224E04A:
 	add r0, r4, #0
 	bl FreeToHeap
 	add r0, r5, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 _0224E068:
 	pop {r3, r4, r5, pc}
 	nop
@@ -17697,7 +17697,7 @@ _0224E08C:
 	mov r2, #0
 	add r1, r6, #0
 	strh r2, [r5]
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	pop {r3, r4, r5, r6, r7, pc}
 	nop
 _0224E0B4: .word ov02_02253A1C
@@ -17763,7 +17763,7 @@ _0224E114: ; jump table
 	.short _0224E1F6 - _0224E114 - 2 ; case 5
 _0224E120:
 	add r0, r6, #0
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_UnpauseMovement
 	ldr r0, [r4]
 	add r0, r0, #1
@@ -17778,7 +17778,7 @@ _0224E130:
 	cmp r0, #0
 	beq _0224E21E
 	add r0, r6, #0
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_PauseMovement
 	ldr r0, [r4]
 	add r0, r0, #1
@@ -19616,17 +19616,17 @@ _0224EF78:
 	.balign 4, 0
 	thumb_func_end ov02_0224EF6C
 
-	thumb_func_start FieldSystem_FollowPokeInteract
-FieldSystem_FollowPokeInteract: ; 0x0224EF80
+	thumb_func_start FieldSystem_FollowMonInteract
+FieldSystem_FollowMonInteract: ; 0x0224EF80
 	ldr r3, _0224EF8C ; =TaskManager_Call
 	ldr r0, [r0, #0x10]
-	ldr r1, _0224EF90 ; =Task_FollowPokeInteract
+	ldr r1, _0224EF90 ; =Task_FollowMonInteract
 	mov r2, #0
 	bx r3
 	nop
 _0224EF8C: .word TaskManager_Call
-_0224EF90: .word Task_FollowPokeInteract
-	thumb_func_end FieldSystem_FollowPokeInteract
+_0224EF90: .word Task_FollowMonInteract
+	thumb_func_end FieldSystem_FollowMonInteract
 
 	thumb_func_start ov02_0224EF94
 ov02_0224EF94: ; 0x0224EF94
@@ -20482,11 +20482,11 @@ ov02_0224F5FC: ; 0x0224F5FC
 	push {r4, r5, r6, lr}
 	add r5, r0, #0
 	add r4, r1, #0
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_GetCurrentX
 	add r6, r0, #0
 	add r0, r5, #0
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_GetCurrentY
 	add r2, r0, #0
 	add r0, r5, #0
@@ -20574,7 +20574,7 @@ ov02_0224F698: ; 0x0224F698
 	mov r1, #0x42
 	lsl r1, r1, #2
 	ldr r0, [r0, r1]
-	bl FieldSystemUnkSub108_GetMonMood
+	bl FieldSystem_UnkSub108_GetMonMood
 	strb r0, [r4, #0x15]
 	pop {r4, pc}
 	.balign 4, 0
@@ -21061,7 +21061,7 @@ _0224F9E8:
 	add r0, r5, #0
 	add r1, r4, #0
 	add r2, r6, #0
-	bl FollowPoke_TryPrintInteractionMessage
+	bl FollowMon_TryPrintInteractionMessage
 	cmp r0, #0
 	beq _0224FA06
 	add r5, #0xe4
@@ -21280,8 +21280,8 @@ _0224FB92:
 _0224FB98: .word 0x00000882
 	thumb_func_end ov02_0224FB54
 
-	thumb_func_start FollowPoke_TryPrintInteractionMessage
-FollowPoke_TryPrintInteractionMessage: ; 0x0224FB9C
+	thumb_func_start FollowMon_TryPrintInteractionMessage
+FollowMon_TryPrintInteractionMessage: ; 0x0224FB9C
 	push {r4, r5, r6, lr}
 	add r6, r2, #0
 	add r5, r0, #0
@@ -21303,7 +21303,7 @@ FollowPoke_TryPrintInteractionMessage: ; 0x0224FB9C
 	add r0, r5, #0
 	mov r2, #0xb
 	sub r3, r3, #1
-	bl FollowPoke_ExpandInteractionMessage
+	bl FollowMon_ExpandInteractionMessage
 	ldr r0, [r5, #0xc]
 	bl Save_PlayerData_GetOptionsAddr
 	add r6, r0, #0
@@ -21331,7 +21331,7 @@ _0224FC00:
 	pop {r4, r5, r6, pc}
 	.balign 4, 0
 _0224FC04: .word 0x0000086E
-	thumb_func_end FollowPoke_TryPrintInteractionMessage
+	thumb_func_end FollowMon_TryPrintInteractionMessage
 
 	thumb_func_start ov02_0224FC08
 ov02_0224FC08: ; 0x0224FC08
@@ -21400,8 +21400,8 @@ _0224FC82:
 _0224FC88: .word 0x0000086D
 	thumb_func_end ov02_0224FC74
 
-	thumb_func_start FollowPoke_ExpandInteractionMessage
-FollowPoke_ExpandInteractionMessage: ; 0x0224FC8C
+	thumb_func_start FollowMon_ExpandInteractionMessage
+FollowMon_ExpandInteractionMessage: ; 0x0224FC8C
 	push {r3, r4, r5, r6, r7, lr}
 	str r1, [sp]
 	mov r1, #0x1b
@@ -21419,7 +21419,7 @@ FollowPoke_ExpandInteractionMessage: ; 0x0224FC8C
 	add r4, r0, #0
 	add r0, r6, #0
 	add r1, r4, #0
-	bl FollowPoke_PlaceholdersSet
+	bl FollowMon_PlaceholdersSet
 	add r0, r5, #0
 	add r1, r7, #0
 	bl NewString_ReadMsgData
@@ -21436,7 +21436,7 @@ FollowPoke_ExpandInteractionMessage: ; 0x0224FC8C
 	bl DestroyMsgData
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
-	thumb_func_end FollowPoke_ExpandInteractionMessage
+	thumb_func_end FollowMon_ExpandInteractionMessage
 
 	thumb_func_start ov02_0224FCE0
 ov02_0224FCE0: ; 0x0224FCE0
@@ -21546,7 +21546,7 @@ _0224FDBC:
 	cmp r0, #0
 	beq _0224FDDC
 	add r0, r4, #0
-	bl FollowPokeObj_GetSpecies
+	bl FollowMon_GetSpecies
 	cmp r0, #0x32
 	beq _0224FDDC
 	cmp r0, #0x33
@@ -21982,8 +21982,8 @@ _02250108: .word 0x00000868
 _0225010C: .word 0x0000087C
 	thumb_func_end ov02_02250004
 
-	thumb_func_start Task_FollowPokeInteract
-Task_FollowPokeInteract: ; 0x02250110
+	thumb_func_start Task_FollowMonInteract
+Task_FollowMonInteract: ; 0x02250110
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
 	bl TaskManager_GetFieldSystem
@@ -22261,7 +22261,7 @@ _02250336:
 	add r0, r7, #0
 	add r1, r5, #0
 	mov r2, #1
-	bl sub_0202BB08
+	bl FashionCase_GiveFashionItem
 	mov r1, #0x12
 	lsl r1, r1, #4
 	ldr r1, [r4, r1]
@@ -22420,10 +22420,10 @@ _02250490: .word SEQ_ME_ACCE
 _02250494: .word 0x00000817
 _02250498: .word 0x0000086E
 _0225049C: .word gSystem
-	thumb_func_end Task_FollowPokeInteract
+	thumb_func_end Task_FollowMonInteract
 
-	thumb_func_start FollowPoke_PlaceholdersSet
-FollowPoke_PlaceholdersSet: ; 0x022504A0
+	thumb_func_start FollowMon_PlaceholdersSet
+FollowMon_PlaceholdersSet: ; 0x022504A0
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
 	ldr r0, [r5, #0xc]
@@ -22463,7 +22463,7 @@ FollowPoke_PlaceholdersSet: ; 0x022504A0
 	mov r1, #4
 	bl BufferItemName
 	pop {r3, r4, r5, r6, r7, pc}
-	thumb_func_end FollowPoke_PlaceholdersSet
+	thumb_func_end FollowMon_PlaceholdersSet
 
 	thumb_func_start ov02_02250504
 ov02_02250504: ; 0x02250504
@@ -22476,7 +22476,7 @@ ov02_02250504: ; 0x02250504
 	mov r0, #0x42
 	lsl r0, r0, #2
 	ldr r0, [r5, r0]
-	bl FieldSystemUnkSub108_GetMonMood
+	bl FieldSystem_UnkSub108_GetMonMood
 	mov r1, #0x12
 	str r0, [sp]
 	lsl r1, r1, #4
@@ -22503,7 +22503,7 @@ _02250542:
 	lsl r1, r1, #0x18
 	ldr r0, [r5, r0]
 	asr r1, r1, #0x18
-	bl FieldSystemUnkSub108_SetMonMood
+	bl FieldSystem_UnkSub108_SetMonMood
 	add r0, r4, #0
 	mov r1, #9
 	mov r2, #0
@@ -22867,7 +22867,7 @@ ov02_022507B4: ; 0x022507B4
 	add r0, #0xe4
 	ldr r0, [r0]
 	add r4, r1, #0
-	bl FollowPokeObj_GetSpecies
+	bl FollowMon_GetSpecies
 	sub r0, #0x32
 	cmp r0, #1
 	bls _022507E0
@@ -22924,7 +22924,7 @@ _0225081E:
 	str r0, [r4]
 _0225082E:
 	add r0, r6, #0
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_AreBitsSetForMovementScriptInit
 	cmp r0, #0
 	beq _022508AA
@@ -25089,7 +25089,7 @@ ov02_022518F8: ; 0x022518F8
 	ldr r0, _022519A8 ; =ov02_02251BA8
 	add r1, r5, #0
 	mov r2, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	ldr r1, _022519AC ; =0x000004A8
 	str r0, [r5, r1]
 	add sp, #0x14
@@ -25213,7 +25213,7 @@ _022519D4:
 	ldr r0, _02251B08 ; =ov02_02251BC4
 	ldr r1, [sp, #0x10]
 	mov r2, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	ldr r2, _02251B0C ; =0x000004A8
 	ldr r1, [sp, #0x10]
 	str r0, [r1, r2]
@@ -25271,7 +25271,7 @@ ov02_02251B14: ; 0x02251B14
 	add r4, r0, #0
 	ldr r0, _02251B48 ; =0x000004A8
 	ldr r0, [r4, r0]
-	bl DestroySysTask
+	bl SysTask_Destroy
 	ldr r0, _02251B48 ; =0x000004A8
 	mov r1, #0
 	str r1, [r4, r0]
@@ -26316,7 +26316,7 @@ ov02_02252334: ; 0x02252334
 	pop {r4, r5, r6, pc}
 _0225234A:
 	add r0, r5, #0
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _022523B0
 	add r0, r5, #0
@@ -26415,7 +26415,7 @@ _02252400: ; jump table
 	.short _022524EE - _02252400 - 2 ; case 4
 _0225240A:
 	add r0, r4, #0
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_UnpauseMovement
 	ldr r0, [r4, #0x10]
 	ldr r1, _0225252C ; =ov01_02205A60
@@ -26427,11 +26427,11 @@ _0225240A:
 	b _02252524
 _02252426:
 	add r0, r4, #0
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	add r1, sp, #0
 	bl MapObject_GetPositionVec
 	add r0, r4, #0
-	bl sub_02069FB0
+	bl FollowMon_IsVisible
 	cmp r0, #0
 	beq _0225244A
 	ldr r0, [r4, #0x44]
@@ -26454,7 +26454,7 @@ _0225244E:
 	ldrb r3, [r4]
 	ldr r0, [r0]
 	lsl r1, r1, #2
-	bl FollowPokeMapObjectSetParams
+	bl FollowMon_SetObjectParams
 	ldr r0, [r5]
 	add r0, r0, #1
 	str r0, [r5]
@@ -26539,7 +26539,7 @@ _0225250A:
 	add r0, r6, #0
 	bl FreeToHeap
 	add r0, r4, #0
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl MapObject_PauseMovement
 	add sp, #0xc
 	mov r0, #1
@@ -26626,7 +26626,7 @@ _022525B4:
 	add r0, r4, #0
 	bl ov02_02252898
 	ldr r0, [r4, #8]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	mov r1, #1
 	bl sub_02069DC8
 	mov r0, #4
@@ -26647,7 +26647,7 @@ _022525EA:
 	cmp r0, #0
 	beq _02252698
 	ldr r0, [r4, #8]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	bl sub_0205F484
 	add r0, r4, #0
 	mov r1, #1
@@ -26760,7 +26760,7 @@ ov02_022526C8: ; 0x022526C8
 	ldr r0, _022526E8 ; =ov02_022526FC
 	add r1, r4, #0
 	mov r2, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	mov r0, #0
 	strb r0, [r4, #2]
 	pop {r4, pc}
@@ -26827,7 +26827,7 @@ _02252746:
 	mov r0, #1
 	strb r0, [r4, #2]
 	add r0, r5, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 _0225275A:
 	add sp, #0xc
 	pop {r4, r5, pc}
@@ -26869,7 +26869,7 @@ ov02_02252764: ; 0x02252764
 	strh r1, [r0]
 	ldr r0, _022527AC ; =ov02_0225286C
 	add r1, r5, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
 _022527AC: .word ov02_0225286C
@@ -26979,7 +26979,7 @@ ov02_0225286C: ; 0x0225286C
 	mov r0, #1
 	strb r0, [r4, #3]
 	add r0, r5, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 _02252886:
 	pop {r3, r4, r5, pc}
 	thumb_func_end ov02_0225286C
@@ -27078,7 +27078,7 @@ _02252912:
 	bl ov02_022529A0
 	ldr r0, [sp, #8]
 	ldr r0, [r0, #8]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	add r1, sp, #0x10
 	bl MapObject_GetPositionVec
 	ldr r0, [sp, #8]
@@ -27640,7 +27640,7 @@ _02252D5A:
 	bl ov02_02252E80
 	ldr r0, [sp, #8]
 	ldr r0, [r0]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	add r1, sp, #0x34
 	bl MapObject_GetPositionVec
 	ldr r4, [sp, #8]
@@ -28064,7 +28064,7 @@ _022530AE:
 	mov r2, #0
 	bl ov02_02252E80
 	ldr r0, [r7]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	add r1, sp, #0x14
 	bl MapObject_GetPositionVec
 	add r0, r7, #0

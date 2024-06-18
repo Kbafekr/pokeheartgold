@@ -1,10 +1,10 @@
-#include "field_follow_poke.h"
+#include "follow_mon.h"
 #include "field_player_avatar.h"
 #include "field_warp_tasks.h"
 #include "heap.h"
 #include "map_header.h"
 #include "metatile_behavior.h"
-#include "save_follow_poke.h"
+#include "save_follow_mon.h"
 #include "script.h"
 #include "sound.h"
 #include "unk_02055BF0.h"
@@ -141,15 +141,15 @@ BOOL sub_02055DBC(TaskManager *man) {
         env->transitionState = 0;
         env->unk24 = NULL;
         env->unk1 = 0;
-        if (FollowingPokemon_IsActive(fieldSystem) && ov01_022057C4(fieldSystem) && PlayerAvatar_GetState(fieldSystem->playerAvatar) != PLAYER_STATE_CYCLING) {
+        if (FollowMon_IsActive(fieldSystem) && ov01_022057C4(fieldSystem) && PlayerAvatar_GetState(fieldSystem->playerAvatar) != PLAYER_STATE_CYCLING) {
             env->state = 9;
             break;
         }
     case 1:
-        if (FollowingPokemon_IsActive(fieldSystem) && !ov01_022057C4(fieldSystem) && PlayerAvatar_GetState(fieldSystem->playerAvatar) != PLAYER_STATE_CYCLING) {
-            LocalMapObject *followMon = FollowingPokemon_GetMapObject(fieldSystem);
-            int species = FollowPokeObj_GetSpecies(followMon);
-            if(!GetFollowPokePermissionBySpeciesAndMap(species, env->location.mapId)) {
+        if (FollowMon_IsActive(fieldSystem) && !ov01_022057C4(fieldSystem) && PlayerAvatar_GetState(fieldSystem->playerAvatar) != PLAYER_STATE_CYCLING) {
+            LocalMapObject *followMon = FollowMon_GetMapObject(fieldSystem);
+            int species = FollowMon_GetSpecies(followMon);
+            if(!FollowMon_GetPermissionBySpeciesAndMap(species, env->location.mapId)) {
                 env->unk24 = ov01_0220329C(followMon, 1);
             }
         }
@@ -161,10 +161,10 @@ BOOL sub_02055DBC(TaskManager *man) {
         }
         FieldSystem_BeginFadeOutMusic(fieldSystem, env->location.mapId);
         TaskManager_Call(man, sMapExitRoutines[env->transitionNo], env);
-        if (FollowingPokemon_IsActive(fieldSystem) && ov01_022057C4(fieldSystem) && !GetFollowPokePermission(fieldSystem)) {
+        if (FollowMon_IsActive(fieldSystem) && ov01_022057C4(fieldSystem) && !FollowMon_GetPermission(fieldSystem)) {
             ov01_022057D0(fieldSystem);
         }
-        SavFollowPoke_SetMapId(fieldSystem->location->mapId, Save_FollowPoke_Get(fieldSystem->saveData));
+        Save_FollowMon_SetMapId(fieldSystem->location->mapId, Save_FollowMon_Get(fieldSystem->saveData));
         env->destinationMapID = fieldSystem->location->mapId;
         env->state++;
         break;
@@ -207,8 +207,8 @@ BOOL sub_02055DBC(TaskManager *man) {
             ov01_021EFAF8(fieldSystem);
             env->transitionState = 0;
             TaskManager_Call(man, sMapEnterRoutines[env->transitionNo], env);
-            LocalMapObject *followerMon = FollowingPokemon_GetMapObject(fieldSystem);
-            if(FollowingPokemon_IsActive(fieldSystem) && !GetFollowPokePermission(fieldSystem)) {
+            LocalMapObject *followerMon = FollowMon_GetMapObject(fieldSystem);
+            if(FollowMon_IsActive(fieldSystem) && !FollowMon_GetPermission(fieldSystem)) {
                 sub_02069E84(followerMon, 1);
                 ov01_02205790(fieldSystem, (u8) PlayerAvatar_GetFacingDirection(fieldSystem->playerAvatar));
             }
@@ -280,12 +280,14 @@ BOOL sub_020560C4(TaskManager *man) {
         fenv->transitionState++;
         break;
     case 1:
+    {
         FieldEnvSubUnk18 *info = fenv->unk18;
         if (ov01_021E98F0(fieldSystem, info, PlayerAvatar_GetFacingDirection(fieldSystem->playerAvatar))) {
             ov01_021E90D4(fenv->unk18);
             fenv->transitionState++;
         }
         break;
+    }
     case 2:
         return TRUE;
     }
@@ -298,9 +300,9 @@ BOOL sub_0205613C(TaskManager *man) {
     LocalMapObject *obj;
     switch (fenv->transitionState) {
     case 0:
-        if (FollowingPokemon_IsActive(fieldSystem) && sub_02069FB0(fieldSystem)) {
-            if (MapObject_IsMovementPaused(FollowingPokemon_GetMapObject(fieldSystem))) {
-                sub_0205FC94(FollowingPokemon_GetMapObject(fieldSystem), 55);
+        if (FollowMon_IsActive(fieldSystem) && FollowMon_IsVisible(fieldSystem)) {
+            if (MapObject_IsMovementPaused(FollowMon_GetMapObject(fieldSystem))) {
+                sub_0205FC94(FollowMon_GetMapObject(fieldSystem), 55);
                 fenv->transitionState++;
             }
         } else {
@@ -308,6 +310,7 @@ BOOL sub_0205613C(TaskManager *man) {
         }
         break;
     case 1:
+    {
         int dir = PlayerAvatar_GetFacingDirection(fieldSystem->playerAvatar);
         obj = PlayerAvatar_GetMapObject(fieldSystem->playerAvatar);
         if (dir == DIR_WEST) {
@@ -319,13 +322,16 @@ BOOL sub_0205613C(TaskManager *man) {
         }
         fenv->transitionState++;
         break;
+    }
     case 2:
+    {
         obj = PlayerAvatar_GetMapObject(fieldSystem->playerAvatar);
         if (MapObject_IsMovementPaused(obj) == TRUE) {
             MapObject_ClearHeldMovementIfActive(obj);
             fenv->transitionState++;
         }
         break;
+    }
     case 3:
         PlaySE(SEQ_SE_DP_KAIDAN2);
         ov01_021E636C(FALSE);
@@ -387,10 +393,10 @@ BOOL sub_020562B0(TaskManager *man) {
         fenv18->direction = PlayerAvatar_GetFacingDirection(fieldSystem->playerAvatar);
         PlayerAvatar_ToggleAutomaticHeightUpdating(fieldSystem->playerAvatar, FALSE);
         ov01_021F6304(fieldSystem->unk2C);
-        if (FollowingPokemon_IsActive(fieldSystem)) {
+        if (FollowMon_IsActive(fieldSystem)) {
             BOOL flag = TRUE;
             int var;
-            switch (MapObject_GetFacingDirection(FollowingPokemon_GetMapObject(fieldSystem))) {
+            switch (MapObject_GetFacingDirection(FollowMon_GetMapObject(fieldSystem))) {
             case DIR_NORTH:
                 var = 12;
                 break;
@@ -521,6 +527,7 @@ BOOL sub_02056530(TaskManager *man) {
         fenv->transitionState++;
         break;
     case 2:
+    {
         FieldEnvSubUnk18 *unk = fenv->unk18;
         if (ov01_021E9374(fieldSystem, unk)) {
             ov01_021E90D4(unk);
@@ -528,6 +535,7 @@ BOOL sub_02056530(TaskManager *man) {
             return TRUE;
         }
         break;
+    }
     case 3:
         return TRUE;
     }
@@ -539,6 +547,7 @@ BOOL sub_020565FC(TaskManager *man) {
     FieldTransitionEnvironment *fenv = TaskManager_GetEnvironment(man);
     switch (fenv->transitionState) {
     case 0:
+    {
         LocalMapObject *mapObj = PlayerAvatar_GetMapObject(fieldSystem->playerAvatar);
         if (sub_0205B70C(GetMetatileBehaviorAt(fieldSystem, GetPlayerXCoord(fieldSystem->playerAvatar), GetPlayerYCoord(fieldSystem->playerAvatar)))) {
             MapObject_SetVisible(mapObj, TRUE);
@@ -550,6 +559,7 @@ BOOL sub_020565FC(TaskManager *man) {
             fenv->transitionState++;
             break;
         }
+    }
     case 1:
         return TRUE;
     }

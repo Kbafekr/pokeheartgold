@@ -46,7 +46,7 @@ _02266110:
 	str r0, [r6, r2]
 	ldr r0, _022662F4 ; =ov12_022698C4
 	add r2, #0x52
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	ldr r1, _022662F8 ; =0x00000698
 	mov r4, #0
 	str r0, [r6, r1]
@@ -258,7 +258,7 @@ _022662CA:
 	ldr r0, _02266314 ; =ov12_02269954
 	ldr r2, _02266318 ; =0x0000D6D8
 	add r1, r6, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	str r0, [r6, #0x68]
 	add r0, r6, #0
 	add sp, #0x24
@@ -301,7 +301,7 @@ _0226632E:
 	bl sub_020135AC
 	ldr r0, _0226638C ; =0x00000698
 	ldr r0, [r6, r0]
-	bl DestroySysTask
+	bl SysTask_Destroy
 	mov r4, #0
 	add r5, r6, #0
 _02266354:
@@ -320,7 +320,7 @@ _02266354:
 	ldr r0, [r6, #0x64]
 	bl FreeToHeap
 	ldr r0, [r6, #0x68]
-	bl DestroySysTask
+	bl SysTask_Destroy
 	add r0, r6, #0
 	bl FreeToHeap
 	pop {r4, r5, r6, pc}
@@ -636,7 +636,7 @@ _0226661A:
 	ldr r0, _02266640 ; =ov12_02269830
 	add r1, r7, #0
 	mov r2, #0xa
-	bl sub_0200E374
+	bl SysTask_CreateOnVWaitQueue
 	add sp, #0x30
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -794,7 +794,7 @@ _02266774:
 	ldr r0, _022667EC ; =ov12_022668D0
 	ldr r1, [sp, #0x14]
 	ldr r2, _022667F0 ; =0x00000514
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	ldr r1, [sp, #0x14]
 	str r0, [r1, #8]
 	add r0, r1, #0
@@ -910,7 +910,7 @@ _02266864:
 	cmp r4, #6
 	blt _02266864
 	ldr r0, [r6, #8]
-	bl DestroySysTask
+	bl SysTask_Destroy
 	ldr r3, _022668C4 ; =0x00004FAB
 	mov r0, #0
 	str r0, [r6, #8]
@@ -1343,7 +1343,7 @@ _02266BB6:
 	b _02266BE8
 _02266BCE:
 	ldr r0, [r4, #0x14]
-	bl sub_02025224
+	bl TouchscreenHitbox_FindRectAtTouchNew
 	add r7, r0, #0
 	mov r0, #0
 	mvn r0, r0
@@ -1615,7 +1615,7 @@ ov12_02266D98: ; 0x02266D98
 	ldr r0, _02266DC0 ; =ov12_02266DC4
 	add r1, r3, #0
 	lsl r2, r2, #4
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 _02266DBA:
 	pop {r4, pc}
 	.balign 4, 0
@@ -1692,7 +1692,7 @@ _02266E0A:
 	and r0, r1
 	str r0, [r2]
 	ldr r0, [sp]
-	bl DestroySysTask
+	bl SysTask_Destroy
 _02266E54:
 	pop {r3, r4, r5, r6, r7, pc}
 	nop
@@ -1789,7 +1789,7 @@ ov12_02266E6C: ; 0x02266E6C
 	ldr r0, _02266F60 ; =ov12_02269568
 	ldr r2, _02266F64 ; =0x000004BA
 	add r1, r4, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	ldr r0, _02266F68 ; =ov12_02269774
 	add r1, r4, #0
 	bl Main_SetHBlankIntrCB
@@ -1800,7 +1800,7 @@ _02266F32:
 	ldr r0, _02266F6C ; =ov12_02269668
 	add r1, r4, #0
 	mov r2, #0xa
-	bl sub_0200E33C
+	bl SysTask_CreateOnVBlankQueue
 	str r0, [r4, #4]
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -1842,7 +1842,7 @@ ov12_02266F84: ; 0x02266F84
 	ldr r0, _022672F0 ; =0x000006E1
 	strb r1, [r5, r0]
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	add r4, r0, #0
 	ldr r0, _022672F4 ; =0x0000068A
 	strb r7, [r5, r0]
@@ -2099,7 +2099,7 @@ _022671C2:
 _022671C4:
 	ldr r0, [r5]
 	mov r6, #0
-	bl ov12_0223A9A4
+	bl BattleSystem_GetMessageFormat
 	str r0, [sp, #0x1c]
 	mov r0, #0x20
 	mov r1, #5
@@ -2420,7 +2420,7 @@ _0226749C:
 	ldr r0, _02267720 ; =0x0000068A
 	strb r1, [r5, r0]
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	str r0, [sp, #0x1c]
 	ldrb r1, [r6, #0x10]
 	add r0, r5, #0
@@ -2744,7 +2744,7 @@ ov12_02267760: ; 0x02267760
 	sub sp, #0x1c
 	add r5, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	mov r1, #0xeb
 	lsl r1, r1, #2
 	add r6, r0, #0
@@ -2815,7 +2815,7 @@ ov12_022677FC: ; 0x022677FC
 	sub sp, #0x1c
 	add r5, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	ldr r1, _02267884 ; =0x0000049D
 	add r6, r0, #0
 	bl NewString_ReadMsgData
@@ -2886,10 +2886,10 @@ ov12_0226789C: ; 0x0226789C
 	sub sp, #0x24
 	add r5, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	add r6, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A9A4
+	bl BattleSystem_GetMessageFormat
 	add r4, r0, #0
 	ldr r1, _0226796C ; =0x000004A2
 	add r0, r6, #0
@@ -2992,7 +2992,7 @@ ov12_02267984: ; 0x02267984
 	mov r3, #0x1f
 	bl G2x_SetBlendAlpha_
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	ldr r1, _02267A4C ; =0x000004EC
 	bl NewString_ReadMsgData
 	add r4, r0, #0
@@ -3077,10 +3077,10 @@ ov12_02267A58: ; 0x02267A58
 	sub sp, #0x24
 	add r5, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	add r6, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A9A4
+	bl BattleSystem_GetMessageFormat
 	add r4, r0, #0
 	ldr r1, _02267B28 ; =0x000004C1
 	add r0, r6, #0
@@ -3176,10 +3176,10 @@ ov12_02267B40: ; 0x02267B40
 	sub sp, #0x24
 	add r5, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	add r6, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A9A4
+	bl BattleSystem_GetMessageFormat
 	add r4, r0, #0
 	ldr r1, _02267C10 ; =0x000004BF
 	add r0, r6, #0
@@ -3287,10 +3287,10 @@ ov12_02267C24: ; 0x02267C24
 	sub r0, r0, #2
 	strb r1, [r5, r0]
 	ldr r0, [r5]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	str r0, [sp, #0x2c]
 	ldr r0, [r5]
-	bl ov12_0223A9A4
+	bl BattleSystem_GetMessageFormat
 	str r0, [sp, #0x1c]
 	add r0, r5, #0
 	add r1, sp, #0x40
@@ -4074,7 +4074,7 @@ _02268280:
 	ldr r0, [r5, r0]
 	cmp r0, #0
 	beq _02268290
-	bl DestroySysTask
+	bl SysTask_Destroy
 	ldr r0, _022682B4 ; =0x00000638
 	str r7, [r5, r0]
 _02268290:
@@ -4272,7 +4272,7 @@ _022683F4:
 	str r6, [r1, r0]
 	ldr r0, _0226843C ; =ov12_022684EC
 	add r1, r6, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	lsl r1, r5, #2
 	add r2, r4, r1
 	ldr r1, _02268420 ; =0x00000638
@@ -4497,7 +4497,7 @@ _02268594:
 	ldr r2, [sp, #0x18]
 	add r0, sp, #0x3c
 	str r3, [sp, #0x14]
-	bl AddTextPrinterParameterized3
+	bl AddTextPrinterParameterizedWithColorAndSpacing
 	b _022685DE
 _022685D2:
 	add r3, r4, #0
@@ -4851,7 +4851,7 @@ ov12_0226885C: ; 0x0226885C
 	ldr r0, [r7]
 	add r5, r1, #0
 	str r2, [sp, #8]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	add r4, r0, #0
 	add r0, r7, #0
 	add r1, r5, #0
@@ -4865,7 +4865,7 @@ ov12_0226885C: ; 0x0226885C
 	bl NewString_ReadMsgData
 	str r0, [sp, #0x28]
 	ldr r0, [r7]
-	bl ov12_0223A9A4
+	bl BattleSystem_GetMessageFormat
 	str r0, [sp, #0x24]
 	mov r0, #0x10
 	mov r1, #5
@@ -5139,7 +5139,7 @@ _02268A90:
 	add r0, r4, #0
 	add r2, r6, #0
 	str r3, [sp, #0x14]
-	bl AddTextPrinterParameterized3
+	bl AddTextPrinterParameterizedWithColorAndSpacing
 	add sp, #0x20
 	pop {r3, r4, r5, r6, r7, pc}
 	thumb_func_end ov12_02268A64
@@ -5505,7 +5505,7 @@ _02268D96:
 	ldr r0, _02268DA8 ; =ov12_0226989C
 	add r1, r5, #0
 	mov r2, #0xa
-	bl sub_0200E374
+	bl SysTask_CreateOnVWaitQueue
 _02268DA4:
 	pop {r3, r4, r5, pc}
 	nop
@@ -5650,7 +5650,7 @@ _02268E94:
 	ldr r2, _02268EB4 ; =0x00000514
 	add r0, r5, #0
 	add r1, r4, #0
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	str r0, [r4, #0xc]
 	pop {r3, r4, r5, pc}
 	nop
@@ -5665,7 +5665,7 @@ ov12_02268EB8: ; 0x02268EB8
 	ldr r0, [r4, #0xc]
 	cmp r0, #0
 	beq _02268ED4
-	bl DestroySysTask
+	bl SysTask_Destroy
 	ldr r0, _02268ED8 ; =0x0000069C
 	mov r1, #0
 	add r0, r4, r0
@@ -6597,7 +6597,7 @@ _022695DA:
 	mov r2, #0
 	strb r2, [r1, r0]
 	ldr r0, [r5, #4]
-	bl DestroySysTask
+	bl SysTask_Destroy
 	bl HBlankInterruptDisable
 	ldr r2, _02269660 ; =0x04001000
 	ldr r0, _02269664 ; =0xFFFF1FFF
@@ -6643,7 +6643,7 @@ _02269606:
 	add r0, r5, #0
 	bl FreeToHeap
 	add r0, r6, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 _02269656:
 	pop {r4, r5, r6, pc}
 	.balign 4, 0
@@ -6927,7 +6927,7 @@ _02269870:
 	cmp r4, #4
 	blt _02269870
 	ldr r0, [sp]
-	bl DestroySysTask
+	bl SysTask_Destroy
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
 _02269890: .word 0x0000068B
@@ -6941,7 +6941,7 @@ ov12_0226989C: ; 0x0226989C
 	add r4, r0, #0
 	bl ov12_02268D5C
 	add r0, r4, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 	pop {r4, pc}
 	thumb_func_end ov12_0226989C
 
@@ -6974,7 +6974,7 @@ ov12_022698C4: ; 0x022698C4
 	ldr r0, [r5]
 	bl BattleSystem_GetPaletteData
 	add r4, r0, #0
-	bl sub_02003B44
+	bl PaletteData_GetSelectedBuffersBitmask
 	cmp r0, #0
 	bne _02269944
 	ldr r0, _02269948 ; =0x00000696
@@ -6989,7 +6989,7 @@ ov12_022698C4: ; 0x022698C4
 	ldr r0, _0226994C ; =0x00007E37
 	str r0, [sp, #4]
 	add r0, r4, #0
-	bl sub_02003E5C
+	bl PaletteData_BlendPalette
 	ldr r1, _02269950 ; =0x00000694
 	ldrb r0, [r5, r1]
 	cmp r0, #0
@@ -7054,7 +7054,7 @@ ov12_02269954: ; 0x02269954
 	ldr r0, [r5]
 	bl BattleSystem_GetPaletteData
 	add r4, r0, #0
-	bl sub_02003B44
+	bl PaletteData_GetSelectedBuffersBitmask
 	cmp r0, #0
 	bne _02269A1C
 	add r0, r4, #0
@@ -9397,7 +9397,7 @@ _0226AAB4:
 	mov r1, #1
 	mov r2, #0x10
 	mov r3, #0x20
-	bl sub_020032A4
+	bl PaletteData_LoadPaletteSlotFromHardware
 	mov r0, #6
 	str r0, [sp]
 	mov r3, #1
@@ -9505,7 +9505,7 @@ _0226AAB4:
 	bl ScheduleBgTilemapBufferTransfer
 	ldr r0, [sp, #0x1c]
 	ldr r0, [r0]
-	bl ov12_0223A930
+	bl BattleSystem_GetMessageData
 	ldr r2, _0226AC54 ; =ov12_0226E23C
 	str r0, [sp, #0x20]
 	ldrh r3, [r2, #0x2c]

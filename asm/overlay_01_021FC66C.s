@@ -133,7 +133,7 @@ ov01_021FC748: ; 0x021FC748
 	ldr r0, _021FC768 ; =ov01_021FC798
 	mov r2, #0x80
 	str r6, [r1]
-	bl CreateSysTask
+	bl SysTask_CreateOnMainQueue
 	pop {r4, r5, r6, pc}
 	.balign 4, 0
 _021FC768: .word ov01_021FC798
@@ -142,7 +142,7 @@ _021FC768: .word ov01_021FC798
 	thumb_func_start ov01_021FC76C
 ov01_021FC76C: ; 0x021FC76C
 	push {r3, lr}
-	bl sub_0201F988
+	bl SysTask_GetData
 	ldr r0, [r0, #4]
 	pop {r3, pc}
 	.balign 4, 0
@@ -151,7 +151,7 @@ ov01_021FC76C: ; 0x021FC76C
 	thumb_func_start ov01_021FC778
 ov01_021FC778: ; 0x021FC778
 	push {r3, lr}
-	bl sub_0201F988
+	bl SysTask_GetData
 	ldr r0, [r0, #8]
 	pop {r3, pc}
 	.balign 4, 0
@@ -161,10 +161,10 @@ ov01_021FC778: ; 0x021FC778
 ov01_021FC784: ; 0x021FC784
 	push {r4, lr}
 	add r4, r0, #0
-	bl sub_0201F988
+	bl SysTask_GetData
 	bl FreeToHeap
 	add r0, r4, #0
-	bl DestroySysTask
+	bl SysTask_Destroy
 	pop {r4, pc}
 	thumb_func_end ov01_021FC784
 
@@ -333,7 +333,7 @@ _021FC8B2:
 	cmp r0, #0
 	beq _021FC8D4
 	ldr r0, [r5, #0x20]
-	bl FollowingPokemon_GetMapObject
+	bl FollowMon_GetMapObject
 	mov r1, #0
 	mov r2, #1
 	bl ov01_02200540
@@ -837,7 +837,7 @@ ov01_021FCC2C: ; 0x021FCC2C
 	pop {r4, pc}
 _021FCC40:
 	ldr r0, [r4, #0x20]
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _021FCC6E
 	ldr r0, [r4, #0x20]
@@ -903,14 +903,14 @@ ov01_021FCCB0: ; 0x021FCCB0
 	push {r4, lr}
 	add r4, r0, #0
 	ldr r0, [r4, #0x20]
-	bl FollowingPokemon_IsActive
+	bl FollowMon_IsActive
 	cmp r0, #0
 	beq _021FCD24
 	mov r0, #0x42
 	ldr r1, [r4, #0x20]
 	lsl r0, r0, #2
 	ldr r0, [r1, r0]
-	bl FieldSystemUnkSub108_GetMonMood
+	bl FieldSystem_UnkSub108_GetMonMood
 	mov r1, #9
 	mvn r1, r1
 	cmp r0, r1

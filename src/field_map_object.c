@@ -3,7 +3,7 @@
 #include "field_map_object.h"
 #include "filesystem.h"
 #include "heap.h"
-#include "unk_0200E320.h"
+#include "sys_task_api.h"
 #include "unk_0205FD20.h"
 
 static void sub_0205E934(LocalMapObject* object);
@@ -107,7 +107,7 @@ LocalMapObject* sub_0205E1D0(MapObjectManager* manager, ObjectEvent* object_even
         return ret;
     }
 
-    MapObject_InitFromObjectEventTemplate(ret, ptemplate, MapObjectManager_GetFieldSysPtr(manager));
+    MapObject_InitFromObjectEventTemplate(ret, ptemplate, MapObjectManager_GetFieldSystemPtr(manager));
     sub_0205EC90(ret, manager);
     sub_0205F250(ret, map_no);
     sub_0205EFA4(ret);
@@ -148,7 +148,7 @@ LocalMapObject* CreateMapObjectFromTemplate(MapObjectManager* manager, u16 id, u
     ObjectEvent* event = sub_0205FA98(id, num_object_events, (ObjectEvent*)templates);
     if (event != NULL) {
         u32 flag_id = ObjectEventTemplate_GetFlagID(event);
-        FieldSystem* fieldSystem = MapObjectManager_GetFieldSysPtr(manager);
+        FieldSystem* fieldSystem = MapObjectManager_GetFieldSystemPtr(manager);
         if (FieldSystem_FlagGet(fieldSystem, (u16)flag_id) == FALSE) {
             ret = sub_0205E1D0(manager, event, map_no);
         }
@@ -471,7 +471,7 @@ void InitMapObjectsFromEventTemplates(MapObjectManager* manager, u32 map_no, u32
 }
 
 void sub_0205EA08(struct MapObjectInitArgs* args) {
-    FieldSystem* fieldSystem = MapObjectManager_GetFieldSysPtr(args->manager);
+    FieldSystem* fieldSystem = MapObjectManager_GetFieldSystemPtr(args->manager);
     ObjectEvent* template = args->templates;
 
     do {
@@ -523,7 +523,7 @@ void sub_0205EAF0(MapObjectManager* manager, LocalMapObject* object) {
         priority += 2;
     }
 
-    SysTask* task = CreateSysTask((SysTaskFunc)sub_0205F12C, object, priority);
+    SysTask* task = SysTask_CreateOnMainQueue((SysTaskFunc)sub_0205F12C, object, priority);
     GF_ASSERT(task != NULL);
 
     sub_0205F338(object, task);
@@ -904,7 +904,7 @@ void MapObjectManager_SetFieldSysPtr(MapObjectManager* manager, FieldSystem* fie
     manager->fieldSystem = fieldSystem;
 }
 
-FieldSystem* MapObjectManager_GetFieldSysPtr(MapObjectManager* manager) {
+FieldSystem* MapObjectManager_GetFieldSystemPtr(MapObjectManager* manager) {
     return manager->fieldSystem;
 }
 
@@ -1115,7 +1115,7 @@ SysTask* sub_0205F340(LocalMapObject* object) {
 }
 
 void sub_0205F348(LocalMapObject* object) {
-    DestroySysTask(sub_0205F340(object));
+    SysTask_Destroy(sub_0205F340(object));
 }
 
 void sub_0205F354(LocalMapObject* object, MapObjectManager* manager) {
@@ -1292,7 +1292,7 @@ u16 sub_0205F524(LocalMapObject* object) {
 }
 
 FieldSystem* MapObject_GetFieldSysPtr(LocalMapObject* object) {
-    return MapObjectManager_GetFieldSysPtr(sub_0205F364(object));
+    return MapObjectManager_GetFieldSystemPtr(sub_0205F364(object));
 }
 
 void* sub_0205F538(LocalMapObject* object) {

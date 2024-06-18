@@ -1,9 +1,9 @@
 #include <nitro/fs/overlay.h>
 #pragma once
 .public PaletteData_LoadNarc
-.public sub_02003370
-.public sub_02003B44
-.public sub_02003B50
+.public PaletteData_BeginPaletteFade
+.public PaletteData_GetSelectedBuffersBitmask
+.public PaletteData_SetAutoTransparent
 .public PlayBGM
 .public sub_0200602C
 .public PlaySE
@@ -35,7 +35,7 @@
 .public UnkImageStruct_TickSpriteAnimation1Frame
 .public sub_0200E188
 .public sub_0200E2B0
-.public DestroySysTask
+.public SysTask_Destroy
 .public sub_0200E398
 .public sub_0200E3D8
 .public DrawFrameAndWindow1
@@ -58,7 +58,7 @@
 .public FillWindowPixelBuffer
 .public FillWindowPixelRect
 .public TextPrinterCheckActive
-.public AddTextPrinterParameterized2
+.public AddTextPrinterParameterizedWithColor
 .public sub_02021AC8
 .public sub_02021B5C
 .public sub_02021BD0
@@ -126,10 +126,10 @@
 .public ov12_0223A8E4
 .public ov12_0223A8EC
 .public ov12_0223A8F4
-.public ov12_0223A930
+.public BattleSystem_GetMessageData
 .public BattleSystem_GetPaletteData
 .public BattleSystem_GetPokedex
-.public ov12_0223A9A4
+.public BattleSystem_GetMessageFormat
 .public BattleSystem_GetMessageBuffer
 .public ov12_0223AAB8
 .public ov12_0223AAD8
@@ -152,9 +152,9 @@
 .public BattleSystem_Random
 .public ov12_0223C134
 .public ov12_0223C224
-.public ov12_0223C2F0
-.public ov12_0223C330
-.public ov12_0223C494
+.public BattleSystem_SetPokedexCaught
+.public BattleSystem_CheckMonCaught
+.public BattleSystem_PrintBattleMessage
 .public ov12_0223C4E8
 .public BtlCmd_PlayEncounterAnimation
 .public BtlCmd_PokemonEncounter

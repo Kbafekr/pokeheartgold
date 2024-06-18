@@ -2,9 +2,9 @@
 #pragma once
 .public PaletteData_GetUnfadedBuf
 .public PaletteData_GetFadedBuf
-.public sub_02003370
-.public sub_02003B44
-.public sub_02003E5C
+.public PaletteData_BeginPaletteFade
+.public PaletteData_GetSelectedBuffersBitmask
+.public PaletteData_BlendPalette
 .public sub_02005B58
 .public PlayBGM
 .public GF_SndStartFadeOutBGM
@@ -50,8 +50,8 @@
 .public UnkImageStruct_GetSpritePositionXY
 .public UnkImageStruct_AddSpritePositionXY
 .public sub_0200E11C
-.public CreateSysTask
-.public DestroySysTask
+.public SysTask_CreateOnMainQueue
+.public SysTask_Destroy
 .public WaitingIcon_New
 .public sub_0200F450
 .public sub_02014540
@@ -163,7 +163,7 @@
 .public ov12_0223A900
 .public ov12_0223A908
 .public ov12_0223A914
-.public ov12_0223A930
+.public BattleSystem_GetMessageData
 .public ov12_0223A934
 .public BattleSystem_GetPaletteData
 .public ov12_0223A99C
@@ -222,8 +222,8 @@
 .public ov12_0223C1A0
 .public ov12_0223C1C4
 .public ov12_0223C1F4
-.public ov12_0223C34C
-.public ov12_0223C494
+.public BattleSystem_PrintTrainerMessage
+.public BattleSystem_PrintBattleMessage
 .public GetBattlerVar
 .public ov12_022506D4
 .public ov12_02251D28
