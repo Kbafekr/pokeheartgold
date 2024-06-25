@@ -113,9 +113,9 @@
 .public LCRandom
 .public AddTextPrinterParameterizedWithColor
 .public GF_RunVramTransferTasks
-.public sub_020215A0
-.public sub_0202168C
-.public sub_020216C8
+.public ObjCharTransfer_Init
+.public ObjCharTransfer_Destroy
+.public ObjCharTransfer_ClearBuffers
 .public sub_02022588
 .public sub_02022608
 .public sub_02022638
@@ -228,10 +228,10 @@
 .public MI_CpuFill8
 .public memset
 .public _s32_div_f
-.public _02103A1C
+.public gOverlayTemplate_PokemonSummary
 .public gSystem
-.public ov65_0221BE20
-.public ov65_0221C250
-.public ov65_0221CD74
+.public WirelessTradeSelectMon_Init
+.public WirelessTradeSelectMon_Main
+.public WirelessTradeSelectMon_Exit
 .public ov65_0221DE24
 .public ov65_0221DE64

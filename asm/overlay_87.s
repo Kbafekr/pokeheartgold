@@ -4,8 +4,8 @@
 
 	.text
 
-	thumb_func_start ov87_021E5900
-ov87_021E5900: ; 0x021E5900
+	thumb_func_start ScratchOffCards_Init
+ScratchOffCards_Init: ; 0x021E5900
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
 	add r7, r1, #0
@@ -85,10 +85,10 @@ _021E5980:
 	nop
 _021E59AC: .word 0x000099FC
 _021E59B0: .word 0x0000039D
-	thumb_func_end ov87_021E5900
+	thumb_func_end ScratchOffCards_Init
 
-	thumb_func_start ov87_021E59B4
-ov87_021E59B4: ; 0x021E59B4
+	thumb_func_start ScratchOffCards_Main
+ScratchOffCards_Main: ; 0x021E59B4
 	push {r3, r4, r5, lr}
 	add r5, r1, #0
 	bl OverlayManager_GetData
@@ -213,10 +213,10 @@ _021E5AB2:
 	bl sub_0202457C
 	mov r0, #0
 	pop {r3, r4, r5, pc}
-	thumb_func_end ov87_021E59B4
+	thumb_func_end ScratchOffCards_Main
 
-	thumb_func_start ov87_021E5AC0
-ov87_021E5AC0: ; 0x021E5AC0
+	thumb_func_start ScratchOffCards_Exit
+ScratchOffCards_Exit: ; 0x021E5AC0
 	push {r3, r4, r5, lr}
 	add r5, r0, #0
 	bl OverlayManager_GetData
@@ -240,7 +240,7 @@ ov87_021E5AC0: ; 0x021E5AC0
 	mov r0, #1
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
-	thumb_func_end ov87_021E5AC0
+	thumb_func_end ScratchOffCards_Exit
 
 	thumb_func_start ov87_021E5AFC
 ov87_021E5AFC: ; 0x021E5AFC
@@ -4873,7 +4873,7 @@ _021E7EC6:
 	ldr r0, [r5]
 	bl SpriteList_Delete
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -4893,11 +4893,11 @@ ov87_021E7EF0: ; 0x021E7EF0
 	ldr r1, _021E7F24 ; =0x00200010
 	add r0, r2, #0
 	add r2, r1, #0
-	bl sub_020215C0
+	bl ObjCharTransfer_InitEx
 	mov r0, #0xe
 	mov r1, #0x7a
 	bl sub_02022588
-	bl sub_020216C8
+	bl ObjCharTransfer_ClearBuffers
 	bl sub_02022638
 	add sp, #0x10
 	pop {r4, pc}
@@ -5138,11 +5138,11 @@ _021E80B0: .word sub_02024B38
 
 	thumb_func_start ov87_021E80B4
 ov87_021E80B4: ; 0x021E80B4
-	ldr r3, _021E80BC ; =Sprite_IsCellAnimationFinished
+	ldr r3, _021E80BC ; =Sprite_IsCellAnimationRunning
 	ldr r0, [r0, #0xc]
 	bx r3
 	nop
-_021E80BC: .word Sprite_IsCellAnimationFinished
+_021E80BC: .word Sprite_IsCellAnimationRunning
 	thumb_func_end ov87_021E80B4
 
 	thumb_func_start ov87_021E80C0

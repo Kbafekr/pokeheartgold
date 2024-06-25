@@ -1,7 +1,7 @@
 #include "global.h"
-#include "unk_0203E348.h"
 #include "camera.h"
 #include "camera_translation.h"
+#include "launch_application.h"
 #include "unk_0200FA24.h"
 #include "system.h"
 #include "text.h"
@@ -15,10 +15,10 @@
 #include "unk_02023694.h"
 #include "unk_0200ACF0.h"
 #include "unk_0200B150.h"
-#include "unk_020215A0.h"
+#include "obj_char_transfer.h"
 #include "unk_02022588.h"
 #include "unk_02026E30.h"
-#include "unk_0201F4C4.h"
+#include "gf_3d_render.h"
 #include "unk_02009D48.h"
 #include "render_window.h"
 #include "touchscreen.h"
@@ -134,21 +134,21 @@ struct ChooseStarterAnm {
 };
 
 struct StarterChooseMonObjResPtrs {
-    struct _2DGfxResObj *charResObj;
-    struct _2DGfxResObj *plttResObj;
-    struct _2DGfxResObj *cellResObj;
-    struct _2DGfxResObj *animResObj;
-    struct _2DGfxResObj *multiCellResObj;
-    struct _2DGfxResObj *multiCellAnmResObj;
+    GF_2DGfxResObj *charResObj;
+    GF_2DGfxResObj *plttResObj;
+    GF_2DGfxResObj *cellResObj;
+    GF_2DGfxResObj *animResObj;
+    GF_2DGfxResObj *multiCellResObj;
+    GF_2DGfxResObj *multiCellAnmResObj;
 };
 
 struct StarterChooseMonSpriteData {
-    struct _2DGfxResMan *charResMan;
-    struct _2DGfxResMan *plttResMan;
-    struct _2DGfxResMan *cellResMan;
-    struct _2DGfxResMan *animResMan;
-    struct _2DGfxResMan *multiCellResMan; //unused
-    struct _2DGfxResMan *multiCellAnmResMan; //unused
+    GF_2DGfxResMan *charResMan;
+    GF_2DGfxResMan *plttResMan;
+    GF_2DGfxResMan *cellResMan;
+    GF_2DGfxResMan *animResMan;
+    GF_2DGfxResMan *multiCellResMan; //unused
+    GF_2DGfxResMan *multiCellAnmResMan; //unused
     struct StarterChooseMonObjResPtrs objs[3];
     void *charDatas[3];
     void *plttDatas[3];
@@ -238,16 +238,16 @@ static int getInput(struct ChooseStarterAppWork *work);
 static int getRotateDirection(int a0, u8 a1, int a2);
 static int getTappedBallId(VecFx32 *vecs, VecFx32 *near, VecFx32 *far, fx32 radius);
 static void createMonSprites(struct ChooseStarterAppWork *work);
-static void loadOneMonObj(struct _2DGfxResMan *charResMan, struct _2DGfxResMan *plttResMan, void *charData, void *plttData, u8 idx);
+static void loadOneMonObj(GF_2DGfxResMan *charResMan, GF_2DGfxResMan *plttResMan, void *charData, void *plttData, u8 idx);
 static void createOneMonRender(struct StarterChooseMonSpriteData *pMonSpriteData, u8 idx, HeapID heapId);
 static void setAllButSelectedMonSpritesInvisible(struct ChooseStarterAppWork *work);
 static void setAllMonSpritesInvisible(struct StarterChooseMonSpriteData *a0);
 static BOOL yRotateSelectedBall(struct ChooseStarterAppWork *work, fx32 from, fx32 to);
 static u16 calcBallTranslationArcStep(const fx32 *from, const fx32 *to, int step, int max);
 
-BOOL ChooseStarterApplication_OvyInit(OVY_MANAGER *ovy, int *state_p) {
+BOOL ChooseStarter_Init(OVY_MANAGER *ovy, int *state_p) {
     struct ChooseStarterAppWork *work;
-    struct ChooseStarterAppArgs *args;
+    struct ChooseStarterArgs *args;
     int i;
 
     CreateHeap(HEAP_ID_3, HEAP_ID_CHOOSE_STARTER, 0x40000);
@@ -307,7 +307,7 @@ static const int sSpecies[] = {
     SPECIES_TOTODILE,
 };
 
-BOOL ChooseStarterApplication_OvyExec(OVY_MANAGER *ovy, int *state) {
+BOOL ChooseStarter_Main(OVY_MANAGER *ovy, int *state) {
     struct ChooseStarterAppWork *work = OverlayManager_GetData(ovy);
     int cameraPathSel = CAMERA_PATH_NULL;
     int input;
@@ -533,9 +533,9 @@ BOOL ChooseStarterApplication_OvyExec(OVY_MANAGER *ovy, int *state) {
     return FALSE;
 }
 
-BOOL ChooseStarterApplication_OvyExit(OVY_MANAGER *ovy, int *state) {
+BOOL ChooseStarter_Exit(OVY_MANAGER *ovy, int *state) {
     struct ChooseStarterAppWork *work = OverlayManager_GetData(ovy);
-    struct ChooseStarterAppArgs *args = OverlayManager_GetArgs(ovy);
+    struct ChooseStarterArgs *args = OverlayManager_GetArgs(ovy);
 
     TextFlags_SetCanABSpeedUpPrint(FALSE);
     sub_02002B50(FALSE);
@@ -553,7 +553,7 @@ BOOL ChooseStarterApplication_OvyExit(OVY_MANAGER *ovy, int *state) {
     Destroy2DGfxResObjMan(work->monSpriteData.cellResMan);
     Destroy2DGfxResObjMan(work->monSpriteData.animResMan);
     OamManager_Free();
-    sub_0202168C();
+    ObjCharTransfer_Destroy();
     sub_02022608();
     freeWindow(work->winTop);
     freeWindow(work->winBottom);
@@ -609,17 +609,17 @@ static void createOamManager(HeapID heapId) {
     NNS_G2dInitOamManagerModule();
     OamManager_Create(0, 0x80, 0, 0x20, 0, 0x80, 0, 0x20, heapId);
     {
-        struct UnkStruct_020215A0 baseTrans = {
+        ObjCharTransferTemplate baseTrans = {
             3,
             0,
             0x2800,
             HEAP_ID_DEFAULT
         };
         baseTrans.heapId = heapId;
-        sub_020215C0(&baseTrans, 0x200010, 0x10);
+        ObjCharTransfer_InitEx(&baseTrans, GX_OBJVRAMMODE_CHAR_1D_128K, GX_OBJVRAMMODE_CHAR_1D_32K);
     }
     sub_02022588(3, heapId);
-    sub_020216C8();
+    ObjCharTransfer_ClearBuffers();
     sub_02022638();
 }
 
@@ -634,7 +634,7 @@ static void init3dEngine(struct ChooseStarterAppWork *work) {
         work->edgeColorTable[i] = GX_RGB(4, 4, 4);
     }
     G3X_SetEdgeColorTable(work->edgeColorTable);
-    G3X_SetClearColor(GX_RGB(31, 31, 16), 0, 0x7FFF, 0x3F, FALSE);
+    G3X_SetClearColor(GX_RGB(31, 31, 16), 0, GF_GX_CLEARCOLORDEPTH_MAX, 0x3F, FALSE);
     NNS_G3dGlbLightVector(GX_LIGHTID_0, 0, -FX16_ONE, 0);
     NNS_G3dGlbLightColor(GX_LIGHTID_0, RGB_WHITE);
     NNS_G3dGlbMaterialColorDiffAmb(RGB_WHITE, RGB_WHITE, FALSE);
@@ -648,7 +648,7 @@ static void update3dObjectsMain(struct ChooseStarterAppWork *work) {
     Camera_PushLookAtToNNSGlb();
     updateBaseAndBallsRotation(work);
     NNS_G3dGePopMtx(1);
-    sub_02026E50(0, 0);
+    RequestSwap3DBuffers(GX_SORTMODE_AUTO, GX_BUFFERMODE_Z);
 }
 
 static inline void id_roty_mtx33(MtxFx33 *mtx, u16 index) {
@@ -668,7 +668,7 @@ static void updateBaseAndBallsRotation(struct ChooseStarterAppWork *work) {
             MTX_Identity33(&rotMtx);
             MTX_RotY33(&tmpMtx, FX_SinIdx(rnd->yRotAngle), FX_CosIdx(rnd->yRotAngle));
             MTX_Concat33(&tmpMtx, &rotMtx, &rotMtx);
-            Draw3dModel(&rnd->obj, &rnd->translVec, &rotMtx, &scaleVec);
+            GF3dRender_DrawModel(&rnd->obj, &rnd->translVec, &rotMtx, &scaleVec);
         }
     }
 
@@ -839,11 +839,11 @@ static void load3dModelResourceFromNarc(struct ChooseStarter3dRes *res, int file
     res->mdlSet = NNS_G3dGetMdlSet(res->header);
     res->mdl = NNS_G3dGetMdlByIdx(res->mdlSet, 0);
     res->tex = NNS_G3dGetTex(res->header);
-    AllocAndLoad3dTexResources(res->tex);
+    GF3dRender_AllocAndLoadTexResources(res->tex);
 }
 
 static void init3dModelRender(struct ChooseStarterRnd *rnd, struct ChooseStarter3dRes *res) {
-    Bind3dModelSet(res->header, res->tex);
+    GF3dRender_BindModelSet(res->header, res->tex);
     NNS_G3dRenderObjInit(&rnd->obj, res->mdl);
 }
 
@@ -1177,8 +1177,8 @@ static void createMonSprites(struct ChooseStarterAppWork *work) {
     struct StarterChooseMonSpriteData *spriteData = &work->monSpriteData;
 
     for (i = 0; i < 3; i++) {
-        spriteData->objs[i].charResObj = AddCharResObjFromOpenNarc(spriteData->charResMan, narc, NARC_choose_starter_sub_res_choose_starter_sub_res_00000009_NCGR, FALSE, i, 2, work->heapId);
-        spriteData->objs[i].plttResObj = AddPlttResObjFromOpenNarc(spriteData->plttResMan, narc, NARC_choose_starter_sub_res_choose_starter_sub_res_00000006_NCLR, FALSE, i, 2, 1, work->heapId);
+        spriteData->objs[i].charResObj = AddCharResObjFromOpenNarc(spriteData->charResMan, narc, NARC_choose_starter_sub_res_choose_starter_sub_res_00000009_NCGR, FALSE, i, NNS_G2D_VRAM_TYPE_2DSUB, work->heapId);
+        spriteData->objs[i].plttResObj = AddPlttResObjFromOpenNarc(spriteData->plttResMan, narc, NARC_choose_starter_sub_res_choose_starter_sub_res_00000006_NCLR, FALSE, i, NNS_G2D_VRAM_TYPE_2DSUB, 1, work->heapId);
         spriteData->objs[i].cellResObj = AddCellOrAnimResObjFromOpenNarc(spriteData->cellResMan, narc, NARC_choose_starter_sub_res_choose_starter_sub_res_00000010_NCER, FALSE, i, GF_GFX_RES_TYPE_CELL, work->heapId);
         spriteData->objs[i].animResObj = AddCellOrAnimResObjFromOpenNarc(spriteData->animResMan, narc, NARC_choose_starter_sub_res_choose_starter_sub_res_00000016_NANR, FALSE, i, GF_GFX_RES_TYPE_ANIM, work->heapId);
         GetMonSpriteCharAndPlttNarcIdsEx(
@@ -1199,9 +1199,9 @@ static void createMonSprites(struct ChooseStarterAppWork *work) {
     NARC_Delete(narc);
 }
 
-static void loadOneMonObj(struct _2DGfxResMan *charResMan, struct _2DGfxResMan *plttResMan, void *charData, void *plttData, u8 idx) {
-    struct _2DGfxResObj *charResObj = Get2DGfxResObjById(charResMan, idx);
-    struct _2DGfxResObj *plttResObj = Get2DGfxResObjById(plttResMan, idx);
+static void loadOneMonObj(GF_2DGfxResMan *charResMan, GF_2DGfxResMan *plttResMan, void *charData, void *plttData, u8 idx) {
+    GF_2DGfxResObj *charResObj = Get2DGfxResObjById(charResMan, idx);
+    GF_2DGfxResObj *plttResObj = Get2DGfxResObjById(plttResMan, idx);
     NNSG2dImageProxy *charProxy;
     const NNSG2dImagePaletteProxy *plttProxy;
     u32 imageloc;

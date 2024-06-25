@@ -5,8 +5,8 @@
 
 	.text
 
-	thumb_func_start SignBackOfTrainerCardApp_OvyInit
-SignBackOfTrainerCardApp_OvyInit: ; 0x021E80C0
+	thumb_func_start TrainerCardSignature_Init
+TrainerCardSignature_Init: ; 0x021E80C0
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0xc
 	add r5, r1, #0
@@ -161,10 +161,10 @@ _021E8238: .word 0x00005B98
 _021E823C: .word ov52_021E837C
 _021E8240: .word 0x04000304
 _021E8244: .word 0xFFFF7FFF
-	thumb_func_end SignBackOfTrainerCardApp_OvyInit
+	thumb_func_end TrainerCardSignature_Init
 
-	thumb_func_start SignBackOfTrainerCardApp_OvyExec
-SignBackOfTrainerCardApp_OvyExec: ; 0x021E8248
+	thumb_func_start TrainerCardSignature_Main
+TrainerCardSignature_Main: ; 0x021E8248
 	push {r3, r4, r5, lr}
 	add r5, r1, #0
 	bl OverlayManager_GetData
@@ -214,10 +214,10 @@ _021E829A:
 	.balign 4, 0
 _021E82A4: .word ov52_021E96C0
 _021E82A8: .word 0x00004318
-	thumb_func_end SignBackOfTrainerCardApp_OvyExec
+	thumb_func_end TrainerCardSignature_Main
 
-	thumb_func_start SignBackOfTrainerCardApp_OvyExit
-SignBackOfTrainerCardApp_OvyExit: ; 0x021E82AC
+	thumb_func_start TrainerCardSignature_Exit
+TrainerCardSignature_Exit: ; 0x021E82AC
 	push {r3, r4, r5, r6, r7, lr}
 	str r0, [sp]
 	bl OverlayManager_GetData
@@ -261,7 +261,7 @@ _021E82FC:
 	ldr r0, [r6, #0x3c]
 	bl SpriteList_Delete
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	add r0, r6, #0
 	bl ov52_021E8B94
@@ -297,7 +297,7 @@ _021E82FC:
 	nop
 _021E8374: .word 0x00005B98
 _021E8378: .word 0x04000304
-	thumb_func_end SignBackOfTrainerCardApp_OvyExit
+	thumb_func_end TrainerCardSignature_Exit
 
 	thumb_func_start ov52_021E837C
 ov52_021E837C: ; 0x021E837C
@@ -715,11 +715,11 @@ ov52_021E86DC: ; 0x021E86DC
 	ldmia r4!, {r0, r1}
 	stmia r3!, {r0, r1}
 	add r0, r2, #0
-	bl sub_020215A0
+	bl ObjCharTransfer_Init
 	mov r0, #0x14
 	mov r1, #0x27
 	bl sub_02022588
-	bl sub_020216C8
+	bl ObjCharTransfer_ClearBuffers
 	bl sub_02022638
 	add sp, #0x10
 	pop {r4, pc}

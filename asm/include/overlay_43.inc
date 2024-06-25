@@ -119,9 +119,9 @@
 .public GF_DestroyVramTransferManager
 .public GF_RunVramTransferTasks
 .public sub_02020B78
-.public sub_020215C0
-.public sub_0202168C
-.public sub_020216C8
+.public ObjCharTransfer_InitEx
+.public ObjCharTransfer_Destroy
+.public ObjCharTransfer_ClearBuffers
 .public sub_02022588
 .public sub_02022608
 .public sub_02022638
@@ -140,7 +140,7 @@
 .public Sprite_GetAnimCtrlCurrentFrame
 .public Sprite_SetPriority
 .public Sprite_SetDrawPriority
-.public Sprite_IsCellAnimationFinished
+.public Sprite_IsCellAnimationRunning
 .public TouchscreenHitbox_FindHitboxAtTouchNew
 .public System_GetTouchNew
 .public GF_AssertFail
@@ -177,7 +177,7 @@
 .public GetUnionRoomAvatarAttrBySprite
 .public Save_VarsFlags_FlypointFlagAction
 .public sub_02070D84
-.public sub_020830D8
+.public NamingScreen_CreateArgs
 .public sub_0208311C
 .public sub_02085400
 .public sub_02085438
@@ -201,6 +201,6 @@
 .public ov42_02227274
 .public ov42_022272BC
 .public ov42_0222740C
-.public ov43_02229EE0
-.public ov43_02229FB4
-.public ov43_0222A0AC
+.public PalPad_Init
+.public PalPad_Main
+.public PalPad_Exit

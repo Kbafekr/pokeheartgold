@@ -4,7 +4,7 @@
 #include "gf_gfx_loader.h"
 #include "palette.h"
 #include "unk_02009D48.h"
-#include "unk_020215A0.h"
+#include "obj_char_transfer.h"
 #include "unk_02022588.h"
 #include "unk_0200B150.h"
 #include "unk_0200CF18.h"
@@ -22,10 +22,10 @@ static Sprite* MyCreateSprite(SpriteRenderer* renderer, SpriteGfxHandler* gfxHan
 static UnkImageStruct* MyLoadResourcesAndCreateSprite(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, UnkTemplate_0200D748* unkTemplate, fx32 yOffset);
 static BOOL MyLoadCellOrAnim_NarcId(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, GfGfxResType a6, int resId);
 static BOOL MyLoadCellOrAnim_OpenNarc(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, GfGfxResType a6, int resId);
-static BOOL MyInsertResObjIntoList(_2DGfxResObjList* list, _2DGfxResObj* obj);
-static BOOL MyUnloadCellOrAnimById(_2DGfxResMan* manager, _2DGfxResObjList* list, u32 cellOrAnimId);
-static BOOL MyUnloadCharById(_2DGfxResMan* manager, _2DGfxResObjList* list, u32 charId);
-static BOOL MyUnloadPlttById(_2DGfxResMan* manager, _2DGfxResObjList* list, u32 plttId);
+static BOOL MyInsertResObjIntoList(GF_2DGfxResObjList* list, GF_2DGfxResObj* obj);
+static BOOL MyUnloadCellOrAnimById(GF_2DGfxResMan* manager, GF_2DGfxResObjList* list, u32 cellOrAnimId);
+static BOOL MyUnloadCharById(GF_2DGfxResMan* manager, GF_2DGfxResObjList* list, u32 charId);
+static BOOL MyUnloadPlttById(GF_2DGfxResMan* manager, GF_2DGfxResObjList* list, u32 plttId);
 
 SpriteRenderer* SpriteRenderer_Create(HeapID heapId) {
     SpriteRenderer* ret = AllocFromHeap(heapId, sizeof(SpriteRenderer));
@@ -60,19 +60,19 @@ BOOL sub_0200CF70(SpriteRenderer* renderer, const Unk122_021E92FC* a1, const Unk
     if (renderer == NULL) {
         return FALSE;
     }
-    struct UnkStruct_020215A0 sp14;
-    sp14.unk_00 = a2->unk0;
-    sp14.unk_04 = a2->unk4;
-    sp14.unk_08 = a2->unk8;
-    sp14.heapId = renderer->heapId;
-    sub_020215C0(&sp14, a2->unkC, a2->unk10);
+    ObjCharTransferTemplate transferTemplate;
+    transferTemplate.maxTasks = a2->maxTasks;
+    transferTemplate.sizeMain = a2->sizeMain;
+    transferTemplate.sizeSub = a2->sizeSub;
+    transferTemplate.heapId = renderer->heapId;
+    ObjCharTransfer_InitEx(&transferTemplate, a2->charModeMain, a2->charModeSub);
     sub_02022588(a3, renderer->heapId);
     NNS_G2dInitOamManagerModule();
     if (renderer->hasOamManager == TRUE) {
         OamManager_Create(a1->unk0, a1->unk4, a1->unk8, a1->unkC, a1->unk10, a1->unk14, a1->unk18, a1->unk1C, renderer->heapId);
     }
     renderer->cellTransferState = sub_02020654(0x20, renderer->heapId);
-    sub_020216C8();
+    ObjCharTransfer_ClearBuffers();
     sub_02022638();
     return TRUE;
 }
@@ -127,7 +127,7 @@ static void SpriteGfxHandler_DestroyResObjsAndMans(SpriteGfxHandler* gfxHandler)
 
 static void DeinitSpriteRenderer(SpriteRenderer* renderer) {
     sub_0202067C(renderer->cellTransferState);
-    sub_0202168C();
+    ObjCharTransfer_Destroy();
     sub_02022608();
     if (renderer->hasOamManager == TRUE) {
         OamManager_Free();
@@ -156,7 +156,7 @@ static BOOL sub_0200D124(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler,
     int i;
     int numGfxResTypes;
     int size;
-    struct _2DGfxResHeader* header;
+    GF_2DGfxResHeader* header;
     void* data;
     NARC* narc;
 
@@ -176,7 +176,7 @@ static BOOL sub_0200D124(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler,
     for (i = 0; i < numGfxResTypes; ++i) {
         header = sub_0200A900(gfxHandler->_2dGfxResHeader, i);
         data = GfGfxLoader_LoadFromOpenNarc(narc, fileIdList[i], FALSE, renderer->heapId, TRUE);
-        sub_0200A908((_2DGfxResHeaderNarcList *)data, header, renderer->heapId);
+        sub_0200A908((GF_2DGfxResHeaderNarcList *)data, header, renderer->heapId);
         FreeToHeap(data);
     }
     for (i = 0; i < numGfxResTypes; ++i) {
@@ -308,11 +308,11 @@ BOOL SpriteRenderer_Init2DGfxResManagersFromCountsArray(SpriteRenderer* renderer
     return TRUE;
 }
 
-BOOL SpriteRenderer_LoadCharResObjFromNarcId(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int vram, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
+BOOL SpriteRenderer_LoadCharResObjFromNarcId(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, NNS_G2D_VRAM_TYPE vram, int resId) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
         return FALSE;
     }
-    _2DGfxResObj* obj = AddCharResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narcId, fileId, compressed, resId, vram, renderer->heapId);
+    GF_2DGfxResObj* obj = AddCharResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narcId, fileId, compressed, resId, vram, renderer->heapId);
     if (obj != NULL) {
         sub_0200ADA4(obj);
         MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[GF_GFX_RES_TYPE_CHAR], obj);
@@ -322,11 +322,11 @@ BOOL SpriteRenderer_LoadCharResObjFromNarcId(SpriteRenderer* renderer, SpriteGfx
     return obj != NULL;
 }
 
-BOOL SpriteRenderer_LoadCharResObjFromOpenNarc(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, int vram, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
+BOOL SpriteRenderer_LoadCharResObjFromOpenNarc(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, NNS_G2D_VRAM_TYPE vram, int resId) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
         return FALSE;
     }
-    _2DGfxResObj* obj = AddCharResObjFromOpenNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narc, fileId, compressed, resId, vram, renderer->heapId);
+    GF_2DGfxResObj* obj = AddCharResObjFromOpenNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narc, fileId, compressed, resId, vram, renderer->heapId);
     if (obj != NULL) {
         sub_0200ADA4(obj);
         MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[GF_GFX_RES_TYPE_CHAR], obj);
@@ -336,11 +336,11 @@ BOOL SpriteRenderer_LoadCharResObjFromOpenNarc(SpriteRenderer* renderer, SpriteG
     return obj != NULL;
 }
 
-s8 SpriteRenderer_LoadPlttResObjFromNarcId(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int pltt_num, int vram, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], resId)) {
+s8 SpriteRenderer_LoadPlttResObjFromNarcId(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int pltt_num, NNS_G2D_VRAM_TYPE vram, int resId) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], resId)) {
         return -1;
     }
-    _2DGfxResObj* obj = AddPlttResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], narcId, fileId, compressed, resId, vram, pltt_num, renderer->heapId);
+    GF_2DGfxResObj* obj = AddPlttResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], narcId, fileId, compressed, resId, vram, pltt_num, renderer->heapId);
     if (obj != NULL) {
         GF_ASSERT(sub_0200B00C(obj) == TRUE);
         MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[GF_GFX_RES_TYPE_PLTT], obj);
@@ -350,11 +350,11 @@ s8 SpriteRenderer_LoadPlttResObjFromNarcId(SpriteRenderer* renderer, SpriteGfxHa
     return -1;
 }
 
-s8 SpriteRenderer_LoadPlttResObjFromOpenNarc(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, int pltt_num, int vram, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], resId)) {
+s8 SpriteRenderer_LoadPlttResObjFromOpenNarc(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, int pltt_num, NNS_G2D_VRAM_TYPE vram, int resId) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], resId)) {
         return -1;
     }
-    _2DGfxResObj* obj = AddPlttResObjFromOpenNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], narc, fileId, compressed, resId, vram, pltt_num, renderer->heapId);
+    GF_2DGfxResObj* obj = AddPlttResObjFromOpenNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], narc, fileId, compressed, resId, vram, pltt_num, renderer->heapId);
     if (obj != NULL) {
         GF_ASSERT(sub_0200B00C(obj) == TRUE);
         MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[GF_GFX_RES_TYPE_PLTT], obj);
@@ -364,7 +364,7 @@ s8 SpriteRenderer_LoadPlttResObjFromOpenNarc(SpriteRenderer* renderer, SpriteGfx
     return -1;
 }
 
-u8 sub_0200D644(PaletteData* plttData, PaletteBufferId bufferId, SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int pltt_num, int vram, int resId) {
+u8 sub_0200D644(PaletteData* plttData, PaletteBufferId bufferId, SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int pltt_num, NNS_G2D_VRAM_TYPE vram, int resId) {
     int ret = SpriteRenderer_LoadPlttResObjFromNarcId(renderer, gfxHandler, narcId, fileId, compressed, pltt_num, vram, resId);
     if (ret != -1) {
         PaletteData_LoadPaletteSlotFromHardware(plttData, bufferId, ret * 16, pltt_num * 32);
@@ -372,7 +372,7 @@ u8 sub_0200D644(PaletteData* plttData, PaletteBufferId bufferId, SpriteRenderer*
     return ret;
 }
 
-u8 sub_0200D68C(PaletteData* plttData, PaletteBufferId bufferId, SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, int pltt_num, int vram, int resId) {
+u8 sub_0200D68C(PaletteData* plttData, PaletteBufferId bufferId, SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, int pltt_num, NNS_G2D_VRAM_TYPE vram, int resId) {
     int ret = SpriteRenderer_LoadPlttResObjFromOpenNarc(renderer, gfxHandler, narc, fileId, compressed, pltt_num, vram, resId);
     if (ret != -1) {
         PaletteData_LoadPaletteSlotFromHardware(plttData, bufferId, ret * 16, pltt_num * 32);
@@ -433,10 +433,10 @@ static UnkImageStruct* MyLoadResourcesAndCreateSprite(SpriteRenderer* renderer, 
         resIdList[GF_GFX_RES_TYPE_MCEL] = -1;
         resIdList[GF_GFX_RES_TYPE_MANM] = -1;
     } else {
-        if (resIdList[GF_GFX_RES_TYPE_MCEL] != -1 && !_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_MCEL], resIdList[GF_GFX_RES_TYPE_MCEL])) {
+        if (resIdList[GF_GFX_RES_TYPE_MCEL] != -1 && !GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_MCEL], resIdList[GF_GFX_RES_TYPE_MCEL])) {
             resIdList[GF_GFX_RES_TYPE_MCEL] = -1;
         }
-        if (resIdList[GF_GFX_RES_TYPE_MANM] != -1 && !_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_MANM], resIdList[GF_GFX_RES_TYPE_MANM])) {
+        if (resIdList[GF_GFX_RES_TYPE_MANM] != -1 && !GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_MANM], resIdList[GF_GFX_RES_TYPE_MANM])) {
             resIdList[GF_GFX_RES_TYPE_MANM] = -1;
         }
     }
@@ -491,7 +491,7 @@ NNSG2dImagePaletteProxy* sub_0200D934(SpriteGfxHandler* gfxHandler, int id) {
     return sub_0200B0F8(Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], id), NULL);
 }
 
-int sub_0200D944(SpriteGfxHandler* gfxHandler, int id, int vram) {
+int sub_0200D944(SpriteGfxHandler* gfxHandler, int id, NNS_G2D_VRAM_TYPE vram) {
     return sub_0200B12C(Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], id), vram);
 }
 
@@ -535,10 +535,10 @@ void sub_0200D9DC(UnkImageStruct* unk) {
 }
 
 static BOOL MyLoadCellOrAnim_NarcId(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, GfGfxResType a6, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[a6], resId)) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[a6], resId)) {
         return FALSE;
     }
-    _2DGfxResObj* data = AddCellOrAnimResObjFromNarc(gfxHandler->_2dGfxResMan[a6], narcId, fileId, compressed, resId, a6, renderer->heapId);
+    GF_2DGfxResObj* data = AddCellOrAnimResObjFromNarc(gfxHandler->_2dGfxResMan[a6], narcId, fileId, compressed, resId, a6, renderer->heapId);
     if (data != NULL) {
         BOOL result = MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[a6], data);
         GF_ASSERT(result == TRUE);
@@ -549,10 +549,10 @@ static BOOL MyLoadCellOrAnim_NarcId(SpriteRenderer* renderer, SpriteGfxHandler* 
 }
 
 static BOOL MyLoadCellOrAnim_OpenNarc(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, GfGfxResType a6, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[a6], resId)) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[a6], resId)) {
         return FALSE;
     }
-    _2DGfxResObj* data = AddCellOrAnimResObjFromOpenNarc(gfxHandler->_2dGfxResMan[a6], narc, fileId, compressed, resId, a6, renderer->heapId);
+    GF_2DGfxResObj* data = AddCellOrAnimResObjFromOpenNarc(gfxHandler->_2dGfxResMan[a6], narc, fileId, compressed, resId, a6, renderer->heapId);
     if (data != NULL) {
         BOOL result = MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[a6], data);
         GF_ASSERT(result == TRUE);
@@ -562,7 +562,7 @@ static BOOL MyLoadCellOrAnim_OpenNarc(SpriteRenderer* renderer, SpriteGfxHandler
     return data != NULL;
 }
 
-static BOOL MyInsertResObjIntoList(_2DGfxResObjList* list, _2DGfxResObj* obj) {
+static BOOL MyInsertResObjIntoList(GF_2DGfxResObjList* list, GF_2DGfxResObj* obj) {
     for (int i = 0; i < list->max; ++i) {
         if (list->obj[i] == NULL) {
             list->obj[i] = obj;
@@ -573,10 +573,10 @@ static BOOL MyInsertResObjIntoList(_2DGfxResObjList* list, _2DGfxResObj* obj) {
     return FALSE;
 }
 
-static BOOL MyUnloadCellOrAnimById(_2DGfxResMan* manager, _2DGfxResObjList* list, u32 cellOrAnimId) {
+static BOOL MyUnloadCellOrAnimById(GF_2DGfxResMan* manager, GF_2DGfxResObjList* list, u32 cellOrAnimId) {
     for (int i = 0; i < list->max; ++i) {
         if (list->obj[i] != NULL) {
-            u32 test_id = sub_0200A7FC(list->obj[i]);
+            u32 test_id = GF2DGfxResObj_GetResID(list->obj[i]);
             if (test_id == cellOrAnimId) {
                 DestroySingle2DGfxResObj(manager, list->obj[i]);
                 list->obj[i] = NULL;
@@ -588,12 +588,12 @@ static BOOL MyUnloadCellOrAnimById(_2DGfxResMan* manager, _2DGfxResObjList* list
     return FALSE;
 }
 
-static BOOL MyUnloadCharById(_2DGfxResMan* manager, _2DGfxResObjList* list, u32 charId) {
+static BOOL MyUnloadCharById(GF_2DGfxResMan* manager, GF_2DGfxResObjList* list, u32 charId) {
     for (int i = 0; i < list->max; ++i) {
         if (list->obj[i] != NULL) {
-            u32 test_id = sub_0200A7FC(list->obj[i]);
+            u32 test_id = GF2DGfxResObj_GetResID(list->obj[i]);
             if (test_id == charId) {
-                sub_02021884(charId);
+                ObjCharTransfer_ResetTransferTasksByResID(charId);
                 DestroySingle2DGfxResObj(manager, list->obj[i]);
                 list->obj[i] = NULL;
                 --list->num;
@@ -604,10 +604,10 @@ static BOOL MyUnloadCharById(_2DGfxResMan* manager, _2DGfxResObjList* list, u32 
     return FALSE;
 }
 
-static BOOL MyUnloadPlttById(_2DGfxResMan* manager, _2DGfxResObjList* list, u32 plttId) {
+static BOOL MyUnloadPlttById(GF_2DGfxResMan* manager, GF_2DGfxResObjList* list, u32 plttId) {
     for (int i = 0; i < list->max; ++i) {
         if (list->obj[i] != NULL) {
-            u32 test_id = sub_0200A7FC(list->obj[i]);
+            u32 test_id = GF2DGfxResObj_GetResID(list->obj[i]);
             if (test_id == plttId) {
                 sub_02022744(plttId);
                 DestroySingle2DGfxResObj(manager, list->obj[i]);
@@ -669,7 +669,7 @@ void sub_0200DC8C(UnkImageStruct* unk, fx32 frame) {
 }
 
 BOOL sub_0200DC98(Sprite* sprite) {
-    return Sprite_IsCellAnimationFinished(sprite);
+    return Sprite_IsCellAnimationRunning(sprite);
 }
 
 BOOL sub_0200DCA0(UnkImageStruct* unk) {
@@ -967,11 +967,11 @@ u32 sub_0200E11C(UnkImageStruct* unk) {
     return sub_02024C9C(unk->sprite);
 }
 
-BOOL sub_0200E128(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int vram, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
+BOOL sub_0200E128(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, NNS_G2D_VRAM_TYPE vram, int resId) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
         return FALSE;
     }
-    _2DGfxResObj* obj = AddCharResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narcId, fileId, compressed, resId, vram, renderer->heapId);
+    GF_2DGfxResObj* obj = AddCharResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narcId, fileId, compressed, resId, vram, renderer->heapId);
     if (obj != NULL) {
         sub_0200AD64(obj);
         MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[GF_GFX_RES_TYPE_CHAR], obj);
@@ -981,11 +981,11 @@ BOOL sub_0200E128(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId
     return obj != NULL;
 }
 
-BOOL sub_0200E188(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int vram, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
+BOOL sub_0200E188(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, NNS_G2D_VRAM_TYPE vram, int resId) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
         return FALSE;
     }
-    _2DGfxResObj* obj = AddCharResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narcId, fileId, compressed, resId, vram, renderer->heapId);
+    GF_2DGfxResObj* obj = AddCharResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narcId, fileId, compressed, resId, vram, renderer->heapId);
     if (obj != NULL) {
         sub_0200AE18(obj);
         MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[GF_GFX_RES_TYPE_CHAR], obj);
@@ -995,11 +995,11 @@ BOOL sub_0200E188(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId
     return obj != NULL;
 }
 
-BOOL sub_0200E1E8(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, int vram, int resId) {
-    if (!_2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
+BOOL sub_0200E1E8(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, NNS_G2D_VRAM_TYPE vram, int resId) {
+    if (!GF2DGfxResObjExistsById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId)) {
         return FALSE;
     }
-    _2DGfxResObj* obj = AddCharResObjFromOpenNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narc, fileId, compressed, resId, vram, renderer->heapId);
+    GF_2DGfxResObj* obj = AddCharResObjFromOpenNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], narc, fileId, compressed, resId, vram, renderer->heapId);
     if (obj != NULL) {
         sub_0200AE18(obj);
         MyInsertResObjIntoList(gfxHandler->_2dGfxResObjList[GF_GFX_RES_TYPE_CHAR], obj);
@@ -1010,13 +1010,13 @@ BOOL sub_0200E1E8(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* 
 }
 
 void sub_0200E248(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int resId) {
-    _2DGfxResObj* obj = Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId);
+    GF_2DGfxResObj* obj = Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId);
     ReplaceCharResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], obj, narcId, fileId, compressed, renderer->heapId);
     sub_0200AE8C(obj);
 }
 
 void sub_0200E27C(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NarcId narcId, int fileId, BOOL compressed, int resId) {
-    _2DGfxResObj* obj = Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], resId);
+    GF_2DGfxResObj* obj = Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], resId);
     ReplacePlttResObjFromNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], obj, narcId, fileId, compressed, renderer->heapId);
     sub_0200B084(obj);
 }
@@ -1030,13 +1030,13 @@ void sub_0200E2B4(SpriteGfxHandler* gfxHandler, SpriteList* spriteList) {
 }
 
 void sub_0200E2B8(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, int resId) {
-    _2DGfxResObj* obj = Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId);
+    GF_2DGfxResObj* obj = Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], resId);
     ReplaceCharResObjFromOpenNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_CHAR], obj, narc, fileId, compressed, renderer->heapId);
     sub_0200AE8C(obj);
 }
 
 void sub_0200E2EC(SpriteRenderer* renderer, SpriteGfxHandler* gfxHandler, NARC* narc, int fileId, BOOL compressed, int resId) {
-    _2DGfxResObj* obj = Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], resId);
+    GF_2DGfxResObj* obj = Get2DGfxResObjById(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], resId);
     ReplacePlttResObjFromOpenNarc(gfxHandler->_2dGfxResMan[GF_GFX_RES_TYPE_PLTT], obj, narc, fileId, compressed, renderer->heapId);
     sub_0200B084(obj);
 }

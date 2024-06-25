@@ -179,7 +179,7 @@ _021E5A50:
 	add r1, r0, #0
 	bl sub_02023738
 	mov r0, #4
-	bl sub_0201F590
+	bl GF3dRender_InitSimpleManager
 	bl ov01_021E61E0
 	bl ov01_021E6178
 	bl GfGfx_SwapDisplay
@@ -580,7 +580,7 @@ _021E5E12:
 	bl ov01_021E6214
 	bl sub_02023778
 	bl GF_DestroyVramTransferManager
-	bl sub_0201F63C
+	bl GF3dRender_DeleteSimpleManager
 	ldr r0, [r4, #4]
 	ldr r0, [r0, #4]
 	bl ov01_021E6734
@@ -1046,11 +1046,11 @@ ov01_021E61E0: ; 0x021E61E0
 	mov r1, #0x10
 	add r0, r2, #0
 	add r2, r1, #0
-	bl sub_020215C0
+	bl ObjCharTransfer_InitEx
 	mov r0, #0x14
 	mov r1, #4
 	bl sub_02022588
-	bl sub_020216C8
+	bl ObjCharTransfer_ClearBuffers
 	bl sub_02022638
 	add sp, #0x10
 	pop {r4, pc}
@@ -1061,7 +1061,7 @@ _021E6210: .word ov01_022062DC
 	thumb_func_start ov01_021E6214
 ov01_021E6214: ; 0x021E6214
 	push {r3, lr}
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	pop {r3, pc}
 	thumb_func_end ov01_021E6214
@@ -1170,7 +1170,7 @@ _021E6294:
 	ldr r1, _021E6318 ; =gG3dDepthBufferingMode
 	add r0, r5, #0
 	ldr r1, [r1]
-	bl sub_02026E50
+	bl RequestSwap3DBuffers
 	add sp, #0x88
 	pop {r4, r5, r6, pc}
 	.balign 4, 0

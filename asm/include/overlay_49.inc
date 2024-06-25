@@ -44,7 +44,7 @@
 .public AddCellOrAnimResObjFromOpenNarc
 .public sub_0200A740
 .public DestroySingle2DGfxResObj
-.public sub_0200A828
+.public GF2DGfxResObj_GetPlttDataPtr
 .public sub_0200ADA4
 .public sub_0200AEB0
 .public sub_0200B00C
@@ -143,8 +143,8 @@
 .public DoScheduledBgGpuUpdates
 .public ScheduleBgTilemapBufferTransfer
 .public ScheduleSetBgPosText
-.public Bind3dModelSet
-.public AllocAndLoad3dTexResources
+.public GF3dRender_BindModelSet
+.public GF3dRender_AllocAndLoadTexResources
 .public sub_0201F990
 .public GF_SinDegNoWrap
 .public GF_DegreeToSinCosIdx
@@ -159,10 +159,10 @@
 .public sub_02020654
 .public sub_02020674
 .public sub_0202067C
-.public sub_020215C0
-.public sub_0202168C
-.public sub_020216C8
-.public sub_02021A50
+.public ObjCharTransfer_InitEx
+.public ObjCharTransfer_Destroy
+.public ObjCharTransfer_ClearBuffers
+.public ObjCharTransfer_DeleteTaskCopyByProxyPtr
 .public sub_02022588
 .public sub_02022608
 .public sub_02022638
@@ -187,7 +187,7 @@
 .public sub_02024AA8
 .public sub_02024B1C
 .public GF_AssertFail
-.public sub_02025ACC
+.public G3dResFileHeader_GetSizeWithoutTex
 .public String_New
 .public String_Delete
 .public String_Copy
@@ -196,7 +196,7 @@
 .public TouchHitboxController_Destroy
 .public TouchHitboxController_IsTriggered
 .public Thunk_G3X_Reset
-.public sub_02026E50
+.public RequestSwap3DBuffers
 .public GF_3DVramMan_Create
 .public GF_3DVramMan_Delete
 .public Save_PlayerData_GetProfileAddr

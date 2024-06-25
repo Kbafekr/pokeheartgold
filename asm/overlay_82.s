@@ -1017,7 +1017,7 @@ _0223E58A:
 	bl ov82_0223E8C4
 	add r1, r4, #0
 	add r1, #0xa4
-	ldr r0, _0223E5D0 ; =_02103A1C
+	ldr r0, _0223E5D0 ; =gOverlayTemplate_PokemonSummary
 	ldr r1, [r1]
 	mov r2, #0x69
 	bl OverlayManager_New
@@ -1036,7 +1036,7 @@ _0223E5C0: .word 0x000005DD
 _0223E5C4: .word 0x000005F3
 _0223E5C8: .word 0x000005DC
 _0223E5CC: .word 0x00000623
-_0223E5D0: .word _02103A1C
+_0223E5D0: .word gOverlayTemplate_PokemonSummary
 	thumb_func_end ov82_0223E2EC
 
 	thumb_func_start ov82_0223E5D4
@@ -3914,7 +3914,7 @@ _0223FBEA:
 	ldr r0, [r5]
 	bl SpriteList_Delete
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -3934,11 +3934,11 @@ ov82_0223FC14: ; 0x0223FC14
 	mov r1, #0x10
 	add r0, r2, #0
 	add r2, r1, #0
-	bl sub_020215C0
+	bl ObjCharTransfer_InitEx
 	mov r0, #4
 	mov r1, #0x69
 	bl sub_02022588
-	bl sub_020216C8
+	bl ObjCharTransfer_ClearBuffers
 	bl sub_02022638
 	add sp, #0x10
 	pop {r4, pc}

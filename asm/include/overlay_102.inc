@@ -111,9 +111,9 @@
 .public SysTask_GetData
 .public MsgArray_SkipControlCode
 .public AddTextPrinterParameterizedWithColor
-.public sub_020215A0
-.public sub_0202168C
-.public sub_020216C8
+.public ObjCharTransfer_Init
+.public ObjCharTransfer_Destroy
+.public ObjCharTransfer_ClearBuffers
 .public sub_02021AC8
 .public sub_02021B5C
 .public GfGfx_SetBanks
@@ -183,6 +183,6 @@
 .public _s32_div_f
 .public _u32_div_f
 .public gSystem
-.public ov102_021E7740
-.public ov102_021E77B8
-.public ov102_021E7868
+.public EasyChat_Init
+.public EasyChat_Main
+.public EasyChat_Exit

@@ -5,8 +5,8 @@
 
 	.text
 
-	thumb_func_start TrainerCardMainApp_OvyInit
-TrainerCardMainApp_OvyInit: ; 0x021E5AC0
+	thumb_func_start TrainerCardMainApp_Init
+TrainerCardMainApp_Init: ; 0x021E5AC0
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0xc
 	add r5, r0, #0
@@ -318,10 +318,10 @@ _021E5D80: .word 0x000030F4
 _021E5D84: .word 0x00003434
 _021E5D88: .word 0x00003108
 _021E5D8C: .word ov51_021E6B88
-	thumb_func_end TrainerCardMainApp_OvyInit
+	thumb_func_end TrainerCardMainApp_Init
 
-	thumb_func_start TrainerCardMainApp_OvyExec
-TrainerCardMainApp_OvyExec: ; 0x021E5D90
+	thumb_func_start TrainerCardMainApp_Main
+TrainerCardMainApp_Main: ; 0x021E5D90
 	push {r4, r5, lr}
 	sub sp, #0xc
 	add r5, r1, #0
@@ -476,10 +476,10 @@ _021E5EB8: .word 0x00003436
 _021E5EBC: .word 0x0000311C
 _021E5EC0: .word 0x00000674
 _021E5EC4: .word 0x0000343F
-	thumb_func_end TrainerCardMainApp_OvyExec
+	thumb_func_end TrainerCardMainApp_Main
 
-	thumb_func_start TrainerCardMainApp_OvyExit
-TrainerCardMainApp_OvyExit: ; 0x021E5EC8
+	thumb_func_start TrainerCardMainApp_Exit
+TrainerCardMainApp_Exit: ; 0x021E5EC8
 	push {r3, r4, r5, lr}
 	add r5, r0, #0
 	bl OverlayManager_GetData
@@ -535,7 +535,7 @@ _021E5F54: .word 0x000033B8
 _021E5F58: .word 0x000033B0
 _021E5F5C: .word 0x0000066C
 _021E5F60: .word 0x0000310C
-	thumb_func_end TrainerCardMainApp_OvyExit
+	thumb_func_end TrainerCardMainApp_Exit
 
 	thumb_func_start ov51_021E5F64
 ov51_021E5F64: ; 0x021E5F64
@@ -4170,7 +4170,7 @@ _021E7CF0:
 	ldr r0, [r5]
 	bl SpriteList_Delete
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	mov r2, #1
 	lsl r2, r2, #0x1a
@@ -4216,11 +4216,11 @@ ov51_021E7D68: ; 0x021E7D68
 	ldmia r4!, {r0, r1}
 	stmia r3!, {r0, r1}
 	add r0, r2, #0
-	bl sub_020215A0
+	bl ObjCharTransfer_Init
 	mov r0, #2
 	mov r1, #0x19
 	bl sub_02022588
-	bl sub_020216C8
+	bl ObjCharTransfer_ClearBuffers
 	bl sub_02022638
 	mov r0, #0x19
 	bl sub_0200B2E0

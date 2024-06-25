@@ -468,7 +468,7 @@ _020239B0:
 	add r0, #0x30
 	add r1, r4, #0
 	add r3, #0xc
-	bl Draw3dModel
+	bl GF3dRender_DrawModel
 	add r0, r4, #0
 	bl sub_0202441C
 _020239C4:
@@ -3126,8 +3126,8 @@ Sprite_GetVramType: ; 0x02024B60
 	.balign 4, 0
 	thumb_func_end Sprite_GetVramType
 
-	thumb_func_start Sprite_IsCellAnimationFinished
-Sprite_IsCellAnimationFinished: ; 0x02024B68
+	thumb_func_start Sprite_IsCellAnimationRunning
+Sprite_IsCellAnimationRunning: ; 0x02024B68
 	push {r4, lr}
 	add r4, r0, #0
 	bne _02024B72
@@ -3136,7 +3136,7 @@ _02024B72:
 	ldr r0, [r4, #0x54]
 	pop {r4, pc}
 	.balign 4, 0
-	thumb_func_end Sprite_IsCellAnimationFinished
+	thumb_func_end Sprite_IsCellAnimationRunning
 
 	thumb_func_start sub_02024B78
 sub_02024B78: ; 0x02024B78

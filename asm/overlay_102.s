@@ -4,8 +4,8 @@
 
 	.text
 
-	thumb_func_start ov102_021E7740
-ov102_021E7740: ; 0x021E7740
+	thumb_func_start EasyChat_Init
+EasyChat_Init: ; 0x021E7740
 	push {r3, r4, r5, lr}
 	add r4, r1, #0
 	ldr r1, [r4]
@@ -63,10 +63,10 @@ _021E77B2:
 	mov r0, #0
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
-	thumb_func_end ov102_021E7740
+	thumb_func_end EasyChat_Init
 
-	thumb_func_start ov102_021E77B8
-ov102_021E77B8: ; 0x021E77B8
+	thumb_func_start EasyChat_Main
+EasyChat_Main: ; 0x021E77B8
 	push {r4, lr}
 	bl OverlayManager_GetData
 	add r4, r0, #0
@@ -97,7 +97,7 @@ _021E77E6:
 	pop {r4, pc}
 	nop
 _021E77F4: .word gSystem
-	thumb_func_end ov102_021E77B8
+	thumb_func_end EasyChat_Main
 
 	thumb_func_start ov102_021E77F8
 ov102_021E77F8: ; 0x021E77F8
@@ -166,8 +166,8 @@ _021E7864:
 	.balign 4, 0
 	thumb_func_end ov102_021E77F8
 
-	thumb_func_start ov102_021E7868
-ov102_021E7868: ; 0x021E7868
+	thumb_func_start EasyChat_Exit
+EasyChat_Exit: ; 0x021E7868
 	push {r4, lr}
 	add r4, r0, #0
 	bl OverlayManager_GetData
@@ -180,7 +180,7 @@ ov102_021E7868: ; 0x021E7868
 	mov r0, #1
 	pop {r4, pc}
 	.balign 4, 0
-	thumb_func_end ov102_021E7868
+	thumb_func_end EasyChat_Exit
 
 	thumb_func_start ov102_021E7888
 ov102_021E7888: ; 0x021E7888
@@ -3659,8 +3659,8 @@ ov102_021E9198: ; 0x021E9198
 	ldmia r4!, {r0, r1}
 	stmia r3!, {r0, r1}
 	add r0, r2, #0
-	bl sub_020215A0
-	bl sub_020216C8
+	bl ObjCharTransfer_Init
+	bl ObjCharTransfer_ClearBuffers
 	add sp, #0x10
 	pop {r4, pc}
 	.balign 4, 0
@@ -3669,10 +3669,10 @@ _021E91B8: .word ov102_021EC698
 
 	thumb_func_start ov102_021E91BC
 ov102_021E91BC: ; 0x021E91BC
-	ldr r3, _021E91C0 ; =sub_0202168C
+	ldr r3, _021E91C0 ; =ObjCharTransfer_Destroy
 	bx r3
 	.balign 4, 0
-_021E91C0: .word sub_0202168C
+_021E91C0: .word ObjCharTransfer_Destroy
 	thumb_func_end ov102_021E91BC
 
 	thumb_func_start ov102_021E91C4

@@ -93,9 +93,9 @@
 .public TextPrinterCheckActive
 .public AddTextPrinterParameterizedWithColor
 .public GF_RunVramTransferTasks
-.public sub_020215C0
-.public sub_0202168C
-.public sub_020216C8
+.public ObjCharTransfer_InitEx
+.public ObjCharTransfer_Destroy
+.public ObjCharTransfer_ClearBuffers
 .public sub_02022588
 .public sub_02022608
 .public sub_02022638
@@ -156,7 +156,7 @@
 .public DC_FlushRange
 .public MI_CpuFill8
 .public memset
-.public _02103A1C
+.public gOverlayTemplate_PokemonSummary
 .public gSystem
 .public ov80_0222A7CC
 .public ov80_02237920

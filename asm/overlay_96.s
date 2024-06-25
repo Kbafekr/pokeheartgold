@@ -4,8 +4,8 @@
 
 	.text
 
-	thumb_func_start PokeathlonCourseApplication_OvyInit
-PokeathlonCourseApplication_OvyInit: ; 0x021E5900
+	thumb_func_start PokeathlonCourse_Init
+PokeathlonCourse_Init: ; 0x021E5900
 	push {r3, r4, r5, r6, lr}
 	sub sp, #0x14
 	mov r2, #0x72
@@ -144,10 +144,10 @@ _021E5A30: .word 0x0000072A
 _021E5A34: .word ov96_0221A984
 _021E5A38: .word 0x000003CA
 _021E5A3C: .word 0x00000614
-	thumb_func_end PokeathlonCourseApplication_OvyInit
+	thumb_func_end PokeathlonCourse_Init
 
-	thumb_func_start PokeathlonCourseApplication_OvyExec
-PokeathlonCourseApplication_OvyExec: ; 0x021E5A40
+	thumb_func_start PokeathlonCourse_Main
+PokeathlonCourse_Main: ; 0x021E5A40
 	push {r3, r4, r5, lr}
 	bl OverlayManager_GetData
 	add r5, r0, #0
@@ -311,10 +311,10 @@ _021E5B78: .word 0x00000D2C
 _021E5B7C: .word 0x00000708
 _021E5B80: .word 0x0000EA5F
 _021E5B84: .word 0x00000D28
-	thumb_func_end PokeathlonCourseApplication_OvyExec
+	thumb_func_end PokeathlonCourse_Main
 
-	thumb_func_start PokeathlonCourseApplication_OvyExit
-PokeathlonCourseApplication_OvyExit: ; 0x021E5B88
+	thumb_func_start PokeathlonCourse_Exit
+PokeathlonCourse_Exit: ; 0x021E5B88
 	push {r3, r4, r5, lr}
 	add r5, r0, #0
 	bl OverlayManager_GetData
@@ -378,7 +378,7 @@ _021E5C1C: .word 0x00000D24
 _021E5C20: .word 0x0000EA5F
 _021E5C24: .word 0x00000614
 _021E5C28: .word 0x000005DC
-	thumb_func_end PokeathlonCourseApplication_OvyExit
+	thumb_func_end PokeathlonCourse_Exit
 
 	thumb_func_start ov96_021E5C2C
 ov96_021E5C2C: ; 0x021E5C2C
@@ -1880,7 +1880,7 @@ ov96_021E661C: ; 0x021E661C
 _021E662C:
 	sub r0, #0xc
 	ldr r0, [r5, r0]
-	bl Sprite_IsCellAnimationFinished
+	bl Sprite_IsCellAnimationRunning
 	cmp r0, #0
 	bne _021E6664
 	ldr r0, _021E6668 ; =0x00000728
@@ -7074,7 +7074,7 @@ _021E8CC2:
 	bl sub_0200B0F8
 	str r0, [sp, #0x28]
 	ldr r0, [r4]
-	bl sub_0200A810
+	bl GF2DGfxResObj_GetCharDataPtr
 	str r0, [sp, #0x20]
 	cmp r6, #3
 	bne _021E8D6C
@@ -7561,7 +7561,7 @@ ov96_021E9104: ; 0x021E9104
 	sub sp, #0xc
 	add r4, r0, #0
 	ldr r0, [r4]
-	bl sub_0200A810
+	bl GF2DGfxResObj_GetCharDataPtr
 	ldrh r1, [r4, #0x18]
 	cmp r1, #0
 	beq _021E911A
@@ -7801,11 +7801,11 @@ ov96_021E92B0: ; 0x021E92B0
 	add r5, r1, #0
 	ldr r2, [sp, #0x10]
 	add r1, r3, #0
-	bl sub_020215C0
+	bl ObjCharTransfer_InitEx
 	add r0, r5, #0
 	add r1, r4, #0
 	bl sub_02022588
-	bl sub_020216C8
+	bl ObjCharTransfer_ClearBuffers
 	bl sub_02022638
 	pop {r3, r4, r5, pc}
 	thumb_func_end ov96_021E92B0
@@ -7814,7 +7814,7 @@ ov96_021E92B0: ; 0x021E92B0
 ov96_021E92D0: ; 0x021E92D0
 	push {r3, lr}
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	pop {r3, pc}
 	thumb_func_end ov96_021E92D0
@@ -11362,7 +11362,7 @@ ov96_021EAD78: ; 0x021EAD78
 	push {r3, lr}
 	ldr r0, [r0]
 	bl ov96_021E8BAC
-	bl Sprite_IsCellAnimationFinished
+	bl Sprite_IsCellAnimationRunning
 	pop {r3, pc}
 	.balign 4, 0
 	thumb_func_end ov96_021EAD78
@@ -12477,11 +12477,11 @@ _021EB578: .word TryChange2dSpriteAnimSeqNo
 
 	thumb_func_start ov96_021EB57C
 ov96_021EB57C: ; 0x021EB57C
-	ldr r3, _021EB584 ; =Sprite_IsCellAnimationFinished
+	ldr r3, _021EB584 ; =Sprite_IsCellAnimationRunning
 	ldr r0, [r0, #4]
 	bx r3
 	nop
-_021EB584: .word Sprite_IsCellAnimationFinished
+_021EB584: .word Sprite_IsCellAnimationRunning
 	thumb_func_end ov96_021EB57C
 
 	thumb_func_start ov96_021EB588
@@ -23202,7 +23202,7 @@ ov96_021F095C: ; 0x021F095C
 	ldr r0, [r4, r0]
 	bl ov96_021E9C0C
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	mov r0, #0x77
 	lsl r0, r0, #4
@@ -32885,7 +32885,7 @@ _021F5598:
 	mov r0, #4
 	bl FontID_Release
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	mov r0, #0
 	add r1, r0, #0
@@ -34560,7 +34560,7 @@ ov96_021F637C: ; 0x021F637C
 	bl ov96_021F61C8
 	mov r0, #0
 	add r1, r0, #0
-	bl sub_02026E50
+	bl RequestSwap3DBuffers
 	pop {r4, pc}
 	thumb_func_end ov96_021F637C
 
@@ -47998,7 +47998,7 @@ ov96_021FCE10: ; 0x021FCE10
 	ldr r0, [r4, r0]
 	bl ov96_021E9C0C
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	mov r0, #0xf7
 	lsl r0, r0, #2
@@ -57764,7 +57764,7 @@ _02201BF0:
 	ldr r0, [r4, r0]
 	bl ov96_021E9C0C
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	ldr r0, _02201C80 ; =0x000005DC
 	ldr r0, [r4, r0]
@@ -63931,7 +63931,7 @@ ov96_02204E58: ; 0x02204E58
 	ldr r0, [r4, r0]
 	bl ov96_021E9C0C
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	mov r0, #0xdb
 	lsl r0, r0, #2
@@ -89539,7 +89539,7 @@ _0221172E:
 	ldr r0, [r4, r0]
 	bl ov96_021E9C0C
 	bl OamManager_Free
-	bl sub_0202168C
+	bl ObjCharTransfer_Destroy
 	bl sub_02022608
 	ldr r0, _022117BC ; =0x0000074C
 	ldr r0, [r4, r0]

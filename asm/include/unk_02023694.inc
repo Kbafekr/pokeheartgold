@@ -4,7 +4,7 @@
 .public AllocFromHeap
 .public FreeToHeap
 .public GF_ExpHeap_FndInitAllocator
-.public Draw3dModel
+.public GF3dRender_DrawModel
 .public sub_0202068C
 .public sub_020206C8
 .public sub_020206E0
@@ -88,7 +88,7 @@
 .public sub_02024B34
 .public sub_02024B38
 .public Sprite_GetVramType
-.public Sprite_IsCellAnimationFinished
+.public Sprite_IsCellAnimationRunning
 .public sub_02024B78
 .public sub_02024BAC
 .public sub_02024BBC
