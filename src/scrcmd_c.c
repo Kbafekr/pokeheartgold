@@ -30,7 +30,7 @@
 #include "unk_02054648.h"
 #include "metatile_behavior.h"
 #include "unk_02055418.h"
-#include "unk_02078E30.h"
+#include "party_menu.h"
 #include "unk_020932A4.h"
 #include "unk_02092BE8.h"
 #include "unk_02097024.h"
@@ -1604,14 +1604,14 @@ BOOL ScrCmd_PartySelectUI(ScriptContext *ctx) {
 
 BOOL ScrCmd_566(ScriptContext *ctx) { //todo: trade screen
     PartyMenuArgs **partyMenu = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA);
-    *partyMenu = PartyMenu_LaunchApp_Unk3(HEAP_ID_32, ctx->fieldSystem);
+    *partyMenu = PartyMenu_LaunchApp_InGameTrade(HEAP_ID_32, ctx->fieldSystem);
     SetupNativeScript(ctx, ScrNative_WaitApplication);
     return TRUE;
 }
 
 BOOL ScrCmd_350(ScriptContext *ctx) { //todo: union pokemon selection
     PartyMenuArgs **partyMenu = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA);
-    *partyMenu = SelectPartyMonAndLearnMove(ctx->fieldSystem->taskman, HEAP_ID_32);
+    *partyMenu = TaskManager_LaunchPartyMenu_UnionRoomBattleSelect(ctx->fieldSystem->taskman, HEAP_ID_32);
     return TRUE;
 }
 
@@ -1619,7 +1619,7 @@ BOOL ScrCmd_PartySelect(ScriptContext *ctx) { //todo: get selected pokemon slot
     u16 *dest_p = ScriptGetVarPointer(ctx);
     PartyMenuArgs **partyMenu = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA);
     GF_ASSERT(*partyMenu != NULL);
-    *dest_p = sub_0203E5C8(*partyMenu);
+    *dest_p = PartyMenuArgs_GetSlot(*partyMenu);
     if (*dest_p == 7) {
         *dest_p = 255;
     }
@@ -1633,16 +1633,16 @@ BOOL ScrCmd_635(ScriptContext *ctx) {
     u16 *r6 = ScriptGetVarPointer(ctx);
     PartyMenuArgs **partyMenuPtr = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA);
     PartyMenuArgs *partyMenu;
-    int r0;
+    int partySlot;
     partyMenu = *partyMenuPtr;
     GF_ASSERT(*partyMenuPtr != NULL);
-    r0 = sub_0203E5C8(*partyMenuPtr);
-    if (r0 == 7) {
+    partySlot = PartyMenuArgs_GetSlot(*partyMenuPtr);
+    if (partySlot == 7) {
         *r5 = 255;
-    } else if (r0 == 6) {
-        *r5 = partyMenu->unk_30[0];
+    } else if (partySlot == 6) {
+        *r5 = partyMenu->selectedOrder[0];
         (*r5)--;
-        *r6 = partyMenu->unk_30[1];
+        *r6 = partyMenu->selectedOrder[1];
         if (*r6 != 0) {
             (*r6)--;
         }
@@ -1659,15 +1659,15 @@ BOOL ScrCmd_639(ScriptContext *ctx) {
     struct PartyMenuArgs **partyMenuPtr = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA);
     struct PartyMenuArgs *partyMenu = *partyMenuPtr;
     GF_ASSERT(partyMenu != NULL);
-    int r0 = sub_0203E5C8(*partyMenuPtr);
-    if (r0 == 7) {
+    int partySlot = PartyMenuArgs_GetSlot(*partyMenuPtr);
+    if (partySlot == 7) {
         *r5 = 255;
-    } else if (r0 == 6) {
-        *r5 = partyMenu->unk_30[0];
+    } else if (partySlot == 6) {
+        *r5 = partyMenu->selectedOrder[0];
         (*r5)--;
-        *sp0 = partyMenu->unk_30[1];
+        *sp0 = partyMenu->selectedOrder[1];
         (*sp0)--;
-        *r7 = partyMenu->unk_30[2];
+        *r7 = partyMenu->selectedOrder[2];
         if (*r7 != 0) {
             (*r7)--;
         }
@@ -1684,15 +1684,15 @@ BOOL ScrCmd_645(ScriptContext *ctx) {
     struct PartyMenuArgs **partyMenuPtr = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA);
     struct PartyMenuArgs *partyMenu = *partyMenuPtr;
     GF_ASSERT(partyMenu != NULL);
-    int r0 = sub_0203E5C8(*partyMenuPtr);
-    if (r0 == 7) {
+    int partySlot = PartyMenuArgs_GetSlot(*partyMenuPtr);
+    if (partySlot == 7) {
         *r5 = 255;
-    } else if (r0 == 6) {
-        *r5 = partyMenu->unk_30[0];
+    } else if (partySlot == 6) {
+        *r5 = partyMenu->selectedOrder[0];
         (*r5)--;
-        *sp0 = partyMenu->unk_30[1];
+        *sp0 = partyMenu->selectedOrder[1];
         (*sp0)--;
-        *r7 = partyMenu->unk_30[2];
+        *r7 = partyMenu->selectedOrder[2];
         if (*r7 != 0) {
             (*r7)--;
         }
@@ -1720,12 +1720,12 @@ BOOL ScrCmd_GetMoveSelection(ScriptContext *ctx) {
 BOOL ScrCmd_PokemonSummaryScreen(ScriptContext *ctx) {
     void **p_work = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA);
     u8 onlySkillsPanel = ScriptReadByte(ctx);
-    u16 r7 = ScriptGetVar(ctx);
-    u16 r3 = ScriptGetVar(ctx);
-    if (onlySkillsPanel == 1) {
-        *p_work = LearnForgetMove_LaunchApp(HEAP_ID_32, ctx->fieldSystem, r7, r3);
+    u16 partySlot = ScriptGetVar(ctx);
+    u16 moveToLearn = ScriptGetVar(ctx);
+    if (onlySkillsPanel == TRUE) {
+        *p_work = LearnForgetMove_LaunchApp(HEAP_ID_32, ctx->fieldSystem, partySlot, moveToLearn);
     } else {
-        *p_work = PokemonSummary_LaunchApp(HEAP_ID_32, ctx->fieldSystem, r7, r3);
+        *p_work = PokemonSummary_LaunchApp(HEAP_ID_32, ctx->fieldSystem, partySlot, moveToLearn);
     }
     SetupNativeScript(ctx, ScrNative_WaitApplication);
     return TRUE;
@@ -1795,7 +1795,7 @@ BOOL ScrCmd_RestoreOverworld(ScriptContext *ctx) {
 }
 
 BOOL ScrCmd_436(ScriptContext *ctx) {
-    sub_0205525C(ctx->fieldSystem->taskman);
+    CallTask_LeaveOverworld(ctx->fieldSystem->taskman);
     return TRUE;
 }
 
@@ -2123,7 +2123,7 @@ BOOL ScrCmd_NicknameInput(ScriptContext *ctx) {
     } else {
         mon = Party_GetMonByIndex(SaveArray_Party_Get(fieldSystem->saveData), partyPos);
     }
-    GetMonData(mon, MON_DATA_NICKNAME, nickname);
+    GetMonData(mon, MON_DATA_NICKNAME_FLAT, nickname);
     var_ret = ScriptGetVarPointer(ctx);
     species = GetMonData(mon, MON_DATA_SPECIES, NULL);
     CallTask_NamingScreen(ctx->taskman, NAME_SCREEN_POKEMON, species, POKEMON_NAME_LENGTH, partyPos, nickname, var_ret);
@@ -3962,7 +3962,7 @@ BOOL ScrCmd_552(ScriptContext *ctx) {
     u16 *r5 = ScriptGetVarPointer(ctx);
     struct PartyMenuArgs **partyMenu = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA);
     GF_ASSERT(*partyMenu != NULL);
-    *r6 = sub_0203E5C8(*partyMenu);
+    *r6 = PartyMenuArgs_GetSlot(*partyMenu);
     if (*r6 == 7) {
         *r6 = 255;
     }
@@ -4748,23 +4748,23 @@ BOOL ScrCmd_CameronPhoto(ScriptContext *ctx) {
     return TRUE;
 }
 
-BOOL ScrCmd_616(ScriptContext *ctx) {
+BOOL ScrCmd_CountSavedPhotos(ScriptContext *ctx) {
     u16 *p_ret = ScriptGetVarPointer(ctx);
     *p_ret = PhotoAlbum_GetNumSaved(Save_PhotoAlbum_Get(ctx->fieldSystem->saveData));
     return FALSE;
 }
 
-BOOL ScrCmd_617(ScriptContext *ctx) {
-    sub_0206A860(ctx->fieldSystem);
+BOOL ScrCmd_OpenPhotoAlbum(ScriptContext *ctx) {
+    FieldSystem_ViewSavedPhotos(ctx->fieldSystem);
     return TRUE;
 }
 
-BOOL ScrCmd_621(ScriptContext *ctx) {
+BOOL ScrCmd_PlaceStarterBallsInElmsLab(ScriptContext *ctx) {
     FieldSystem *fieldSystem = ctx->fieldSystem;
-    const struct UnkStruct_020FACDC sp4[3] = {
-        {0x00083000, 0x00000000, 0x00041000},
-        {0x0008D000, 0x00000000, 0x00041000},
-        {0x00088000, 0x00000000, 0x00048000},
+    const VecFx32 ballCoords[3] = {
+        {FX32_CONST(131), 0, FX32_CONST(65)},
+        {FX32_CONST(141), 0, FX32_CONST(65)},
+        {FX32_CONST(136), 0, FX32_CONST(72)},
     };
     int n, i;
 
@@ -4779,7 +4779,7 @@ BOOL ScrCmd_621(ScriptContext *ctx) {
         n = 3;
     }
     for (i = 0; i < n; i++) {
-        ov01_021F3C0C(fieldSystem->unk9C, 0x8D, &sp4[i], 0, fieldSystem->unk54);
+        ov01_021F3C0C(fieldSystem->unk9C, 0x8D, &ballCoords[i], 0, fieldSystem->unk54);
     }
     return FALSE;
 }
