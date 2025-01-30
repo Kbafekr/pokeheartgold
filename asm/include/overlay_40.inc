@@ -1,6 +1,6 @@
 #include <nitro/fs/overlay.h>
 #pragma once
-.public sub_02002B8C
+.public TextFlags_SetCanTouchSpeedUpPrint
 .public FontID_String_GetWidth
 .public FontID_String_AllCharsValid
 .public FontID_String_GetWidthMultiline
@@ -34,8 +34,8 @@
 .public Pokepic_SetAttr
 .public PokepicManager_HandleLoadImgAndOrPltt
 .public G2dRenderer_SetSubSurfaceCoords
-.public sub_02009FE8
-.public sub_0200A080
+.public G2dRenderer_SetObjCharTransferReservedRegion
+.public G2dRenderer_SetPlttTransferReservedRegion
 .public NewMsgDataFromNarc
 .public DestroyMsgData
 .public ReadMsgDataIntoString
@@ -53,9 +53,9 @@
 .public SpriteRenderer_Create
 .public SpriteRenderer_CreateGfxHandler
 .public SpriteRenderer_GetG2dRendererPtr
-.public sub_0200CF70
-.public sub_0200CFF4
-.public sub_0200D020
+.public SpriteRenderer_CreateOamCharPlttManagers
+.public SpriteRenderer_CreateSpriteList
+.public SpriteGfxHandler_RenderAndAnimateSprites
 .public thunk_OamManager_ApplyAndResetBuffers
 .public SpriteRenderer_Delete
 .public SpriteRenderer_Init2DGfxResManagersFromCountsArray
@@ -67,7 +67,7 @@
 .public SpriteRenderer_LoadAnimResObjFromNarcId
 .public SpriteRenderer_LoadAnimResObjFromOpenNarc
 .public SpriteRenderer_LoadResourcesAndCreateSprite
-.public sub_0200D934
+.public GfGfxHandler_GetPlttProxy
 .public SpriteGfxHandler_UnloadCharObjById
 .public SpriteGfxHandler_UnloadPlttObjById
 .public SpriteGfxHandler_UnloadCellObjById
@@ -206,7 +206,7 @@
 .public GetIGTSeconds
 .public Save_GameStats_Get
 .public GameStats_GetCapped
-.public GameStats_AddSpecial
+.public GameStats_AddScore
 .public FrontierData_BattlePointAction
 .public Save_FrontierData_Get
 .public sub_0202FBF0

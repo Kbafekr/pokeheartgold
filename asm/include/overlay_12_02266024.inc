@@ -1,9 +1,9 @@
 #include <nitro/fs/overlay.h>
 #pragma once
-.public sub_02002BC4
-.public sub_02002BD4
-.public sub_02002BE4
-.public sub_02002BF4
+.public TextFlags_GetHasSpedUpInput
+.public TextFlags_ResetHasSpedUpInput
+.public TextFlags_GetHasContinuedInput
+.public TextFlags_ResetHasContinuedInput
 .public FontID_String_GetWidth
 .public PaletteData_LoadPalette
 .public PaletteData_LoadNarc
@@ -34,7 +34,7 @@
 .public SpriteRenderer_LoadAnimResObjFromNarcId
 .public SpriteRenderer_LoadAnimResObjFromOpenNarc
 .public SpriteRenderer_LoadResourcesAndCreateSprite
-.public sub_0200D934
+.public GfGfxHandler_GetPlttProxy
 .public SpriteGfxHandler_UnloadCharObjById
 .public SpriteGfxHandler_UnloadPlttObjById
 .public SpriteGfxHandler_UnloadCellObjById
@@ -88,8 +88,8 @@
 .public AddTextPrinterParameterizedWithColorAndSpacing
 .public sub_02021AC8
 .public sub_02021B5C
-.public Set2dSpriteAnimSeqNo
-.public sub_02024AA8
+.public Sprite_SetAnimCtrlSeq
+.public Sprite_SetPalOffsetRespectVramOffset
 .public Sprite_GetImageProxy
 .public TouchscreenHitbox_FindRectAtTouchNew
 .public GF_AssertFail
@@ -133,8 +133,8 @@
 .public BattleSystem_GetBattleType
 .public BattleSystem_GetOpponentData
 .public BattleSystem_GetPartyMon
-.public ov12_0223A8E4
-.public ov12_0223A8EC
+.public BattleSystem_GetSpriteRenderer
+.public BattleSystem_GetGfxHandler
 .public BattleSystem_GetMessageData
 .public BattleSystem_GetPaletteData
 .public BattleSystem_GetMessageFormat

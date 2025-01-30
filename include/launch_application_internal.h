@@ -2,8 +2,8 @@
 #define POKEHEARTGOLD_FIELD_LAUNCH_APPLICATION_INTERNAL_H
 
 #include "launch_application.h"
+#include "naming_screen.h"
 #include "unk_0202C034.h"
-#include "unk_02082908.h"
 
 typedef enum PartyMenuMoveSelectState {
     PMMS_OPEN_PARTY_MENU,
@@ -54,7 +54,7 @@ typedef struct UnkStruct_0203F0D0 {
     SaveFashionDataSub *unk4;
     FashionCase *fashionCase;
     Options *options;
-    GAME_STATS *gameStats;
+    GameStats *gameStats;
     PlayerProfile *profile;
     int *unk18;
     int unk1C;
@@ -74,9 +74,9 @@ typedef struct WirelessTradeSelectMonArgs {
     Party *party;
     SavePalPad *palPad;
     SaveData *saveData;
-    SaveUnk26 *unk14;
+    SaveWiFiHistory *wifiHistory;
     Options *options;
-    GAME_STATS *gameStats;
+    GameStats *gameStats;
     Pokedex *pokedex;
     int unk24;
     int unk28;
@@ -131,11 +131,11 @@ typedef struct UnkStruct_0203F844 {
     PCStorage *pcStorage;
     Pokedex *pokedex;
     UnkStruct_021D2230 *unk14;
-    void *unk18;
+    SaveWiFiHistory *wifiHistory;
     PlayerProfile *profile;
     SaveData *saveData;
     Options *options;
-    GAME_STATS *gameStats;
+    GameStats *gameStats;
     Bag *bag;
     BOOL natDexEnabled;
     void *unk34;
@@ -154,4 +154,4 @@ typedef struct PartyMenuMoveSelectData {
     PokemonSummaryArgs *pokemonSummary;
 } PartyMenuMoveSelectData;
 
-#endif //POKEHEARTGOLD_FIELD_LAUNCH_APPLICATION_INTERNAL_H
+#endif // POKEHEARTGOLD_FIELD_LAUNCH_APPLICATION_INTERNAL_H

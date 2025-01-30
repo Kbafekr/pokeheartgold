@@ -11,9 +11,9 @@
 .public FreeToHeap
 .public LCRandom
 .public Sprite_SetMatrix
-.public Set2dSpriteAnimSeqNo
-.public Get2dSpriteCurrentAnimSeqNo
-.public Sprite_TickCellOrMulticellAnimation
+.public Sprite_SetAnimCtrlSeq
+.public Sprite_GetAnimationNumber
+.public Sprite_TickAnimCtrlFrame
 .public Sprite_SetAnimCtrlCurrentFrame
 .public Sprite_GetAnimCtrlCurrentFrame
 .public GF_AssertFail
@@ -22,7 +22,7 @@
 .public Save_PlayerData_GetProfileAddr
 .public PlayerProfile_GetTrainerGender
 .public PlayerProfile_GetVersion
-.public sub_0202CA44
+.public Save_WiFiHistory_Get
 .public sub_02034818
 .public sub_0203769C
 .public sub_02039F68

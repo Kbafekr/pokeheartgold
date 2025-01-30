@@ -47,8 +47,8 @@
 .public IsBrightnessTransitionActive
 .public SpriteRenderer_CreateGfxHandler
 .public SpriteRenderer_GetG2dRendererPtr
-.public sub_0200CFF4
-.public sub_0200D020
+.public SpriteRenderer_CreateSpriteList
+.public SpriteGfxHandler_RenderAndAnimateSprites
 .public SpriteRenderer_Init2DGfxResManagersFromCountsArray
 .public SpriteRenderer_LoadCharResObjFromOpenNarc
 .public sub_0200D68C
@@ -146,7 +146,7 @@
 .public GF_SinDeg
 .public LCRandom
 .public GF_CreateNewVramTransferTask
-.public sub_02022808
+.public ObjPlttTransfer_GetPaletteVramOffset
 .public Camera_SetAnglePos
 .public Camera_GetAngle
 .public Camera_SetLookAtCamTarget
@@ -234,8 +234,8 @@
 .public ov07_02234B5C
 .public ov07_022377DC
 .public ov07_022377F4
-.public ov12_0223A8E4
-.public ov12_0223A8EC
+.public BattleSystem_GetSpriteRenderer
+.public BattleSystem_GetGfxHandler
 .public BattleSystem_GetPaletteData
 .public ov12_0223BB88
 .public ov12_0223C1C4

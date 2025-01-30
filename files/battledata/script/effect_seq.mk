@@ -13,7 +13,8 @@ $(EFFECT_SCRIPT_DEPS):
 
 $(EFFECT_SCRIPT_BINS): %.bin: %.s
 $(EFFECT_SCRIPT_BINS): %.bin: %.s %.d
-	$(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $<
+	@echo $(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $<
+	@$(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $< || { rm -f $*.d; exit 1; }
 	@$(call fixdep,$*.d)
 	@$(SED) -i 's/\.o/.bin/' $*.d
 	$(OBJCOPY) -O binary --file-alignment 4 $*.o $@
@@ -26,4 +27,8 @@ endif
 
 $(EFFECT_SCRIPT_NARC): $(EFFECT_SCRIPT_BINS)
 
-FS_CLEAN_TARGETS += $(EFFECT_SCRIPT_NARC) $(EFFECT_SCRIPT_BINS) $(EFFECT_SCRIPT_OBJS) $(EFFECT_SCRIPT_DEPS)
+clean-effect-seq:
+	$(RM) $(EFFECT_SCRIPT_NARC) $(EFFECT_SCRIPT_BINS) $(EFFECT_SCRIPT_OBJS) $(EFFECT_SCRIPT_DEPS)
+
+.PHONY: clean-effect-seq
+clean-filesystem: clean-effect-seq

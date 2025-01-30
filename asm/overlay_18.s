@@ -6383,7 +6383,7 @@ _021E8C0E:
 	bl ov18_021F1004
 	ldr r0, _021E8C2C ; =0x0000066C
 	ldr r0, [r5, r0]
-	bl sub_0200D020
+	bl SpriteGfxHandler_RenderAndAnimateSprites
 	mov r0, #1
 	pop {r3, r4, r5, pc}
 	nop
@@ -22606,7 +22606,7 @@ ov18_021F1024: ; 0x021F1024
 	sub r0, r7, #4
 	ldr r0, [r4, r0]
 	mov r3, #0x20
-	bl sub_0200CF70
+	bl SpriteRenderer_CreateOamCharPlttManagers
 	ldr r3, _021F10C4 ; =_021FA380
 	add r2, sp, #0
 	ldmia r3!, {r0, r1}
@@ -22620,7 +22620,7 @@ ov18_021F1024: ; 0x021F1024
 	add r1, r1, #4
 	ldr r1, [r4, r1]
 	mov r2, #0x78
-	bl sub_0200CFF4
+	bl SpriteRenderer_CreateSpriteList
 	sub r1, r7, #4
 	ldr r0, [r4, r1]
 	add r1, r1, #4
@@ -23188,7 +23188,7 @@ ov18_021F14B4: ; 0x021F14B4
 	ldr r1, _021F14F8 ; =0x0000C550
 	mov r2, #1
 	add r6, r3, #0
-	bl sub_0200D944
+	bl GfGfxHandler_GetPlttNumById
 	mov r3, #1
 	add r7, r0, #0
 	str r3, [sp]
@@ -23262,7 +23262,7 @@ ov18_021F1534: ; 0x021F1534
 	ldr r1, _021F1594 ; =0x0000C551
 	ldr r0, [r5, r0]
 	mov r2, #2
-	bl sub_0200D944
+	bl GfGfxHandler_GetPlttNumById
 	add r6, r0, #0
 	ldr r1, [sp, #4]
 	add r0, r7, #0
@@ -24290,7 +24290,7 @@ ov18_021F1D98: ; 0x021F1D98
 	ldr r1, _021F1DE0 ; =0x0000C55B
 	ldr r0, [r6, r0]
 	mov r2, #2
-	bl sub_0200D944
+	bl GfGfxHandler_GetPlttNumById
 	add r1, r0, #0
 	ldr r0, [r5, r4]
 	bl UnkImageStruct_SetSpritePalIndex
@@ -24819,7 +24819,7 @@ ov18_021F21FC: ; 0x021F21FC
 	ldr r1, _021F226C ; =0x0000C558
 	ldr r0, [r5, r0]
 	mov r2, #2
-	bl sub_0200D944
+	bl GfGfxHandler_GetPlttNumById
 	add r6, r0, #0
 	ldr r0, [sp, #4]
 	bl ov18_021F9688
@@ -25113,7 +25113,7 @@ _021F248A:
 	ldr r1, _021F24D8 ; =0x0000C55A
 	ldr r0, [r7, r0]
 	mov r2, #2
-	bl sub_0200D944
+	bl GfGfxHandler_GetPlttNumById
 	add r1, r0, #0
 	mov r0, #0x67
 	lsl r0, r0, #4
@@ -26783,7 +26783,7 @@ _021F3214:
 	ldr r1, _021F3290 ; =0x0000C55A
 	ldr r0, [r5, r0]
 	mov r2, #2
-	bl sub_0200D944
+	bl GfGfxHandler_GetPlttNumById
 	add r1, r0, #0
 	mov r0, #0x67
 	lsl r0, r0, #4
@@ -38108,7 +38108,7 @@ _021F8AA0:
 	add r0, r4, #0
 	add r0, #0xb4
 	ldr r0, [r0]
-	bl sub_0202457C
+	bl SpriteList_RenderAndAnimateSprites
 	add r0, r4, #0
 	bl ov18_021F8C68
 	add sp, #8
@@ -38737,7 +38737,7 @@ ov18_021F8FA0: ; 0x021F8FA0
 	add r1, #0xb4
 	str r0, [r1]
 	ldr r0, [r4, #0x14]
-	bl sub_02024BBC
+	bl ClearMainOAM
 	add r0, r4, #0
 	bl ov18_021F8F28
 	add r0, r4, #0
@@ -38793,7 +38793,7 @@ ov18_021F8FF8: ; 0x021F8FF8
 	lsl r0, r0, #2
 	ldr r0, [r4, r0]
 	mov r1, #1
-	bl sub_0200B12C
+	bl GF_PlttResObj_GetVramSlotNum
 	add r2, r0, #0
 	lsl r2, r2, #0x14
 	ldr r0, [r4, #4]
@@ -38883,7 +38883,7 @@ ov18_021F9068: ; 0x021F9068
 	lsl r0, r0, #2
 	ldr r0, [r4, r0]
 	mov r1, #1
-	bl sub_0200B12C
+	bl GF_PlttResObj_GetVramSlotNum
 	add r2, r0, #0
 	lsl r2, r2, #0x14
 	ldr r0, [r4, #4]
@@ -38982,7 +38982,7 @@ ov18_021F9150: ; 0x021F9150
 	str r0, [r5, r1]
 	ldr r0, [r5, r1]
 	mov r1, #1
-	bl sub_0200B12C
+	bl GF_PlttResObj_GetVramSlotNum
 	add r2, r0, #0
 	lsl r2, r2, #0x14
 	ldr r0, [r5, #4]
@@ -39228,7 +39228,7 @@ ov18_021F9370: ; 0x021F9370
 	lsl r0, r0, #0xe
 	str r0, [sp, #0x5c]
 	add r0, sp, #0x50
-	bl sub_02024714
+	bl Sprite_Create
 	mov r1, #0x81
 	lsl r1, r1, #2
 	str r0, [r5, r1]
@@ -39239,7 +39239,7 @@ ov18_021F9370: ; 0x021F9370
 	mov r0, #0x81
 	lsl r0, r0, #2
 	ldr r0, [r5, r0]
-	bl sub_02024A48
+	bl Sprite_SetPalIndexRespectVramOffset
 	mov r0, #0x87
 	lsl r0, r0, #2
 	ldr r0, [r5, r0]
@@ -39308,7 +39308,7 @@ ov18_021F9370: ; 0x021F9370
 	lsl r0, r0, #0xe
 	str r0, [sp, #0x5c]
 	add r0, sp, #0x50
-	bl sub_02024714
+	bl Sprite_Create
 	mov r1, #0x86
 	lsl r1, r1, #2
 	str r0, [r5, r1]
@@ -39326,7 +39326,7 @@ _021F947A:
 	lsl r0, r0, #2
 	ldr r0, [r5, r0]
 	mov r1, #0
-	bl Set2dSpriteVisibleFlag
+	bl Sprite_SetVisibleFlag
 	add sp, #0x70
 	pop {r3, r4, r5, r6, r7, pc}
 _021F948A:
@@ -39335,7 +39335,7 @@ _021F948A:
 	mov r0, #0x86
 	lsl r0, r0, #2
 	ldr r0, [r5, r0]
-	bl sub_02024A48
+	bl Sprite_SetPalIndexRespectVramOffset
 	add sp, #0x70
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -39388,7 +39388,7 @@ ov18_021F94BC: ; 0x021F94BC
 	lsl r0, r1, #0x11
 	str r0, [sp, #0x30]
 	add r0, sp, #0x24
-	bl sub_02024714
+	bl Sprite_Create
 	mov r1, #0x1f
 	lsl r1, r1, #4
 	str r0, [r4, r1]
@@ -39440,7 +39440,7 @@ ov18_021F9518: ; 0x021F9518
 	lsl r0, r0, #0x10
 	str r0, [sp, #0x30]
 	add r0, sp, #0x24
-	bl sub_02024714
+	bl Sprite_Create
 	mov r1, #0x8b
 	lsl r1, r1, #2
 	str r0, [r5, r1]
@@ -39492,7 +39492,7 @@ ov18_021F95AC: ; 0x021F95AC
 _021F95B8:
 	ldr r0, [r5, r6]
 	add r1, r7, #0
-	bl Set2dSpriteVisibleFlag
+	bl Sprite_SetVisibleFlag
 	add r4, r4, #1
 	add r5, #0x14
 	cmp r4, #4

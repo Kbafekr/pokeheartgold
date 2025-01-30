@@ -178,19 +178,19 @@ ov89_02258800: ; 0x02258800
 	ldr r2, _02258AE8 ; =ov89_0225C9EC
 	mov r3, #0x20
 	str r0, [r5, #0x1c]
-	bl sub_0200CF70
+	bl SpriteRenderer_CreateOamCharPlttManagers
 	ldr r1, _02258AEC ; =0x00200010
 	mov r0, #1
-	bl sub_02009FE8
+	bl G2dRenderer_SetObjCharTransferReservedRegion
 	mov r0, #1
-	bl sub_0200A080
+	bl G2dRenderer_SetPlttTransferReservedRegion
 	ldr r0, [r5, #0x1c]
 	bl SpriteRenderer_CreateGfxHandler
 	str r0, [r5, #0x20]
 	ldr r0, [r5, #0x1c]
 	ldr r1, [r5, #0x20]
 	mov r2, #0x80
-	bl sub_0200CFF4
+	bl SpriteRenderer_CreateSpriteList
 	ldr r0, [r5, #0x1c]
 	ldr r1, [r5, #0x20]
 	ldr r2, _02258AF0 ; =ov89_0225CA00
@@ -276,9 +276,9 @@ _02258A4A:
 	mov r0, #1
 	bl TextFlags_SetCanABSpeedUpPrint
 	mov r0, #0
-	bl sub_02002B50
+	bl TextFlags_SetAutoScrollParam
 	mov r0, #0
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	ldr r0, _02258AF8 ; =ov89_02258FF4
 	ldr r2, _02258AFC ; =0x0000EA60
 	add r1, r5, #0
@@ -871,9 +871,9 @@ ov89_02258F00: ; 0x02258F00
 	mov r0, #0
 	bl TextFlags_SetCanABSpeedUpPrint
 	mov r0, #0
-	bl sub_02002B50
+	bl TextFlags_SetAutoScrollParam
 	mov r0, #0
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	bl sub_0203A914
 	add r0, r5, #0
 	bl OverlayManager_FreeData
@@ -894,8 +894,8 @@ ov89_02258FF4: ; 0x02258FF4
 	add r0, r4, #0
 	bl ov89_02259C0C
 	ldr r0, [r4, #0x20]
-	bl sub_0200D020
-	bl sub_0200D03C
+	bl SpriteGfxHandler_RenderAndAnimateSprites
+	bl SpriteRenderer_thunk_UpdateCellTransferStateManager
 	mov r0, #0
 	add r1, r0, #0
 	bl RequestSwap3DBuffers
@@ -3232,7 +3232,7 @@ _0225A2E6:
 	str r0, [sp, #0x50]
 	ldr r1, [sp, #0x98]
 	add r0, r7, #0
-	bl sub_0200D934
+	bl GfGfxHandler_GetPlttProxy
 	mov r1, #0
 	str r0, [sp, #0x54]
 	ldr r0, [sp, #0x30]

@@ -13,7 +13,8 @@ $(BTL_SUBSCRIPT_SCRIPT_DEPS):
 
 $(BTL_SUBSCRIPT_SCRIPT_BINS): %.bin: %.s
 $(BTL_SUBSCRIPT_SCRIPT_BINS): %.bin: %.s %.d
-	$(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $<
+	@echo $(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $<
+	@$(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $< || { rm -f $*.d; exit 1; }
 	@$(call fixdep,$*.d)
 	@$(SED) -i 's/\.o/.bin/' $*.d
 	$(OBJCOPY) -O binary --file-alignment 4 $*.o $@
@@ -26,4 +27,8 @@ endif
 
 $(BTL_SUBSCRIPT_SCRIPT_NARC): $(BTL_SUBSCRIPT_SCRIPT_BINS)
 
-FS_CLEAN_TARGETS += $(BTL_SUBSCRIPT_SCRIPT_NARC) $(BTL_SUBSCRIPT_SCRIPT_BINS) $(BTL_SUBSCRIPT_SCRIPT_OBJS) $(BTL_SUBSCRIPT_SCRIPT_DEPS)
+clean-subscript:
+	$(RM) $(BTL_SUBSCRIPT_SCRIPT_NARC) $(BTL_SUBSCRIPT_SCRIPT_BINS) $(BTL_SUBSCRIPT_SCRIPT_OBJS) $(BTL_SUBSCRIPT_SCRIPT_DEPS)
+
+.PHONY: clean-subscript
+clean-filesystem: clean-subscript

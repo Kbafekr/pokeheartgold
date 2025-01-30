@@ -799,7 +799,7 @@ DrawFrameAndWindow2: ; 0x0200E998
 	bl CopyWindowToVram
 _0200E9B2:
 	add r0, r6, #0
-	bl sub_020027F0
+	bl TextPrinter_SetDownArrowBaseTile
 	pop {r4, r5, r6, pc}
 	.balign 4, 0
 	thumb_func_end DrawFrameAndWindow2
@@ -1668,7 +1668,7 @@ _0200F094:
 	bl CopyWindowToVram
 _0200F0A0:
 	add r0, r6, #0
-	bl sub_020027F0
+	bl TextPrinter_SetDownArrowBaseTile
 	add sp, #0x28
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -2273,7 +2273,7 @@ _0200F582:
 	ldr r0, [r4, r0]
 	mov r1, #1
 	ldr r0, [r0]
-	bl Set2dSpriteAnimSeqNo
+	bl Sprite_SetAnimCtrlSeq
 	b _0200F5A8
 _0200F594:
 	sub r0, #0xb
@@ -2292,9 +2292,9 @@ _0200F5A8:
 	mov r1, #1
 	ldr r0, [r0]
 	lsl r1, r1, #0xc
-	bl Sprite_TickCellOrMulticellAnimation
+	bl Sprite_TickAnimCtrlFrame
 	ldr r0, [r4]
-	bl sub_0202457C
+	bl SpriteList_RenderAndAnimateSprites
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
 _0200F5C0: .word 0x0000016F
@@ -2430,7 +2430,7 @@ _0200F694:
 	lsl r1, r1, #2
 	str r0, [r4, r1]
 	ldr r0, [r4]
-	bl sub_0202457C
+	bl SpriteList_RenderAndAnimateSprites
 	mov r0, #0x10
 	mov r1, #1
 	bl GfGfx_EngineBTogglePlanes
@@ -2572,7 +2572,7 @@ sub_0200F748: ; 0x0200F748
 	ldr r1, _0200F828 ; =0x00015CD5
 	bl Get2DGfxResObjById
 	ldr r1, [sp, #4]
-	bl sub_0200B0F8
+	bl GF_PlttResObj_GetPlttProxy
 	mov r1, #1
 	bl NNS_G2dGetImagePaletteLocation
 	add r5, r0, #0

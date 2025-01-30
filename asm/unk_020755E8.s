@@ -139,7 +139,7 @@ sub_02075630: ; 0x02075630
 	add r0, #0xac
 	ldr r0, [r0]
 	mov r3, #0x20
-	bl sub_0200CF70
+	bl SpriteRenderer_CreateOamCharPlttManagers
 	add r0, r5, #0
 	add r1, r5, #0
 	add r0, #0xac
@@ -147,7 +147,7 @@ sub_02075630: ; 0x02075630
 	ldr r0, [r0]
 	ldr r1, [r1]
 	mov r2, #0x10
-	bl sub_0200CFF4
+	bl SpriteRenderer_CreateSpriteList
 	ldr r4, _0207576C ; =_020FFEFC
 	add r3, sp, #0x10
 	add r2, r3, #0
@@ -907,7 +907,7 @@ sub_02075A7C: ; 0x02075A7C
 	mov r0, #1
 	bl TextFlags_SetCanABSpeedUpPrint
 	mov r0, #1
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	bl sub_0203A880
 	add r0, r4, #0
 	add sp, #0x24
@@ -1024,7 +1024,7 @@ sub_02075D4C: ; 0x02075D4C
 	mov r0, #0
 	bl TextFlags_SetCanABSpeedUpPrint
 	mov r0, #0
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	ldr r0, _02075E10 ; =gSystem + 0x60
 	mov r1, #1
 	strb r1, [r0, #9]
@@ -1818,7 +1818,7 @@ _02076478:
 	bl GameStats_Inc
 	ldr r0, [r4, #0x50]
 	mov r1, #0x15
-	bl GameStats_AddSpecial
+	bl GameStats_AddScore
 	ldr r0, [r4, #0x28]
 	mov r1, #0x4d
 	mov r2, #0
@@ -2947,7 +2947,7 @@ _02076D62:
 	bl GameStats_Inc
 	ldr r0, [r4, #0x50]
 	mov r1, #0x15
-	bl GameStats_AddSpecial
+	bl GameStats_AddScore
 	add r0, r5, #0
 	bl FreeToHeap
 	ldr r0, [r4, #0x4c]
@@ -3474,7 +3474,7 @@ _020772C0:
 	add r0, r4, #0
 	add r0, #0xb0
 	ldr r0, [r0]
-	bl sub_0200D020
+	bl SpriteGfxHandler_RenderAndAnimateSprites
 	bl thunk_OamManager_ApplyAndResetBuffers
 _020772CE:
 	bl GF_RunVramTransferTasks

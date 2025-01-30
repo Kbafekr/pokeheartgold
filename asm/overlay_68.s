@@ -156,7 +156,7 @@ _021E5A22:
 	mov r0, #0x12
 	lsl r0, r0, #4
 	ldr r0, [r5, r0]
-	bl sub_0200D020
+	bl SpriteGfxHandler_RenderAndAnimateSprites
 	mov r0, #0
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
@@ -197,7 +197,7 @@ ov68_021E5A58: ; 0x021E5A58
 	and r0, r1
 	str r0, [r2]
 	mov r0, #1
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	ldr r0, [r4]
 	ldr r0, [r0, #0xc]
 	bl sub_020183F0
@@ -277,7 +277,7 @@ ov68_021E5B14: ; 0x021E5B14
 	ldr r1, [r4, r1]
 	bl sub_02018410
 	mov r0, #0
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	bl GF_DestroyVramTransferManager
 	mov r0, #0
 	add r1, r0, #0
@@ -2663,13 +2663,13 @@ ov68_021E6DDC: ; 0x021E6DDC
 	sub r0, r7, #4
 	ldr r0, [r4, r0]
 	mov r3, #0x20
-	bl sub_0200CF70
+	bl SpriteRenderer_CreateOamCharPlttManagers
 	sub r1, r7, #4
 	ldr r0, [r4, r1]
 	add r1, r1, #4
 	ldr r1, [r4, r1]
 	mov r2, #0xc
-	bl sub_0200CFF4
+	bl SpriteRenderer_CreateSpriteList
 	sub r1, r7, #4
 	ldr r0, [r4, r1]
 	add r1, r1, #4

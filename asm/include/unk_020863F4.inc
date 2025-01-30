@@ -11,8 +11,8 @@
 .public NewString_ReadMsgData
 .public SpriteRenderer_Create
 .public SpriteRenderer_CreateGfxHandler
-.public sub_0200CF70
-.public sub_0200CFF4
+.public SpriteRenderer_CreateOamCharPlttManagers
+.public SpriteRenderer_CreateSpriteList
 .public SpriteRenderer_Init2DGfxResManagersFromCountsArray
 .public SpriteRenderer_LoadCharResObjFromOpenNarc
 .public sub_0200D644
@@ -20,7 +20,7 @@
 .public SpriteRenderer_LoadCellResObjFromOpenNarc
 .public SpriteRenderer_LoadAnimResObjFromOpenNarc
 .public SpriteRenderer_LoadResourcesAndCreateSprite
-.public sub_0200D934
+.public GfGfxHandler_GetPlttProxy
 .public UnkImageStruct_Delete
 .public UnkImageStruct_TickSpriteAnimation1Frame
 .public UnkImageStruct_SetSpriteAnimSeqNo

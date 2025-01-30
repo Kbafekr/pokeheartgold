@@ -13,7 +13,8 @@ $(MOVE_SCRIPT_DEPS):
 
 $(MOVE_SCRIPT_BINS): %.bin: %.s
 $(MOVE_SCRIPT_BINS): %.bin: %.s %.d
-	$(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $<
+	@echo $(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $<
+	@$(WINE) $(MWAS) $(MWASFLAGS) $(DEPFLAGS) -o $*.o $< || { rm -f $*.d; exit 1; }
 	@$(call fixdep,$*.d)
 	@$(SED) -i 's/\.o/.bin/' $*.d
 	$(OBJCOPY) -O binary --file-alignment 4 $*.o $@
@@ -26,4 +27,8 @@ endif
 
 $(MOVE_SCRIPT_NARC): $(MOVE_SCRIPT_BINS)
 
-FS_CLEAN_TARGETS += $(MOVE_SCRIPT_NARC) $(MOVE_SCRIPT_BINS) $(MOVE_SCRIPT_OBJS) $(MOVE_SCRIPT_DEPS)
+clean-move-seq:
+	$(RM) $(MOVE_SCRIPT_NARC) $(MOVE_SCRIPT_BINS) $(MOVE_SCRIPT_OBJS) $(MOVE_SCRIPT_DEPS)
+
+.PHONY: clean-move-seq
+clean-filesystem: clean-move-seq

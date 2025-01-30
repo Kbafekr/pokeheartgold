@@ -1,8 +1,8 @@
 #include <nitro/fs/overlay.h>
 #pragma once
 .public TextFlags_SetCanABSpeedUpPrint
-.public sub_02002B50
-.public sub_02002B8C
+.public TextFlags_SetAutoScrollParam
+.public TextFlags_SetCanTouchSpeedUpPrint
 .public FontID_Alloc
 .public FontID_Release
 .public FontID_String_GetWidth
@@ -31,8 +31,8 @@
 .public GfGfxLoader_LoadScrnDataFromOpenNarc
 .public GfGfxLoader_LoadFromOpenNarc
 .public G2dRenderer_SetSubSurfaceCoords
-.public sub_02009FE8
-.public sub_0200A080
+.public G2dRenderer_SetObjCharTransferReservedRegion
+.public G2dRenderer_SetPlttTransferReservedRegion
 .public NewMsgDataFromNarc
 .public DestroyMsgData
 .public ReadMsgDataIntoString
@@ -44,11 +44,11 @@
 .public SpriteRenderer_Create
 .public SpriteRenderer_CreateGfxHandler
 .public SpriteRenderer_GetG2dRendererPtr
-.public sub_0200CF70
-.public sub_0200CFF4
-.public sub_0200D020
+.public SpriteRenderer_CreateOamCharPlttManagers
+.public SpriteRenderer_CreateSpriteList
+.public SpriteGfxHandler_RenderAndAnimateSprites
 .public thunk_OamManager_ApplyAndResetBuffers
-.public sub_0200D03C
+.public SpriteRenderer_thunk_UpdateCellTransferStateManager
 .public SpriteRenderer_Delete
 .public SpriteRenderer_Init2DGfxResManagersFromCountsArray
 .public SpriteRenderer_LoadCharResObjFromOpenNarc
@@ -57,7 +57,7 @@
 .public SpriteRenderer_LoadCellResObjFromOpenNarc
 .public SpriteRenderer_LoadAnimResObjFromOpenNarc
 .public SpriteRenderer_LoadResourcesAndCreateSprite
-.public sub_0200D934
+.public GfGfxHandler_GetPlttProxy
 .public SpriteRenderer_UnloadResourcesAndRemoveGfxHandler
 .public UnkImageStruct_Delete
 .public TickSpriteAnimation1Frame

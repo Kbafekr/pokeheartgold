@@ -14,7 +14,7 @@ Static main
     Object src/list_menu.o
     Object src/list_menu_2d.o
     Object src/string_util.o
-    Object asm/render_text.o
+    Object src/render_text.o
     Object src/font.o
     Object src/palette.o
     Object src/sound.o
@@ -36,7 +36,7 @@ Static main
     Object src/msgdata.o
     Object src/message_format.o
     Object src/message_printer.o
-    Object asm/unk_0200CE7C.o
+    Object src/unk_0200CE7C.o
     Object src/unk_0200CF18.o
     Object src/sys_task_api.o
     Object asm/render_window.o
@@ -76,10 +76,11 @@ Static main
     Object asm/unk_02020B8C.o
     Object asm/unk_020210A0.o
     Object src/obj_char_transfer.o
-    Object asm/unk_02022588.o
+    Object src/obj_pltt_transfer.o
     Object src/gf_gfx_planes.o
     Object src/camera.o
     Object asm/unk_02023694.o
+    Object src/sprite.o
     Object src/touchscreen.o
     Object src/timer3.o
     Object src/error_handling.o
@@ -97,7 +98,8 @@ Static main
     Object src/save.o
     Object src/sav_system_info.o
     Object src/player_data.o
-    Object asm/unk_020290B4.o
+    Object src/save_link_ruleset.o
+    Object src/link_ruleset_data.o
     Object src/daycare.o
     Object src/pokedex.o
     Object src/save_misc.o
@@ -111,11 +113,11 @@ Static main
     Object asm/unk_0202C730.o
     Object src/coins.o
     Object src/save_trainer_card.o
-    Object asm/unk_0202CA24.o
+    Object src/save_wifi_history.o
     Object src/seal_case.o
     Object src/igt.o
     Object src/sav_chatot.o
-    Object asm/game_stats.o
+    Object src/game_stats.o
     Object asm/unk_0202D230.o
     Object src/save_special_ribbons.o
     Object src/roamer.o
@@ -123,10 +125,10 @@ Static main
     Object src/mystery_gift.o
     Object src/hall_of_fame.o
     Object asm/unk_0202E41C.o
-    Object asm/unk_0202E4B0.o
+    Object src/save_rankings.o
     Object asm/unk_0202EB30.o
     Object src/update_dex_received.o
-    Object asm/unk_0202ED18.o
+    Object src/save_follow_mon.o
     Object src/save_pokegear.o
     Object src/safari_zone.o
     Object src/photo_album.o
@@ -161,9 +163,6 @@ Static main
     Object src/field_system.o
     Object src/location_backup.o
     Object src/launch_application.o
-    Object src/launch_application_data1.o
-    Object src/launch_application_data2.o
-    Object asm/launch_application_data.o
     Object src/script.o
     Object src/fieldmap.o
     Object src/scrcmd_c.o
@@ -259,7 +258,7 @@ Static main
     Object src/pokemon_icon_idx.o
     Object src/party.o
     Object src/pokedex_util.o
-    Object asm/unk_02074944.o
+    Object src/battle_regulation.o
     Object asm/unk_02074E5C.o
     Object asm/unk_020755E8.o
     Object asm/unk_020773AC.o
@@ -274,7 +273,7 @@ Static main
     Object src/party_menu_sprites.o
     Object src/party_menu_list_items.o
     Object src/party_menu_items.o
-    Object asm/unk_02082908.o
+    Object src/naming_screen.o
     Object asm/unk_020850F4.o
     Object asm/unk_02085604.o
     Object asm/unk_020863F4.o
@@ -282,7 +281,7 @@ Static main
     Object asm/unk_02087A78.o
     Object asm/unk_02087E70.o
     Object asm/unk_02087FD4.o
-    Object asm/unk_0208805C.o
+    Object src/unk_0208805C.o
     Object asm/unk_02088288.o
     Object asm/unk_0208B1AC.o
     Object asm/unk_0208C3E4.o
@@ -301,7 +300,7 @@ Static main
     Object src/dex_mon_measures.o
     Object asm/unk_02091564.o
     Object asm/unk_020915B0.o
-    Object asm/unk_02091664.o
+    Object src/location_gmm_dat.o
     Object src/move_relearner.o
     Object asm/unk_02091880.o
     Object asm/unk_02091CDC.o
@@ -406,7 +405,7 @@ Static main
     Object lib/NitroSDK/asm/mi_memory.o
     Object lib/NitroSDK/asm/mi_swap.o
     Object lib/NitroSDK/asm/mi_uncompress.o
-    Object lib/NitroSDK/asm/mi_dma_card.o
+    Object lib/NitroSDK/src/mi/mi_dma_card.o
     Object lib/NitroSDK/asm/mi_compress.o
     Object lib/NitroSDK/asm/mi_init.o
     Object lib/asm/nitro.o
@@ -582,7 +581,7 @@ Overlay OVY_12
     Object asm/overlay_12_battle_controller_opponent.o
     Object src/battle/battle_02261FD4.o
     Object asm/overlay_12_battle_controller.o
-    Object asm/overlay_12_hp_bar.o
+    Object src/battle/battle_hp_bar.o
     Object asm/overlay_12_02265E28.o
     Object src/battle/battle_input.o
     Object asm/overlay_12_02266024.o
@@ -803,7 +802,9 @@ Overlay trainer_card_signature
 Overlay OVY_53
 {
     After main
-    Object asm/overlay_53.o
+    Object src/oaks_speech.o
+    Object src/oaks_speech_obj.o
+    Object src/oaks_speech_yesnomenu.o
 }
 Overlay options_app
 {
@@ -1119,6 +1120,7 @@ Overlay OVY_108
 {
     After main
     Object asm/overlay_108.o
+    Object asm/overlay_108_021E8850.o
 }
 Overlay OVY_109
 {
@@ -1180,10 +1182,10 @@ Overlay OVY_120
     After OVY_31
     Object asm/overlay_120.o
 }
-Overlay OVY_121
+Overlay view_rankings_app
 {
     After main
-    Object asm/overlay_121.o
+    Object src/application/view_rankings.o
 }
 Overlay voltorb_flip
 {
@@ -1206,7 +1208,7 @@ Overlay OVY_123
 Overlay OVY_124
 {
     After OVY_123
-    Object asm/overlay_124.o
+    Object src/overlay_124.o
 }
 Overlay OVY_125
 {

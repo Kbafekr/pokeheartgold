@@ -36,9 +36,9 @@
 .public sub_0200CE7C
 .public SpriteRenderer_Create
 .public SpriteRenderer_CreateGfxHandler
-.public sub_0200CF70
-.public sub_0200CFF4
-.public sub_0200D020
+.public SpriteRenderer_CreateOamCharPlttManagers
+.public SpriteRenderer_CreateSpriteList
+.public SpriteGfxHandler_RenderAndAnimateSprites
 .public thunk_OamManager_ApplyAndResetBuffers
 .public SpriteRenderer_Delete
 .public SpriteRenderer_Init2DGfxResManagersFromCountsArray
@@ -48,7 +48,7 @@
 .public SpriteRenderer_LoadCellResObjFromOpenNarc
 .public SpriteRenderer_LoadAnimResObjFromOpenNarc
 .public SpriteRenderer_LoadResourcesAndCreateSprite
-.public sub_0200D934
+.public GfGfxHandler_GetPlttProxy
 .public SpriteRenderer_UnloadResourcesAndRemoveGfxHandler
 .public UnkImageStruct_Delete
 .public UnkImageStruct_SetSpriteAnimSeqNo
@@ -121,7 +121,7 @@
 .public GfGfx_EngineATogglePlanes
 .public GfGfx_DisableEngineBPlanes
 .public Camera_SetPerspectiveClippingPlane
-.public Sprite_TickCellOrMulticellAnimation
+.public Sprite_TickAnimCtrlFrame
 .public GF_AssertFail
 .public String_New
 .public String_Delete

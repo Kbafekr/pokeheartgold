@@ -1,18 +1,21 @@
 #include "battle/battle_022378C0.h"
-#include "battle/overlay_12_02266024.h"
-#include "battle/battle_system.h"
+
+#include "constants/game_stats.h"
+
 #include "battle/battle_input.h"
+#include "battle/battle_system.h"
+#include "battle/overlay_12_02266024.h"
+
+#include "filesystem_files_def.h"
 #include "gf_gfx_planes.h"
 #include "render_text.h"
-#include "system.h"
-#include "vram_transfer_manager.h"
-#include "unk_02037C94.h"
 #include "sound_02004A44.h"
-#include "unk_020379A0.h"
-#include "unk_020755E8.h"
+#include "system.h"
 #include "unk_02026E84.h"
-#include "constants/game_stats.h"
-#include "filesystem_files_def.h"
+#include "unk_020379A0.h"
+#include "unk_02037C94.h"
+#include "unk_020755E8.h"
+#include "vram_transfer_manager.h"
 
 FS_EXTERN_OVERLAY(OVY_5);
 FS_EXTERN_OVERLAY(OVY_6);
@@ -53,7 +56,7 @@ BOOL Battle_Run(OVY_MANAGER *man, int *state) {
         break;
     case BSTATE_LINK_INIT:
         ov12_022399D4(man, setup);
-        sub_02039F68(setup->unk_12C);
+        sub_02039F68(setup->wifiHistory);
         if (!sub_02039998()) {
             GameStats_Inc(setup->gameStats, GAME_STAT_UNK21);
             if (setup->battleType != 0x8F) {
@@ -132,8 +135,7 @@ BOOL Battle_Run(OVY_MANAGER *man, int *state) {
     case BSTATE_END_WAIT:
         *state = BSTATE_EXIT;
         break;
-    case BSTATE_EVOLUTION_INIT:
-    {
+    case BSTATE_EVOLUTION_INIT: {
         int selectedMonIndex;
         int evolutionSpecies;
         int evolutionCondition;
@@ -143,19 +145,15 @@ BOOL Battle_Run(OVY_MANAGER *man, int *state) {
 
         if (evolutionSpecies) {
             CreateHeap(HEAP_ID_3, HEAP_ID_EVOLUTION, 0x30000);
-            mon = Party_GetMonByIndex(setup->party[BATTLER_PLAYER], selectedMonIndex);
-            setup->evolutionTaskData = sub_02075A7C(setup->party[BATTLER_PLAYER], mon, evolutionSpecies,
-                                        setup->options, setup->unk_164, setup->pokedex,
-                                        setup->bag, setup->gameStats, evolutionCondition,
-                                        3, HEAP_ID_EVOLUTION);
-            *state = BSTATE_EVOLUTION_MAIN;
+            mon                      = Party_GetMonByIndex(setup->party[BATTLER_PLAYER], selectedMonIndex);
+            setup->evolutionTaskData = sub_02075A7C(setup->party[BATTLER_PLAYER], mon, evolutionSpecies, setup->options, setup->unk_164, setup->pokedex, setup->bag, setup->gameStats, evolutionCondition, 3, HEAP_ID_EVOLUTION);
+            *state                   = BSTATE_EVOLUTION_MAIN;
         } else {
             *state = BSTATE_EXIT;
         }
         break;
     }
-    case BSTATE_EVOLUTION_MAIN:
-    {
+    case BSTATE_EVOLUTION_MAIN: {
         void *data = setup->evolutionTaskData;
         if (sub_02075D3C(data) == TRUE) {
             sub_02075D4C(data);
@@ -191,8 +189,8 @@ void ov12_02237B6C(BattleSystem *bsys) {
     RemoveWindow(bsys->window);
     ov12_02238A30(bsys->bgConfig);
     ov12_02238A64(bsys);
-    SpriteRenderer_UnloadResourcesAndRemoveGfxHandler(bsys->unk90, bsys->unk94);
-    SpriteRenderer_Delete(bsys->unk90);
+    SpriteRenderer_UnloadResourcesAndRemoveGfxHandler(bsys->spriteRenderer, bsys->gfxHandler);
+    SpriteRenderer_Delete(bsys->spriteRenderer);
     GF_DestroyVramTransferManager();
     FontID_Release(4);
 }
@@ -208,7 +206,7 @@ void ov12_02237BB8(BattleSystem *bsys) {
 
     ov12_0223BBF0(bsys, 0);
 
-    int size = sub_02026E9C();
+    int size   = sub_02026E9C();
     void *data = GetSubBgPlttAddr();
     MIi_CpuClear16(0, data, size);
 
@@ -230,10 +228,10 @@ void ov12_02237BB8(BattleSystem *bsys) {
     NARC_Delete(unkNarcA);
     NARC_Delete(unkNarcB);
 
-    sub_020027F0(1);
+    TextPrinter_SetDownArrowBaseTile(1);
     ov12_0223A620(bsys);
 
-    G2dRenderer_SetSubSurfaceCoords(SpriteRenderer_GetG2dRendererPtr(bsys->unk90), 0, FX32_CONST(272));
+    G2dRenderer_SetSubSurfaceCoords(SpriteRenderer_GetG2dRendererPtr(bsys->spriteRenderer), 0, FX32_CONST(272));
 }
 
 void ov12_02237CC4(BattleSystem *bsys) {

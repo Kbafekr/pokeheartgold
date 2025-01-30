@@ -617,7 +617,7 @@ ov103_021ECE18: ; 0x021ECE18
 	lsl r1, r1, #4
 	str r0, [r4, r1]
 	mov r0, #1
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	pop {r4, pc}
 	.balign 4, 0
 	thumb_func_end ov103_021ECE18
@@ -627,7 +627,7 @@ ov103_021ECE54: ; 0x021ECE54
 	push {r4, lr}
 	add r4, r0, #0
 	mov r0, #0
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	mov r0, #0x23
 	lsl r0, r0, #4
 	ldr r0, [r4, r0]
@@ -1264,7 +1264,7 @@ _021ED2EE:
 	ldr r1, [r5, #0xc]
 	lsl r0, r0, #2
 	ldr r0, [r1, r0]
-	bl sub_0200D020
+	bl SpriteGfxHandler_RenderAndAnimateSprites
 _021ED30C:
 	mov r0, #1
 	pop {r3, r4, r5, pc}
@@ -2933,7 +2933,7 @@ ov103_021EDF88: ; 0x021EDF88
 	sub r0, r7, #4
 	ldr r0, [r4, r0]
 	mov r3, #0x20
-	bl sub_0200CF70
+	bl SpriteRenderer_CreateOamCharPlttManagers
 	ldr r3, _021EE024 ; =ov103_021EED20
 	add r2, sp, #0
 	ldmia r3!, {r0, r1}
@@ -2947,7 +2947,7 @@ ov103_021EDF88: ; 0x021EDF88
 	add r1, r1, #4
 	ldr r1, [r4, r1]
 	mov r2, #7
-	bl sub_0200CFF4
+	bl SpriteRenderer_CreateSpriteList
 	sub r1, r7, #4
 	ldr r0, [r4, r1]
 	add r1, r1, #4

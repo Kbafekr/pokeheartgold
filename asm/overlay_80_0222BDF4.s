@@ -533,7 +533,7 @@ ov80_0222C17C: ; 0x0222C17C
 	cmp r0, #0
 	bne _0222C196
 	mov r0, #0
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	mov r0, #1
 	pop {r3, pc}
 _0222C196:
@@ -1829,7 +1829,7 @@ FrtCmd_052: ; 0x0222CB54
 	bl NamingScreen_CreateArgs
 	add r2, r0, #0
 	ldr r0, _0222CB8C ; =ov80_0222CB94
-	ldr r1, _0222CB90 ; =_02102610
+	ldr r1, _0222CB90 ; =gOverlayTemplate_NamingScreen
 	str r0, [sp]
 	ldr r0, [r4]
 	mov r3, #0
@@ -1840,15 +1840,15 @@ FrtCmd_052: ; 0x0222CB54
 	pop {r4, pc}
 	.balign 4, 0
 _0222CB8C: .word ov80_0222CB94
-_0222CB90: .word _02102610
+_0222CB90: .word gOverlayTemplate_NamingScreen
 	thumb_func_end FrtCmd_052
 
 	thumb_func_start ov80_0222CB94
 ov80_0222CB94: ; 0x0222CB94
-	ldr r3, _0222CB98 ; =sub_0208311C
+	ldr r3, _0222CB98 ; =NamingScreen_DeleteArgs
 	bx r3
 	.balign 4, 0
-_0222CB98: .word sub_0208311C
+_0222CB98: .word NamingScreen_DeleteArgs
 	thumb_func_end ov80_0222CB94
 
 	thumb_func_start FrtCmd_108
@@ -4662,7 +4662,7 @@ FrtCmd_074: ; 0x0222E0C8
 	ldr r0, [r0, #8]
 	bl Save_GameStats_Get
 	add r1, r4, #0
-	bl GameStats_AddSpecial
+	bl GameStats_AddScore
 	mov r0, #0
 	pop {r3, r4, r5, pc}
 	.balign 4, 0
@@ -4999,18 +4999,18 @@ ov80_0222E344: ; 0x0222E344
 	add r4, r2, #0
 	bl TextFlags_SetCanABSpeedUpPrint
 	ldr r0, [sp, #0x20]
-	bl sub_02002B50
+	bl TextFlags_SetAutoScrollParam
 	cmp r4, #0
 	beq _0222E362
 	cmp r4, #0xff
 	bne _0222E36A
 _0222E362:
 	mov r0, #0
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	b _0222E370
 _0222E36A:
 	mov r0, #1
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 _0222E370:
 	mov r3, #0
 	str r3, [sp]
@@ -6836,7 +6836,7 @@ _0222F0DA:
 	ldr r0, [r6]
 	bl Sprite_GetPaletteProxy
 	mov r1, #1
-	bl sub_02022808
+	bl ObjPlttTransfer_GetPaletteVramOffset
 	lsl r7, r0, #4
 	mov r0, #2
 	str r0, [sp]
@@ -7041,7 +7041,7 @@ _0222F2D8:
 	bl Pokemon_GetIconPalette
 	add r1, r0, #0
 	ldr r0, [r4]
-	bl sub_02024AA8
+	bl Sprite_SetPalOffsetRespectVramOffset
 	add r0, r4, #0
 	bl UnkImageStruct_TickSpriteAnimation1Frame
 	add r0, r4, #0
@@ -7274,7 +7274,7 @@ ov80_0222F4D0: ; 0x0222F4D0
 	cmp r0, #0
 	bne _0222F4EA
 	mov r0, #0
-	bl sub_02002B8C
+	bl TextFlags_SetCanTouchSpeedUpPrint
 	mov r0, #1
 	pop {r3, pc}
 _0222F4EA:

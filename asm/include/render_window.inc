@@ -1,6 +1,6 @@
 #include <nitro/fs/overlay.h>
 #pragma once
-.public sub_020027F0
+.public TextPrinter_SetDownArrowBaseTile
 .public CreateSysTaskAndEnvironment
 .public DestroySysTaskAndEnvironment
 .public AllocAndReadWholeNarcMemberByIdPair
@@ -11,7 +11,7 @@
 .public PokepicManager_Delete
 .public Get2DGfxResObjById
 .public sub_0200AF00
-.public sub_0200B0F8
+.public GF_PlttResObj_GetPlttProxy
 .public UnkImageStruct_Delete
 .public SysTask_CreateOnVBlankQueue
 .public SysTask_CreateOnVWaitQueue
@@ -58,9 +58,9 @@
 .public ScheduleBgTilemapBufferTransfer
 .public SysTask_GetData
 .public GfGfx_EngineBTogglePlanes
-.public sub_0202457C
-.public Set2dSpriteAnimSeqNo
-.public Sprite_TickCellOrMulticellAnimation
+.public SpriteList_RenderAndAnimateSprites
+.public Sprite_SetAnimCtrlSeq
+.public Sprite_TickAnimCtrlFrame
 .public Sprite_GetAnimCtrlCurrentFrame
 .public GetPokemonSpriteCharAndPlttNarcIds
 .public GetMonSpriteCharAndPlttNarcIdsEx

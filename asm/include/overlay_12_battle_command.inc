@@ -26,7 +26,7 @@
 .public SpriteRenderer_LoadCellResObjFromNarcId
 .public SpriteRenderer_LoadAnimResObjFromNarcId
 .public SpriteRenderer_LoadResourcesAndCreateSprite
-.public sub_0200D934
+.public GfGfxHandler_GetPlttProxy
 .public SpriteGfxHandler_UnloadCharObjById
 .public SpriteGfxHandler_UnloadPlttObjById
 .public SpriteGfxHandler_UnloadCellObjById
@@ -63,7 +63,7 @@
 .public sub_02021B5C
 .public ObjCharTransfer_PopTaskManager
 .public ObjCharTransfer_PushTaskManager
-.public sub_02024AA8
+.public Sprite_SetPalOffsetRespectVramOffset
 .public System_GetTouchNew
 .public GF_AssertFail
 .public String_Delete
@@ -99,12 +99,12 @@
 .public Pokedex_IsNatDexEnabled
 .public GetItemAttr
 .public NamingScreen_CreateArgs
-.public sub_0208311C
+.public NamingScreen_DeleteArgs
 .public ApplyMonMoodModifier
 .public _s32_div_f
 .public _u32_div_f
 .public gGameLanguage
-.public _02102610
+.public gOverlayTemplate_NamingScreen
 .public gSystem
 .public ov07_02232F58
 .public ov07_02232F60
@@ -123,8 +123,8 @@
 .public BattleSystem_GetPartySize
 .public BattleSystem_GetPartyMon
 .public ov12_0223A8D4
-.public ov12_0223A8E4
-.public ov12_0223A8EC
+.public BattleSystem_GetSpriteRenderer
+.public BattleSystem_GetGfxHandler
 .public ov12_0223A8F4
 .public BattleSystem_GetMessageData
 .public BattleSystem_GetPaletteData

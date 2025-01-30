@@ -1,17 +1,17 @@
 #ifndef POKEHEARTGOLD_FONT_TYPES_DEF_H
 #define POKEHEARTGOLD_FONT_TYPES_DEF_H
 
-#include "pm_string.h"
 #include "bg_window.h"
+#include "pm_string.h"
 
 typedef u8 FontID;
 struct FontData;
 
-struct GlyphInfo {
+typedef struct GlyphInfo {
     u8 data[0x80];
     u8 width;
     u8 height;
-};
+} GlyphInfo;
 
 struct FontInfo {
     u8 maxLetterWidth;
@@ -39,7 +39,7 @@ typedef struct TextPrinterTemplate {
     u16 letterSpacing, lineSpacing;
     u8 unk14;
     u8 fgColor, bgColor, shadowColor;
-    u16 unk18;
+    u16 glyphTable;
     u8 unk1A;
     u8 unk1B;
 } TextPrinterTemplate;
@@ -53,8 +53,8 @@ typedef struct TextPrinter {
     u8 subStructFields[7]; // x20
     u8 active;
     u8 state;
-    u8 textSpeedBottom:7; // x29
-    u8 textSpeedTop:1;
+    u8 textSpeedBottom : 7; // x29
+    u8 textSpeedTop    : 1;
     u8 delayCounter;
     u8 scrollDistance;
     u8 id;
@@ -70,4 +70,4 @@ typedef enum RenderResult {
     RENDER_UPDATE,
 } RenderResult;
 
-#endif //POKEHEARTGOLD_FONT_TYPES_DEF_H
+#endif // POKEHEARTGOLD_FONT_TYPES_DEF_H

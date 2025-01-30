@@ -46,7 +46,7 @@ sub_020863F4: ; 0x020863F4
 	str r0, [r3]
 	ldr r0, [r4, r7]
 	mov r3, #0x20
-	bl sub_0200CF70
+	bl SpriteRenderer_CreateOamCharPlttManagers
 	ldr r3, _0208648C ; =_021027DC
 	add r2, sp, #0
 	ldmia r3!, {r0, r1}
@@ -64,7 +64,7 @@ sub_020863F4: ; 0x020863F4
 	ldr r0, [r4, r0]
 	ldr r1, [r4, r1]
 	mov r2, #0x80
-	bl sub_0200CFF4
+	bl SpriteRenderer_CreateSpriteList
 	cmp r0, #0
 	bne _02086468
 	bl GF_AssertFail
@@ -1738,7 +1738,7 @@ sub_02087090: ; 0x02087090
 	str r0, [sp, #0x34]
 	ldr r0, [r5, r1]
 	add r1, #0xf7
-	bl sub_0200D934
+	bl GfGfxHandler_GetPlttProxy
 	str r0, [sp, #0x38]
 	mov r1, #0
 	mov r0, #0xe2

@@ -21,7 +21,7 @@
 .public SpriteRenderer_LoadCellResObjFromOpenNarc
 .public SpriteRenderer_LoadAnimResObjFromOpenNarc
 .public SpriteRenderer_LoadResourcesAndCreateSprite
-.public sub_0200D934
+.public GfGfxHandler_GetPlttProxy
 .public UnkImageStruct_Delete
 .public TickSpriteAnimation1Frame
 .public UnkImageStruct_SetSpriteVisibleFlag
@@ -55,10 +55,10 @@
 .public AddTextPrinterParameterizedWithColorAndSpacing
 .public sub_02021AC8
 .public sub_02021B5C
-.public sub_020247F4
-.public Set2dSpriteVisibleFlag
-.public sub_0202487C
-.public Set2dSpriteAnimSeqNo
+.public Sprite_SetScale
+.public Sprite_SetVisibleFlag
+.public Sprite_SetAffineOverwriteType
+.public Sprite_SetAnimCtrlSeq
 .public GF_AssertFail
 .public String_Delete
 .public FX_Div

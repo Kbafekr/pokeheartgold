@@ -253,8 +253,8 @@ _022662C0:
 _022662CA:
 	add r0, r4, #0
 	bl FreeToHeap
-	bl sub_02002BD4
-	bl sub_02002BF4
+	bl TextFlags_ResetHasSpedUpInput
+	bl TextFlags_ResetHasContinuedInput
 	ldr r0, _02266314 ; =ov12_02269954
 	ldr r2, _02266318 ; =0x0000D6D8
 	add r1, r6, #0
@@ -335,10 +335,10 @@ ov12_02266390: ; 0x02266390
 	sub sp, #0x18
 	add r7, r0, #0
 	ldr r0, [r7]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	add r6, r0, #0
 	ldr r0, [r7]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	add r4, r0, #0
 	ldr r0, [r7]
 	bl BattleSystem_GetBgConfig
@@ -451,9 +451,9 @@ ov12_02266490: ; 0x02266490
 	push {r3, r4, r5, r6, r7, lr}
 	add r7, r0, #0
 	ldr r0, [r7]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	ldr r0, [r7]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	ldr r6, _022664F0 ; =0x00004E39
 	add r5, r0, #0
 	mov r4, #0
@@ -523,10 +523,10 @@ _02266526:
 	bl BattleSystem_GetBgConfig
 	str r0, [sp, #0x28]
 	ldr r0, [r7]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	str r0, [sp, #0x24]
 	ldr r0, [r7]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	str r0, [sp, #0x20]
 	ldr r0, _0226662C ; =0x0000068B
 	ldrsb r2, [r7, r0]
@@ -670,11 +670,11 @@ _02266660:
 _02266664:
 	ldr r0, [sp, #0x14]
 	ldr r0, [r0]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	str r0, [sp, #0x18]
 	ldr r0, [sp, #0x14]
 	ldr r0, [r0]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	add r7, r0, #0
 	mov r0, #1
 	str r0, [sp]
@@ -865,9 +865,9 @@ _02266818:
 	bl GF_AssertFail
 _0226681C:
 	ldr r0, [r6]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	ldr r0, [r6]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	ldr r1, _022668B4 ; =0x00004E37
 	add r7, r0, #0
 	bl SpriteGfxHandler_UnloadCharObjById
@@ -1167,7 +1167,7 @@ _02266A76:
 	ldr r0, _02266ABC ; =0x000005D8
 	ldr r0, [r5, r0]
 	ldr r0, [r0]
-	bl Set2dSpriteAnimSeqNo
+	bl Sprite_SetAnimCtrlSeq
 	ldr r0, _02266ABC ; =0x000005D8
 	ldr r0, [r5, r0]
 	ldr r0, [r0]
@@ -1179,7 +1179,7 @@ _02266A76:
 	lsl r0, r0, #4
 	ldr r0, [r5, r0]
 	ldr r0, [r0]
-	bl Set2dSpriteAnimSeqNo
+	bl Sprite_SetAnimCtrlSeq
 	mov r0, #0x5f
 	lsl r0, r0, #4
 	ldr r0, [r5, r0]
@@ -3970,10 +3970,10 @@ ov12_02268194: ; 0x02268194
 	sub sp, #0x18
 	add r5, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	add r4, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	add r6, r0, #0
 	ldr r0, [r5]
 	bl BattleSystem_GetPaletteData
@@ -4025,7 +4025,7 @@ _02268210: .word 0x00004E35
 ov12_02268214: ; 0x02268214
 	push {r4, lr}
 	ldr r0, [r0]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	ldr r1, _02268250 ; =0x00004E44
 	add r4, r0, #0
 	bl SpriteGfxHandler_UnloadCharObjById
@@ -4162,10 +4162,10 @@ _0226831A:
 	pop {r3, r4, r5, r6, r7, pc}
 _02268324:
 	ldr r0, [r4]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	str r0, [sp, #0x18]
 	ldr r0, [r4]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	str r0, [sp, #0x14]
 	ldr r0, [sp, #0xc]
 	bl Pokemon_GetIconNaix
@@ -4215,7 +4215,7 @@ _02268356:
 	bl Pokemon_GetIconPalette
 	add r1, r0, #0
 	ldr r0, [r6]
-	bl sub_02024AA8
+	bl Sprite_SetPalOffsetRespectVramOffset
 	ldr r0, [sp, #0x10]
 	mov r7, #0
 	cmp r0, #0
@@ -4305,10 +4305,10 @@ ov12_02268440: ; 0x02268440
 	bl GF_AssertFail
 _02268454:
 	ldr r0, [r5]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	add r7, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	add r4, r0, #0
 	ldr r0, [sp, #0xc]
 	bl Pokemon_GetIconNaix
@@ -4357,7 +4357,7 @@ _02268488:
 	bl Pokemon_GetIconPalette
 	add r1, r0, #0
 	ldr r0, [r4]
-	bl sub_02024AA8
+	bl Sprite_SetPalOffsetRespectVramOffset
 	add r0, r4, #0
 	bl UnkImageStruct_TickSpriteAnimation1Frame
 	ldr r0, _022684E0 ; =0x000006EC
@@ -4452,7 +4452,7 @@ ov12_02268550: ; 0x02268550
 	bl GF_AssertFail
 _0226856A:
 	ldr r0, [r7]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	str r0, [sp, #0x20]
 	ldr r0, [r7]
 	bl BattleSystem_GetBgConfig
@@ -4534,7 +4534,7 @@ _02268602:
 	str r0, [sp, #0x54]
 	ldr r0, [sp, #0x20]
 	ldr r1, [sp, #0x98]
-	bl sub_0200D934
+	bl GfGfxHandler_GetPlttProxy
 	str r0, [sp, #0x58]
 	mov r0, #0
 	ldr r1, [sp, #0x34]
@@ -5153,10 +5153,10 @@ ov12_02268AD0: ; 0x02268AD0
 	add r0, #0x1c
 	str r0, [sp, #4]
 	ldr r0, [r5]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	str r0, [sp, #0xc]
 	ldr r0, [r5]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	ldr r1, _02268BA4 ; =0x0000068A
 	str r0, [sp, #8]
 	ldrb r1, [r5, r1]
@@ -5260,9 +5260,9 @@ ov12_02268BB8: ; 0x02268BB8
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	ldr r0, [r5]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	mov r4, #0
 	ldr r7, _02268BE8 ; =0x00000608
 	add r6, r4, #0
@@ -5288,9 +5288,9 @@ ov12_02268BEC: ; 0x02268BEC
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	ldr r0, [r5]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	mov r4, #0
 	add r6, r0, #0
 	add r7, r4, #0
@@ -7045,12 +7045,12 @@ _02269950: .word 0x00000694
 ov12_02269954: ; 0x02269954
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r1, #0
-	bl sub_02002BC4
+	bl TextFlags_GetHasSpedUpInput
 	add r6, r0, #0
-	bl sub_02002BE4
+	bl TextFlags_GetHasContinuedInput
 	add r7, r0, #0
-	bl sub_02002BD4
-	bl sub_02002BF4
+	bl TextFlags_ResetHasSpedUpInput
+	bl TextFlags_ResetHasContinuedInput
 	ldr r0, [r5]
 	bl BattleSystem_GetPaletteData
 	add r4, r0, #0
@@ -9161,9 +9161,9 @@ ov12_0226A8F4: ; 0x0226A8F4
 	push {r4, lr}
 	add r4, r0, #0
 	ldr r0, [r4]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	ldr r0, [r4]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	ldr r0, [r4]
 	bl BattleSystem_GetPaletteData
 	ldr r0, [r4]
@@ -9606,10 +9606,10 @@ ov12_0226AC70: ; 0x0226AC70
 	bl GF_AssertFail
 _0226AC84:
 	ldr r0, [r5]
-	bl ov12_0223A8E4
+	bl BattleSystem_GetSpriteRenderer
 	add r4, r0, #0
 	ldr r0, [r5]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	add r6, r0, #0
 	mov r0, #8
 	mov r1, #5
@@ -9672,7 +9672,7 @@ _0226AC84:
 	ldr r0, [r5, r1]
 	mov r1, #1
 	ldr r0, [r0]
-	bl Set2dSpriteAnimSeqNo
+	bl Sprite_SetAnimCtrlSeq
 	mov r0, #0x6f
 	lsl r0, r0, #4
 	mov r3, #0x11
@@ -9711,7 +9711,7 @@ ov12_0226AD60: ; 0x0226AD60
 	cmp r0, #0
 	beq _0226ADB4
 	ldr r0, [r5]
-	bl ov12_0223A8EC
+	bl BattleSystem_GetGfxHandler
 	add r4, r0, #0
 	mov r0, #0x6f
 	lsl r0, r0, #4
