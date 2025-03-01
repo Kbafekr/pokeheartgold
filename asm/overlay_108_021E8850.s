@@ -166,7 +166,7 @@ ov108_021E8968: ; 0x021E8968
 	bl Options_GetFrame
 	strb r0, [r5, #0x19]
 	ldr r0, [r4, #4]
-	bl sub_020183F0
+	bl MenuInputStateMgr_GetState
 	str r0, [r5, #0x10]
 	str r4, [r5, #0x1c]
 	ldr r0, [r4, #0x20]
@@ -184,7 +184,7 @@ ov108_021E8968: ; 0x021E8968
 	lsl r1, r1, #4
 	strb r0, [r5, r1]
 	ldr r0, [r4]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	add r6, r0, #0
 	ldr r0, [r5, #0x20]
 	bl sub_0202F720
@@ -308,7 +308,7 @@ _021E8AAE:
 	ldr r0, [r4, #0x1c]
 	ldr r1, [r4, #0x10]
 	ldr r0, [r0, #4]
-	bl sub_02018410
+	bl MenuInputStateMgr_SetState
 	pop {r4, pc}
 	nop
 _021E8AD0: .word 0x00000431

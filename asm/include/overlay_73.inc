@@ -69,8 +69,8 @@
 .public YesNoPrompt_HandleInput
 .public YesNoPrompt_IsInTouchMode
 .public YesNoPrompt_Reset
-.public sub_020183F0
-.public sub_02018410
+.public MenuInputStateMgr_GetState
+.public MenuInputStateMgr_SetState
 .public Main_SetVBlankIntrCB
 .public HBlankInterruptDisable
 .public SetKeyRepeatTimers
@@ -133,7 +133,7 @@
 .public SaveSubstruct_UpdateCRC
 .public Save_SysInfo_GetField4C
 .public Save_SysInfo_SetField4C
-.public Save_PlayerData_GetProfileAddr
+.public Save_PlayerData_GetProfile
 .public PlayerProfile_GetNamePtr
 .public PlayerName_FlatToString
 .public PlayerProfile_GetTrainerID

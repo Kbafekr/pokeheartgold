@@ -64,7 +64,7 @@ _021E5916:
 	str r1, [r4, r0]
 	ldr r0, [r4, #8]
 	ldr r0, [r0, #0x10]
-	bl sub_020183F0
+	bl MenuInputStateMgr_GetState
 	mov r1, #0xc5
 	lsl r1, r1, #2
 	str r0, [r4, r1]
@@ -360,7 +360,7 @@ _021E5BD8:
 	lsl r1, r1, #2
 	ldr r0, [r0, #0x10]
 	ldr r1, [r6, r1]
-	bl sub_02018410
+	bl MenuInputStateMgr_SetState
 	add r0, r6, #0
 	bl ov73_021E5ED4
 	ldr r0, [sp]
@@ -4295,7 +4295,7 @@ ov73_021E7AC0: ; 0x021E7AC0
 	add r5, r1, #0
 	add r7, r2, #0
 	str r3, [sp]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	add r4, r0, #0
 	mov r0, #0
 	str r0, [sp, #4]

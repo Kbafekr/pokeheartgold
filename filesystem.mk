@@ -438,6 +438,7 @@ $(eval $(call arc_strip_name,files/fielddata/tsurepoke/tp_param.narc,files/a/1/4
 $(eval $(call arc_strip_name,files/fielddata/graphic/preview_graphic/preview_graphic.narc,files/a/1/5/0))
 $(eval $(call arc_strip_name,files/system/touch_subwindow.narc,files/a/1/5/2))
 $(eval $(call arc_strip_name,files/data/gs_areawindow.narc,files/a/1/6/3))
+$(eval $(call arc_strip_name,files/data/sbox_gra.narc,files/a/1/6/5))
 $(eval $(call arc_strip_name,files/poketool/personal/performance.narc,files/a/1/6/9))
 $(eval $(call arc_strip_name,files/application/annon/puzzle_gra.narc,files/a/1/7/2))
 $(eval $(call arc_strip_name,files/demo/legend.narc,files/a/1/7/4))
@@ -521,6 +522,7 @@ include files/graphic/camera_viewfinder.mk
 include files/application/guinness.mk
 include files/demo/intro/intro.mk
 include files/data/namein.mk
+include files/data/sbox_gra.mk
 
 $(filter-out $(DIFF_ARCS) $(FS_RULE_OVERRIDES),$(NITROFS_FILES)): ;
 
@@ -530,10 +532,8 @@ include graphics_files_rules.mk
 NTR_FILE_EXT := bin NCGR NCLR NCER NSCR NSBMD NSBCA NSBTA
 
 %.narc: NARC_DEPS = $(foreach ext,$(NTR_FILE_EXT),$(wildcard $*/*.$ext))
-%.narc: $(NARC_DEPS)
+%.narc %.naix: $(NARC_DEPS)
 	$(KNARC) -d $* -p $@ -i
-
-%.naix: %.narc ;
 
 .PHONY: filesystem clean-filesystem clean-fs
 files_for_compile: $(FILES_NEEDED_FOR_COMPILE)

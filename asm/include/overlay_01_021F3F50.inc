@@ -28,7 +28,7 @@
 .public GF_AssertFail
 .public String_Delete
 .public SaveGameNormal
-.public Save_PlayerData_GetProfileAddr
+.public Save_PlayerData_GetProfile
 .public Save_PlayerData_GetIGTAddr
 .public PlayerProfile_CountBadges
 .public Pokedex_CountDexOwned
@@ -42,7 +42,7 @@
 .public FieldSystem_SyncMapObjectsToSave
 .public PlayerAvatar_GetFacingDirection
 .public GetPlayerXCoord
-.public GetPlayerYCoord
+.public GetPlayerZCoord
 .public Field_SaveStatsPrinter_Print
 .public Field_SaveStatsPrinter_RemoveFromScreen
 .public Field_SaveStatsPrinter_New

@@ -495,11 +495,11 @@ _021FC3A8:
 	bl GetPlayerXCoord
 	add r6, r0, #0
 	ldr r0, [r5, #0x40]
-	bl GetPlayerYCoord
+	bl GetPlayerZCoord
 	add r2, r0, #0
 	add r0, r5, #0
 	add r1, r6, #0
-	bl GetMetatileBehaviorAt
+	bl GetMetatileBehavior
 	add r1, r0, #0
 	add r0, r5, #0
 	bl ov02_02247F9C

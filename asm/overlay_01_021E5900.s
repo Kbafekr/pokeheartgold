@@ -403,7 +403,7 @@ _021E5C4A:
 	ldr r1, [r4, #0x20]
 	str r0, [r1, #8]
 	ldr r0, [r4, #0x40]
-	bl GetPlayerYCoord
+	bl GetPlayerZCoord
 	ldr r1, [r4, #0x20]
 	str r0, [r1, #0xc]
 	ldr r0, [r4, #0x40]
@@ -540,7 +540,7 @@ _021E5D82:
 	bl ov01_021F3D50
 	ldr r0, [r4, #4]
 	ldr r0, [r0, #8]
-	bl ov01_021EFA1C
+	bl FieldDrawMapNameInfo_Destroy
 	ldr r0, [r4, #4]
 	ldr r0, [r0, #0xc]
 	bl ov01_021EB234
@@ -655,7 +655,7 @@ ov01_021E5ED4: ; 0x021E5ED4
 	bl GetPlayerXCoord
 	add r4, r0, #0
 	ldr r0, [r5, #0x40]
-	bl GetPlayerYCoord
+	bl GetPlayerZCoord
 	ldr r2, [r5, #0x20]
 	ldr r1, [r2, #8]
 	cmp r4, r1
@@ -687,7 +687,7 @@ ov01_021E5F04: ; 0x021E5F04
 	add r1, r0, r1
 	ldr r0, [r5, #0x40]
 	asr r4, r1, #5
-	bl GetPlayerYCoord
+	bl GetPlayerZCoord
 	asr r1, r0, #4
 	lsr r1, r1, #0x1b
 	add r1, r0, r1
@@ -750,7 +750,7 @@ _021E5F3E:
 	cmp r6, r0
 	beq _021E5FB8
 	add r0, r5, #0
-	bl ov01_021EFAF8
+	bl FieldSystem_DrawMapNameAnimation
 _021E5FB8:
 	mov r0, #1
 	add sp, #8
@@ -1525,7 +1525,7 @@ _021E65D8:
 	ldr r1, [r4, #4]
 	str r0, [r1, #0xc]
 	ldr r0, [r4, #8]
-	bl ov01_021EF9E0
+	bl FieldDrawMapNameInfo_Create
 	ldr r1, [r4, #4]
 	str r0, [r1, #8]
 	mov r0, #4

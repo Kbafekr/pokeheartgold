@@ -58,7 +58,8 @@ Static main
     Object asm/unk_02017FAC.o
     Object asm/unk_02018000.o
     Object src/unk_02018380.o
-    Object asm/unk_020183F0.o
+    Object src/menu_input_state.o
+    Object src/touchscreen_list_menu.o
     Object src/camera_translation.o
     Object asm/unk_020192D0.o
     Object src/system.o
@@ -237,6 +238,7 @@ Static main
     Object asm/unk_0206793C.o
     Object asm/unk_02067A60.o
     Object src/field_move.o
+    Object src/field_move_environment.o
     Object asm/unk_020689C8.o
     Object src/gymmick_init.o
     Object src/unk_02068F84.o
@@ -294,7 +296,7 @@ Static main
     Object src/use_item_on_mon.o
     Object src/mail_misc.o
     Object src/unk_02091054.o
-    Object asm/unk_020910D8.o
+    Object src/hatch_egg_task.o
     Object asm/unk_02091278.o
     Object asm/unk_020912AC.o
     Object src/dex_mon_measures.o
@@ -303,8 +305,8 @@ Static main
     Object src/location_gmm_dat.o
     Object src/move_relearner.o
     Object asm/unk_02091880.o
-    Object asm/unk_02091CDC.o
-    Object asm/unk_020921A4.o
+    Object src/application/delete_savedata.o
+    Object src/application/check_savedata.o
     Object src/save_data_read_error.o
     Object src/save_data_write_error.o
     Object asm/unk_02092B04.o
@@ -409,6 +411,28 @@ Static main
     Object lib/NitroSDK/asm/mi_compress.o
     Object lib/NitroSDK/asm/mi_init.o
     Object lib/asm/nitro.o
+    Object lib/MSL_C/asm/MSL_ARM_abort_exit.o
+    Object lib/MSL_c/asm/MSL_ARM_critical_regions_NITRO.o
+    Object lib/MSL_C/asm/MSL_ARM_math.o
+    Object lib/MSL_C/asm/MSL_Common_alloc.o
+    Object lib/MSL_C/asm/MSL_Common_ansi_files.o
+    Object lib/MSL_C/src/arith.o
+    Object lib/MSL_C/asm/MSL_Common_assert.o
+    Object lib/MSL_C/asm/MSL_Common_buffer_io.o
+    Object lib/MSL_C/asm/MSL_Common_ctype.o
+    Object lib/MSL_C/asm/MSL_Common_direct_io.o
+    Object lib/MSL_C/asm/MSL_Common_errno.o
+    Object lib/MSL_C/asm/MSL_Common_file_io.o
+    Object lib/MSL_C/asm/MSL_Common_file_pos.o
+    Object lib/MSL_C/asm/MSL_Common_float.o
+    Object lib/MSL_C/asm/MSL_Common_mbstring.o
+    Object lib/MSL_C/asm/MSL_Common_mem.o
+    Object lib/MSL_C/asm/MSL_Common_mem_funcs.o
+    Object lib/MSL_C/asm/MSL_Common_printf.o
+    Object lib/MSL_C/asm/MSL_Common_qsort.o
+    Object lib/MSL_C/src/rand.o
+    Object lib/MSL_C/asm/MSL_Common_scanf.o
+    Object lib/MSL_C/asm/MSL_Common_signal.o
     Object lib/asm/msl.o
 }
 
@@ -454,7 +478,7 @@ Overlay field
     Object asm/overlay_01_021EB1E8.o
     Object asm/overlay_01_021EDAFC.o
     Object src/field/scrcmd_message.o
-    Object asm/overlay_01_021EF7A0.o
+    Object src/field/draw_map_name.o
     Object asm/overlay_01_021EFB38.o
     Object asm/overlay_01_021F1348.o
     Object asm/overlay_01_021F1AFC.o
@@ -522,7 +546,11 @@ Overlay OVY_2
     After field
     Object asm/overlay_02_02245B80.o
     Object src/field/legend_cutscene_camera.o
-    Object asm/overlay_02_02251E74.o
+    Object src/field/overlay_2_gear_phone.o
+    Object src/field/event_cutscene_shaymin.o
+    Object src/field/event_cutscene_celebi.o
+    Object src/field/event_cutscene_sinjoh.o
+    Object src/overlay_02_02251E74.o
 }
 Overlay OVY_3
 {
@@ -856,7 +884,7 @@ Overlay OVY_61
 Overlay OVY_62
 {
     After main
-    Object asm/overlay_62.o
+    Object src/overlay_mic_test.o
 }
 Overlay OVY_63
 {
@@ -915,6 +943,7 @@ Overlay OVY_73
 Overlay OVY_74
 {
     After OVY_38
+    Object src/application/main_menu/main_menu.o
     Object asm/overlay_74_thumb.o
     Object asm/nitrocrypto.o
 }

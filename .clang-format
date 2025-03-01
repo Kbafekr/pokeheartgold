@@ -1,16 +1,14 @@
 ---
 BasedOnStyle: WebKit
-Language: Cpp
 LineEnding: LF
 ColumnLimit: 0
 
 AlignAfterOpenBracket: DontAlign
-AlignConsecutiveAssignments:
-  Enabled: true
-AlignConsecutiveBitFields:
-  Enabled: true
+AlignConsecutiveAssignments: None
+AlignConsecutiveBitFields: None
 AlignConsecutiveDeclarations: None
 AlignConsecutiveMacros: Consecutive
+AlignEscapedNewlines: Left
 AlignTrailingComments: true
 AlignArrayOfStructures: Left
 

@@ -1,6 +1,7 @@
 #ifndef POKEHEARTGOLD_FIELD_SYSTEM_H
 #define POKEHEARTGOLD_FIELD_SYSTEM_H
 
+#include "field/draw_map_name.h"
 #include "field/overlay_01_021E66E4.h"
 
 #include "bag_cursor.h"
@@ -13,6 +14,7 @@
 #include "gear_phone.h"
 #include "map_events_internal.h"
 #include "map_matrix.h"
+#include "menu_input_state.h"
 #include "overlay_01_021EB1E8.h"
 #include "overlay_01_02204004.h"
 #include "overlay_manager.h"
@@ -75,7 +77,7 @@ typedef struct FieldSystemUnk108 {
 struct FieldSystemUnkSub0 {
     OVY_MANAGER *unk0;
     OVY_MANAGER *unk4;
-    BOOL unk8;
+    BOOL isPaused;
     BOOL unkC;
 };
 
@@ -95,7 +97,7 @@ struct FieldSystemUnkSub68 {
 typedef struct FieldSystemUnkSub4 {
     u32 unk0;
     Field3dObjectTaskManager *field3dObjectTaskManager;
-    u32 unk8;
+    FieldDrawMapNameInfo *drawMapNameInfo;
     void *unk_0C; // weather related?
     UnkStruct_ov01_021EB1E8 *unk10;
     u32 unk14;
@@ -166,7 +168,7 @@ struct FieldSystem {
     FollowMon followMon; // E4
     u8 unk104[4];
     FieldSystemUnk108 *unk108;
-    BOOL menuInputState; // Tracks whether the last menu input was touch or keypad
+    MenuInputStateMgr menuInputState; // Tracks whether the last menu input was touch or keypad
     u8 unk_110;
     u8 unk_111[3];
     GearPhoneRingManager *phoneRingManager;
@@ -175,18 +177,18 @@ struct FieldSystem {
     u32 judgeStatPosition;
 }; // size: 0x128
 
-typedef struct Unk_0203E15C {
+typedef struct FieldInput {
     u8 unk0[6];
     u16 unk6;
     u16 unk8;
     u16 unkA;
-} Unk_0203E15C;
+} FieldInput;
 
 BOOL Field_Continue_AppInit(OVY_MANAGER *man, int *unused);
 BOOL Field_NewGame_AppInit(OVY_MANAGER *man, int *unused);
 BOOL Field_AppExec(OVY_MANAGER *man, int *unused);
 BOOL Field_AppExit(OVY_MANAGER *man, int *unused);
-void sub_0203DEF0(FieldSystem *fieldSystem);
+void FieldSystem_LoadFieldOverlayInternal(FieldSystem *fieldSystem);
 void sub_0203DF34(FieldSystem *fieldSystem);
 u8 sub_0203DF3C(FieldSystem *fieldSystem);
 void sub_0203DF64(FieldSystem *fieldSystem, int a1);
@@ -196,8 +198,8 @@ BOOL sub_0203DFA4(FieldSystem *fieldSystem);
 void FieldSystem_LaunchApplication(FieldSystem *fieldSystem, const OVY_MGR_TEMPLATE *template, void *parentWork);
 FieldSystem *FieldSystem_New(OVY_MANAGER *man);
 void FieldSystem_Delete(OVY_MANAGER *man);
-BOOL sub_0203E13C(FieldSystem *fieldSystem);
-void sub_0203E15C(FieldSystem *fieldSystem);
+BOOL FieldSystem_IsPlayerMovementAllowed(FieldSystem *fieldSystem);
+void FieldSystem_Control(FieldSystem *fieldSystem);
 void sub_0203E2F4();
 void sub_0203E30C();
 int sub_0203E324();
@@ -211,10 +213,10 @@ extern const OVY_MGR_TEMPLATE gApplication_NewGameFieldsys;
 extern const OVY_MGR_TEMPLATE gApplication_ContinueFieldsys;
 
 static inline void InitLocation(Location *location, int mapId, int warpId, int x, int y, int direction) {
-    location->mapId     = mapId;
-    location->warpId    = warpId;
-    location->x         = x;
-    location->y         = y;
+    location->mapId = mapId;
+    location->warpId = warpId;
+    location->x = x;
+    location->y = y;
     location->direction = direction;
 }
 

@@ -13,7 +13,7 @@
 .public CallApplicationAsTask
 .public TaskManager_GetFieldSystem
 .public TaskManager_GetEnvironment
-.public GetMetatileBehaviorAt
+.public GetMetatileBehavior
 .public sub_02054940
 .public sub_02056680
 .public sub_020566F8
@@ -29,7 +29,7 @@
 .public sub_0205B81C
 .public PlayerAvatar_GetFacingDirection
 .public GetPlayerXCoord
-.public GetPlayerYCoord
+.public GetPlayerZCoord
 .public PlayerAvatar_GetPositionVec
 .public PlayerAvatar_GetPositionVecConst
 .public PlayerAvatar_GetMapObject
@@ -38,8 +38,8 @@
 .public PlayerAvatar_ToggleAutomaticHeightUpdating_NowApply
 .public MapObject_SetFacingDirectionDirect
 .public sub_0205F328
-.public MapObject_GetPositionVec
-.public MapObject_SetPositionVec
+.public MapObject_CopyPositionVector
+.public MapObject_SetPositionVector
 .public sub_0205FC94
 .public MapObject_AreBitsSetForMovementScriptInit
 .public MapObject_SetHeldMovement

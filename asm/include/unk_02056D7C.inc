@@ -61,12 +61,12 @@
 .public PlayerAvatar_GetFacingDirection
 .public PlayerAvatar_SetFacingDirection
 .public GetPlayerXCoord
-.public GetPlayerYCoord
+.public GetPlayerZCoord
 .public sub_0205C6CC
 .public sub_0205C6D4
 .public PlayerAvatar_GetMapObject
 .public FieldSystem_GetPlayerAvatar
-.public sub_0205CB38
+.public PlayerAvatar_CheckRunningShoesLock
 .public sub_0205DE38
 .public sub_0205DF0C
 .public sub_0205DFC8
@@ -75,8 +75,8 @@
 .public MapObjectManager_GetFirstActiveObjectByID
 .public MapObject_SetID
 .public MapObject_SetCurrentX
-.public MapObject_SetCurrentY
-.public sub_0205FC2C
+.public MapObject_SetCurrentZ
+.public MapObject_SetPositionFromXYZAndDirection
 .public GetDeltaXByFacingDirection
 .public GetDeltaYByFacingDirection
 .public sub_0206234C

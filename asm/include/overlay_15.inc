@@ -82,7 +82,7 @@
 .public YesNoPrompt_Destroy
 .public YesNoPrompt_InitFromTemplate
 .public YesNoPrompt_HandleInput
-.public sub_02018410
+.public MenuInputStateMgr_SetState
 .public Main_SetVBlankIntrCB
 .public HBlankInterruptDisable
 .public SetKeyRepeatTimers
@@ -145,7 +145,7 @@
 .public String16_FormatInteger
 .public Thunk_G3X_Reset
 .public RequestSwap3DBuffers
-.public Save_PlayerData_GetProfileAddr
+.public Save_PlayerData_GetProfile
 .public Save_PlayerData_GetOptionsAddr
 .public PlayerProfile_GetTrainerGender
 .public PlayerProfile_GetMoney

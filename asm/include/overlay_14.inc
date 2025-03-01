@@ -113,7 +113,7 @@
 .public YesNoPrompt_InitFromTemplate
 .public YesNoPrompt_HandleInput
 .public YesNoPrompt_Reset
-.public sub_02018410
+.public MenuInputStateMgr_SetState
 .public sub_0201956C
 .public sub_020195C0
 .public sub_020195F4
@@ -203,7 +203,7 @@
 .public String_New
 .public String_Delete
 .public SaveArray_PCStorage_Get
-.public Save_PlayerData_GetProfileAddr
+.public Save_PlayerData_GetProfile
 .public Save_PlayerData_GetOptionsAddr
 .public Options_GetFrame
 .public Save_SpecialRibbons_Get

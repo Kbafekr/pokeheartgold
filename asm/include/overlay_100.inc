@@ -66,8 +66,8 @@
 .public sub_0200FBDC
 .public sub_0200FBF4
 .public GF_RTC_CopyDateTime
-.public sub_020183F0
-.public sub_02018410
+.public MenuInputStateMgr_GetState
+.public MenuInputStateMgr_SetState
 .public Main_SetVBlankIntrCB
 .public HBlankInterruptDisable
 .public CreateHeap
@@ -104,7 +104,7 @@
 .public Sprite_SetPalIndex
 .public TouchscreenHitbox_FindRectAtTouchNew
 .public GF_AssertFail
-.public Save_PlayerData_GetProfileAddr
+.public Save_PlayerData_GetProfile
 .public Save_PlayerData_GetOptionsAddr
 .public SaveData_GSPlayerMisc_Get
 .public sub_0202EDF8

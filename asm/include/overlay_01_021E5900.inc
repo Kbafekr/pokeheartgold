@@ -80,7 +80,7 @@
 .public sub_0205C46C
 .public PlayerAvatar_GetFacingDirection
 .public GetPlayerXCoord
-.public GetPlayerYCoord
+.public GetPlayerZCoord
 .public PlayerAvatar_GetPositionVecConst
 .public sub_0205E104
 .public sub_0205E4C8
@@ -154,9 +154,9 @@
 .public ov01_021EB234
 .public ov01_021EB260
 .public FieldWeatherUpdate_UsedFlash
-.public ov01_021EF9E0
-.public ov01_021EFA1C
-.public ov01_021EFAF8
+.public FieldDrawMapNameInfo_Create
+.public FieldDrawMapNameInfo_Destroy
+.public FieldSystem_DrawMapNameAnimation
 .public ov01_021F1348
 .public ov01_021F1384
 .public ov01_021F1390

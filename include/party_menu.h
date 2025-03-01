@@ -1,10 +1,11 @@
 #ifndef POKEHEARTGOLD_PARTY_MENU_H
 #define POKEHEARTGOLD_PARTY_MENU_H
 
-#include "constants/party_menu.h"
+#include "constants/field_move_response.h"
 
 #include "bag_types_def.h"
 #include "battle_regulation.h"
+#include "field_move.h"
 #include "gf_3d_vramman.h"
 #include "mail.h"
 #include "message_printer.h"
@@ -15,16 +16,6 @@
 #include "unk_02020654.h"
 #include "unk_0202E41C.h"
 #include "yes_no_prompt.h"
-
-#define FIELD_MOVE_CHECK_TREE_F      0
-#define FIELD_MOVE_CHECK_WATER_F     2
-#define FIELD_MOVE_CHECK_ROCK_F      3
-#define FIELD_MOVE_CHECK_BREAKROCK_F 4
-#define FIELD_MOVE_CHECK_WATERFALL_F 5
-#define FIELD_MOVE_CHECK_ROCKCLIMB_F 6
-#define FIELD_MOVE_CHECK_FLASH_F     7
-#define FIELD_MOVE_CHECK_WHIRLPOOL_F 12
-#define FIELD_MOVE_CHECK_HEADBUTT_F  13
 
 typedef enum PartyMonSelection {
     PARTY_MON_SELECTION_1,
@@ -139,7 +130,7 @@ typedef enum PartyMonContextMenuItem {
 
     PARTY_MON_CONTEXT_MENU_FIELD_MOVES_BEGIN = PARTY_MON_CONTEXT_MENU_CUT,
     PARTY_MON_CONTEXT_MENU_FIELD_MOVES_COUNT = PARTY_MON_CONTEXT_MENU_MAX - PARTY_MON_CONTEXT_MENU_FIELD_MOVES_BEGIN,
-    PARTY_MON_CONTEXT_MENU_NUM_STRINGS       = PARTY_MON_CONTEXT_MENU_CUT + MAX_MON_MOVES,
+    PARTY_MON_CONTEXT_MENU_NUM_STRINGS = PARTY_MON_CONTEXT_MENU_CUT + MAX_MON_MOVES,
 } PartyMonContextMenuItem;
 
 typedef enum PartyMenuActionReturn {
@@ -272,8 +263,8 @@ typedef struct UnkTemplatePartyMenuContextMenu_0207E590 {
     u8 unk_08;
     u8 unk_09;
     u8 numItems;
-    u8 unk_0B_0      : 4;
-    u8 unk_0B_4      : 2;
+    u8 unk_0B_0 : 4;
+    u8 unk_0B_4 : 2;
     u8 scrollEnabled : 2;
 } PartyMenuContextMenu;
 
@@ -285,19 +276,6 @@ typedef struct PartyMenuContextMenuCursor {
     PartyMenuContextMenu menu;
 } PartyMenuContextMenuCursor;
 
-typedef struct FieldMoveUseData {
-    TaskManager *taskManager;
-    u16 partySlot;
-    u16 fieldMoveIdx;
-} FieldMoveUseData;
-
-typedef struct FieldMoveCheckData {
-    u32 mapId;
-    FieldSystem *fieldSystem;
-    LocalMapObject *facingObject;
-    u16 flag;
-} FieldMoveCheckData;
-
 typedef struct PartyMenuArgs {
     Party *party;
     Bag *bag;
@@ -307,7 +285,7 @@ typedef struct PartyMenuArgs {
     LinkBattleRuleset *linkBattleRuleset;
     FieldMoveCheckData *fieldMoveCheckData;
     FieldSystem *fieldSystem;
-    BOOL *menuInputStatePtr;
+    MenuInputStateMgr *menuInputStatePtr;
     u8 context;
     u8 unk_25;
     u8 partySlot;
@@ -345,7 +323,7 @@ typedef struct PartyMenuContextButtonAnimData {
     PartyMenuContextMenu *template;
     u8 numItems;
     u8 selection;
-    u8 autoAnimTimer   : 4;
+    u8 autoAnimTimer : 4;
     u8 buttonAnimState : 4;
     u8 state;
     int followUpState;
@@ -353,16 +331,16 @@ typedef struct PartyMenuContextButtonAnimData {
 } PartyMenuContextButtonAnimData;
 
 typedef struct PartyMenuMonsDrawState {
-    String *nickname;               // 828
-    u16 species;                    // 82C
-    u16 hp;                         // 82E
-    u16 maxHp;                      // 830
-    u16 level;                      // 832
-    u16 heldItem;                   // 834
-    u16 status                : 12; // 836
+    String *nickname; // 828
+    u16 species;      // 82C
+    u16 hp;           // 82E
+    u16 maxHp;        // 830
+    u16 level;        // 832
+    u16 heldItem;     // 834
+    u16 status : 12;  // 836
     u16 dontPrintGenderSymbol : 1;
-    u16 gender                : 2;
-    u16 isContestCompatible   : 1;
+    u16 gender : 2;
+    u16 isContestCompatible : 1;
     u8 isEgg;                     // 838
     u8 form;                      // 839
     u16 capsule;                  // 83A
@@ -424,8 +402,8 @@ struct PartyMenu {
     u8 unk_C61;
     u8 afterTextPrinterState;
     u8 softboiledDonorSlot : 6;
-    u8 secondCursorActive  : 1;
-    u8 cancelDisabled      : 1;
+    u8 secondCursorActive : 1;
+    u8 cancelDisabled : 1;
     u8 textPrinterId;
     u8 partyMonIndex; // 0xc65
     u8 unk_C66;
@@ -441,23 +419,6 @@ struct PartyMenu {
     PartyMenuContextButtonAnimData contextMenuButtonAnim;
     u8 filler_CA0[0x8];
 }; // CA8
-
-#define FIELD_MOVE_FUNC_USE   0
-#define FIELD_MOVE_FUNC_CHECK 1
-
-typedef void (*FieldMoveUseFunc)(struct FieldMoveUseData *useData, const struct FieldMoveCheckData *sub);
-typedef u32 (*FieldMoveCheckFunc)(const struct FieldMoveCheckData *checkData);
-
-typedef struct FieldUseMoveEnv {
-    u32 magic;
-    LocalMapObject *facingObject;
-    struct FieldMoveUseData useData;
-} FieldUseMoveEnv;
-
-struct TeleportFieldEnv {
-    Pokemon *mon;
-    struct FlyTaskStruct *flySub; // waste of space
-};
 
 extern const OVY_MGR_TEMPLATE gOverlayTemplate_PartyMenu;
 
@@ -484,7 +445,7 @@ u32 sub_0207CAA8(void);
 void sub_0207CAAC(HeapID heapId, u16 *a1, u16 *a2, u16 *a3);
 void PartyMenu_FormChangeScene_End(PartyMenu *partyMenu);
 void PartyMenu_DeleteContextMenuAndList(PartyMenu *partyMenu);
-void sub_0207CB3C(PartyMenu *partyMenu, BOOL a1);
+void sub_0207CB3C(PartyMenu *partyMenu, MenuInputState menuInputState);
 void PartyMenu_FormChangeScene_Begin(PartyMenu *partyMenu);
 
 #endif // POKEHEARTGOLD_PARTY_MENU_H

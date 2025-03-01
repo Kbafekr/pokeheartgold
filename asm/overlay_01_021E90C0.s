@@ -251,10 +251,10 @@ _021E926A:
 	cmp r0, #0
 	bne _021E92A8
 	add r0, r5, #0
-	bl MapObject_GetPrevX
+	bl MapObject_GetPreviousX
 	add r7, r0, #0
 	add r0, r5, #0
-	bl MapObject_GetPrevY
+	bl MapObject_GetPreviousZ
 	add r3, r6, #0
 	add r2, r0, #0
 	mov r0, #0xc
@@ -1200,10 +1200,10 @@ _021E9A00:
 	cmp r0, #0
 	beq _021E9A34
 	add r0, r7, #0
-	bl MapObject_GetPrevX
+	bl MapObject_GetPreviousX
 	str r0, [sp, #0x18]
 	add r0, r7, #0
-	bl MapObject_GetPrevY
+	bl MapObject_GetPreviousZ
 	add r6, #0xe4
 	add r2, r0, #0
 	ldr r1, [sp, #0x18]
@@ -2181,7 +2181,7 @@ ov01_021EA1F4: ; 0x021EA1F4
 	ldr r0, [r0, #0x20]
 	add r4, r1, #0
 	ldr r0, [r0]
-	bl sub_0203B58C
+	bl MapHeader_IsInBuilding
 	cmp r0, #0
 	beq _021EA214
 	cmp r4, #0x3f

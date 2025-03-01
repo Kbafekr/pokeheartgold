@@ -23,49 +23,49 @@ static void ApplyRoamerLocation(RoamerSaveData *roamer, u8 roamer_idx, u8 new_lo
 
 static const u32 sRoamerLocations[ROAMER_LOC_COUNT] = {
     // Johto
-    MAP_R29,
-    MAP_R30,
-    MAP_R31,
-    MAP_R32,
-    MAP_R33,
-    MAP_R34,
-    MAP_R35,
-    MAP_R36,
-    MAP_R37,
-    MAP_R38,
-    MAP_R39,
-    MAP_R42,
-    MAP_R43,
-    MAP_R44,
-    MAP_R45,
-    MAP_R46,
+    MAP_ROUTE_29,
+    MAP_ROUTE_30,
+    MAP_ROUTE_31,
+    MAP_ROUTE_32,
+    MAP_ROUTE_33,
+    MAP_ROUTE_34,
+    MAP_ROUTE_35,
+    MAP_ROUTE_36,
+    MAP_ROUTE_37,
+    MAP_ROUTE_38,
+    MAP_ROUTE_39,
+    MAP_ROUTE_42,
+    MAP_ROUTE_43,
+    MAP_ROUTE_44,
+    MAP_ROUTE_45,
+    MAP_ROUTE_46,
 
     // Kanto
-    MAP_R01,
-    MAP_R02,
-    MAP_R03,
-    MAP_R04,
-    MAP_R05,
-    MAP_R06,
-    MAP_R07,
-    MAP_R08,
-    MAP_R09,
-    MAP_R10,
-    MAP_R11,
-    MAP_R12,
-    MAP_R13,
-    MAP_R14,
-    MAP_R15,
-    MAP_R16,
-    MAP_R17,
-    MAP_R18,
-    MAP_W19,
-    MAP_W20,
-    MAP_W21,
-    MAP_R22,
-    MAP_R24,
-    MAP_R26,
-    MAP_R28,
+    MAP_ROUTE_1,
+    MAP_ROUTE_2,
+    MAP_ROUTE_3,
+    MAP_ROUTE_4,
+    MAP_ROUTE_5,
+    MAP_ROUTE_6,
+    MAP_ROUTE_7,
+    MAP_ROUTE_8,
+    MAP_ROUTE_9,
+    MAP_ROUTE_10,
+    MAP_ROUTE_11,
+    MAP_ROUTE_12,
+    MAP_ROUTE_13,
+    MAP_ROUTE_14,
+    MAP_ROUTE_15,
+    MAP_ROUTE_16,
+    MAP_ROUTE_17,
+    MAP_ROUTE_18,
+    MAP_ROUTE_19,
+    MAP_ROUTE_20,
+    MAP_ROUTE_21,
+    MAP_ROUTE_22,
+    MAP_ROUTE_24,
+    MAP_ROUTE_26,
+    MAP_ROUTE_28,
 };
 
 static const struct RoamerAdjacency sRoamerAdjacencyTable[ROAMER_LOC_COUNT] = {
@@ -174,7 +174,7 @@ void UpdatePlayerLocationHistoryIfAnyRoamersActive(RoamerSaveData *roamers, u32 
 void Save_CreateRoamerByID(SaveData *saveData, u8 idx) {
     PlayerProfile *profile;
     RoamerSaveData *roamerSave = Save_Roamers_Get(saveData);
-    Roamer *roamerStats        = Roamers_GetRoamMonStats(roamerSave, idx);
+    Roamer *roamerStats = Roamers_GetRoamMonStats(roamerSave, idx);
     Pokemon *mon;
     u16 species;
     u8 level;
@@ -182,19 +182,19 @@ void Save_CreateRoamerByID(SaveData *saveData, u8 idx) {
     switch (idx) {
     case ROAMER_RAIKOU:
         species = SPECIES_RAIKOU;
-        level   = 40;
+        level = 40;
         break;
     case ROAMER_ENTEI:
         species = SPECIES_ENTEI;
-        level   = 40;
+        level = 40;
         break;
     case ROAMER_LATIAS:
         species = SPECIES_LATIAS;
-        level   = 35;
+        level = 35;
         break;
     case ROAMER_LATIOS:
         species = SPECIES_LATIOS;
-        level   = 35;
+        level = 35;
         break;
     default:
         GF_ASSERT(0);
@@ -204,8 +204,8 @@ void Save_CreateRoamerByID(SaveData *saveData, u8 idx) {
     SetRoamerData(roamerStats, ROAMER_DATA_SPECIES, species);
     SetRoamerData(roamerStats, ROAMER_DATA_LEVEL, level);
 
-    profile = Save_PlayerData_GetProfileAddr(saveData);
-    mon     = AllocMonZeroed((HeapID)4);
+    profile = Save_PlayerData_GetProfile(saveData);
+    mon = AllocMonZeroed((HeapID)4);
     ZeroMonData(mon);
     CreateMon(mon, species, level, 32, FALSE, 0, OT_ID_PRESET, PlayerProfile_GetTrainerID_VisibleHalf(profile));
     SetRoamerData(roamerStats, ROAMER_DATA_STATUS, 0);
@@ -247,7 +247,7 @@ static void RoamerLocationSetRandom(RoamerSaveData *roamer, u8 roamer_idx, u32 l
         loc_min = ROAMER_LOC_KANTO_START;
     }
     do {
-        loc_cur_rand    = (LCRandom() % loc_num) + loc_min;
+        loc_cur_rand = (LCRandom() % loc_num) + loc_min;
         roamer_test_loc = sRoamerLocations[loc_cur_rand];
     } while (roamer_test_loc == last_loc || roamer_test_loc == roamer_cur_loc);
     ApplyRoamerLocation(roamer, roamer_idx, loc_cur_rand, roamer_test_loc);
@@ -261,9 +261,9 @@ static void RoamerLocationUpdateEx(RoamerSaveData *roamer, u8 roamer_idx, u32 la
     const struct RoamerAdjacency *adj;
 
     roamer_last_loc = Roamer_GetLocation(roamer, roamer_idx);
-    adj             = &sRoamerAdjacencyTable[roamer_last_loc];
+    adj = &sRoamerAdjacencyTable[roamer_last_loc];
     if (adj->count == 1) {
-        roamer_next_loc   = adj->neighbors[0];
+        roamer_next_loc = adj->neighbors[0];
         roamer_next_mapno = sRoamerLocations[roamer_next_loc];
         if (roamer_next_mapno == last_loc) {
             RoamerLocationSetRandom(roamer, roamer_idx, last_loc);
@@ -272,8 +272,8 @@ static void RoamerLocationUpdateEx(RoamerSaveData *roamer, u8 roamer_idx, u32 la
         }
     } else {
         while (1) {
-            sel_idx           = LCRandRange(adj->count);
-            roamer_next_loc   = adj->neighbors[sel_idx];
+            sel_idx = LCRandRange(adj->count);
+            roamer_next_loc = adj->neighbors[sel_idx];
             roamer_next_mapno = sRoamerLocations[roamer_next_loc];
             if (roamer_next_mapno != last_loc) {
                 ApplyRoamerLocation(roamer, roamer_idx, roamer_next_loc, roamer_next_mapno);

@@ -7,7 +7,6 @@
 #include "map_events.h"
 #include "math_util.h"
 #include "overlay_01_021E6880.h"
-#include "overlay_01_021EF7A0.h"
 #include "overlay_01_021F1AFC.h"
 #include "overlay_01_021F3D38.h"
 #include "overlay_01_021F6830.h"
@@ -27,16 +26,16 @@ FS_EXTERN_OVERLAY(OVY_124);
 FS_EXTERN_OVERLAY(field);
 
 const OVY_MGR_TEMPLATE gApplication_NewGameFieldsys = {
-    .init   = Field_NewGame_AppInit,
-    .exec   = Field_AppExec,
-    .exit   = Field_AppExit,
+    .init = Field_NewGame_AppInit,
+    .exec = Field_AppExec,
+    .exit = Field_AppExit,
     .ovy_id = FS_OVERLAY_ID_NONE
 };
 
 const OVY_MGR_TEMPLATE gApplication_ContinueFieldsys = {
-    .init   = Field_Continue_AppInit,
-    .exec   = Field_AppExec,
-    .exit   = Field_AppExit,
+    .init = Field_Continue_AppInit,
+    .exec = Field_AppExec,
+    .exit = Field_AppExit,
     .ovy_id = FS_OVERLAY_ID_NONE
 };
 
@@ -51,7 +50,7 @@ static BOOL FieldSystem_Main(FieldSystem *fieldSystem);
 
 BOOL Field_Continue_AppInit(OVY_MANAGER *man, int *unused) {
     FieldSystemInitWork *args = OverlayManager_GetArgs(man);
-    sFieldSysPtr              = FieldSystem_New(man);
+    sFieldSysPtr = FieldSystem_New(man);
 
     if (args->unk4) {
         CallFieldTask_ContinueGame_CommError(sFieldSysPtr);
@@ -87,14 +86,14 @@ BOOL Field_AppExit(OVY_MANAGER *man, int *unused) {
 
 extern OVY_MGR_TEMPLATE ov01_02206378;
 
-void sub_0203DEF0(FieldSystem *fieldSystem) {
+void FieldSystem_LoadFieldOverlayInternal(FieldSystem *fieldSystem) {
     GF_ASSERT(fieldSystem->unk0->unk4 == NULL);
     GF_ASSERT(fieldSystem->unk0->unk0 == NULL);
 
     HandleLoadOverlay(FS_OVERLAY_ID(field), OVY_LOAD_ASYNC);
 
-    fieldSystem->unk6C      = FALSE;
-    fieldSystem->unk0->unk8 = FALSE;
+    fieldSystem->unk6C = FALSE;
+    fieldSystem->unk0->isPaused = FALSE;
     fieldSystem->unk0->unk0 = OverlayManager_New(&ov01_02206378, fieldSystem, HEAP_ID_FIELD);
 }
 
@@ -143,7 +142,7 @@ FieldSystem *FieldSystem_New(OVY_MANAGER *man) {
 
     fieldSystem->unk0->unk0 = NULL;
     fieldSystem->unk0->unk4 = NULL;
-    fieldSystem->unk0->unk8 = FALSE;
+    fieldSystem->unk0->isPaused = FALSE;
     fieldSystem->unk0->unkC = FALSE;
 
     HandleLoadOverlay(FS_OVERLAY_ID(OVY_124), OVY_LOAD_ASYNC);
@@ -177,7 +176,7 @@ static void ppOverlayManager_RunFrame_DeleteIfFinished(OVY_MANAGER **man) {
 }
 
 static BOOL FieldSystem_Main(FieldSystem *fieldSystem) {
-    sub_0203E15C(fieldSystem);
+    FieldSystem_Control(fieldSystem);
     if (FieldSystem_RunTaskFrame(fieldSystem) == TRUE) {
         if (fieldSystem->unk4) {
             ov01_021F6830(fieldSystem, 0, 0);
@@ -197,87 +196,84 @@ static BOOL FieldSystem_Main(FieldSystem *fieldSystem) {
     return FALSE;
 }
 
-BOOL sub_0203E13C(FieldSystem *fieldSystem) {
-    if (!fieldSystem->unk0->unk8 && fieldSystem->unk6C && !FieldSystem_TaskIsRunning(fieldSystem)) {
-        return TRUE;
-    }
-    return FALSE;
+BOOL FieldSystem_IsPlayerMovementAllowed(FieldSystem *fieldSystem) {
+    return !fieldSystem->unk0->isPaused && fieldSystem->unk6C && !FieldSystem_TaskIsRunning(fieldSystem);
 }
 
-void sub_0203E15C(FieldSystem *fieldSystem) {
-    Unk_0203E15C unkStruct;
+void FieldSystem_Control(FieldSystem *fieldSystem) {
+    FieldInput fieldInput;
 
-    BOOL flag = sub_0203E13C(fieldSystem);
+    BOOL movementAllowed = FieldSystem_IsPlayerMovementAllowed(fieldSystem);
 
-    if (flag) {
-        sub_0205CE68(fieldSystem->playerAvatar);
-        ov01_021E6928(&unkStruct, fieldSystem, gSystem.newKeys, gSystem.heldKeys);
+    if (movementAllowed) {
+        PlayerAvatar_UpdateMovement(fieldSystem->playerAvatar);
+        FieldInput_Update(&fieldInput, fieldSystem, gSystem.newKeys, gSystem.heldKeys);
     }
 
-    int unkVar = fieldSystem->unk70;
+    int loadType = fieldSystem->unk70;
 
-    if (fieldSystem->location->mapId == MAP_D31R0201) {
-        unkVar = 0;
+    if (fieldSystem->location->mapId == MAP_BATTLE_TOWER) {
+        loadType = 0;
     }
 
-    switch (unkVar) {
+    switch (loadType) {
     case 3:
-        if (flag) {
+        if (movementAllowed) {
             if (sub_02057A0C()) {
-                if (ov01_021E6E00(&unkStruct, fieldSystem) == TRUE) {
-                    flag = FALSE;
+                if (FieldInput_Process_Colosseum(&fieldInput, fieldSystem) == TRUE) {
+                    movementAllowed = FALSE;
                 }
             } else {
-                flag = FALSE;
+                movementAllowed = FALSE;
             }
         }
-        sub_020573F0(fieldSystem, flag);
+        sub_020573F0(fieldSystem, movementAllowed);
         break;
     case 2:
-        if (flag && ov01_021E6EFC(&unkStruct, fieldSystem) != TRUE) {
-            sub_0205CB48(fieldSystem->playerAvatar, fieldSystem->unk2C, -1, unkStruct.unk6, unkStruct.unk8, 0);
+        if (movementAllowed && FieldInput_Process_UnionRoom(&fieldInput, fieldSystem) != TRUE) {
+            PlayerAvatar_MoveControl(fieldSystem->playerAvatar, fieldSystem->unk2C, -1, fieldInput.unk6, fieldInput.unk8, 0);
         }
         break;
     case 4:
-        if (flag) {
-            if (ov01_021E6FD4(&unkStruct, fieldSystem) == TRUE) {
-                ov01_021EFACC(fieldSystem->unk4->unk8);
+        if (movementAllowed) {
+            if (FieldInput_Process_BattleTower(&fieldInput, fieldSystem) == TRUE) {
+                FieldDrawMapName_Reset(fieldSystem->unk4->drawMapNameInfo);
                 ov01_021F3DFC(fieldSystem, 4);
                 ov01_021F2F24(fieldSystem->playerAvatar);
                 ov01_021F6830(fieldSystem, 0, 1);
                 break;
             }
             if (gSystem.newKeys & PAD_BUTTON_A) {
-                ov01_021EFACC(fieldSystem->unk4->unk8);
+                FieldDrawMapName_Reset(fieldSystem->unk4->drawMapNameInfo);
             }
-            flag = 0;
+            movementAllowed = 0;
             if (sub_0203E324()) {
-                flag = ov35_02259DB8();
+                movementAllowed = ov35_02259DB8();
             }
-            sub_0205CB48(fieldSystem->playerAvatar, fieldSystem->unk2C, -1, unkStruct.unk6, unkStruct.unk8, flag);
+            PlayerAvatar_MoveControl(fieldSystem->playerAvatar, fieldSystem->unk2C, -1, fieldInput.unk6, fieldInput.unk8, movementAllowed);
         }
         break;
     default:
-        if (flag) {
-            flag = ov01_021E6AF4(&unkStruct, fieldSystem);
-            if (flag) {
-                ov01_021EFACC(fieldSystem->unk4->unk8);
+        if (movementAllowed) {
+            u32 newEvent = FieldInput_Process(&fieldInput, fieldSystem);
+            if (newEvent) {
+                FieldDrawMapName_Reset(fieldSystem->unk4->drawMapNameInfo);
                 ov01_021F3DFC(fieldSystem, 4);
                 sub_0205CF44(fieldSystem->playerAvatar);
                 ov01_021F2F24(fieldSystem->playerAvatar);
                 ov01_021F6830(fieldSystem, 0, 1);
-                if (flag != 2) {
+                if (newEvent != 2) {
                     sub_02092FA8(fieldSystem->phoneRingManager);
                 }
             } else {
                 if (gSystem.newKeys & PAD_BUTTON_A) {
-                    ov01_021EFACC(fieldSystem->unk4->unk8);
+                    FieldDrawMapName_Reset(fieldSystem->unk4->drawMapNameInfo);
                 }
-                flag = 0;
+                u32 flag = 0;
                 if (sub_0203E324()) {
                     flag = ov35_02259DB8();
                 }
-                sub_0205CB48(fieldSystem->playerAvatar, fieldSystem->unk2C, -1, unkStruct.unk6, unkStruct.unk8, flag);
+                PlayerAvatar_MoveControl(fieldSystem->playerAvatar, fieldSystem->unk2C, -1, fieldInput.unk6, fieldInput.unk8, flag);
             }
         }
         break;
@@ -285,12 +281,12 @@ void sub_0203E15C(FieldSystem *fieldSystem) {
 }
 
 void sub_0203E2F4() {
-    sFieldSysPtr->unk0->unk8 = TRUE;
+    sFieldSysPtr->unk0->isPaused = TRUE;
     sub_02037504();
 }
 
 void sub_0203E30C() {
-    sFieldSysPtr->unk0->unk8 = FALSE;
+    sFieldSysPtr->unk0->isPaused = FALSE;
     sub_020374E4();
 }
 

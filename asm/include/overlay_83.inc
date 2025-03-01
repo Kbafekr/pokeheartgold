@@ -86,12 +86,12 @@
 .public YesNoPrompt_InitFromTemplate
 .public YesNoPrompt_HandleInput
 .public YesNoPrompt_Reset
-.public sub_02018424
-.public sub_02018474
-.public sub_020185FC
-.public sub_02018680
-.public sub_02018694
-.public sub_020186A4
+.public TouchscreenListMenuSpawner_Create
+.public TouchscreenListMenuSpawner_Destroy
+.public TouchscreenListMenu_Create
+.public TouchscreenListMenu_Destroy
+.public TouchscreenListMenu_DestroyButtons
+.public TouchscreenListMenu_HandleInput
 .public sub_02019BA4
 .public sub_02019BDC
 .public sub_02019BE4
@@ -163,7 +163,7 @@
 .public String_New
 .public String_Delete
 .public CopyU16ArrayToString
-.public Save_PlayerData_GetProfileAddr
+.public Save_PlayerData_GetProfile
 .public Save_PlayerData_GetOptionsAddr
 .public PlayerProfile_GetNamePtr
 .public PlayerProfile_GetTrainerGender

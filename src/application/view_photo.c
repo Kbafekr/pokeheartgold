@@ -9,12 +9,12 @@
 #include "field_take_photo.h"
 #include "font.h"
 #include "gf_gfx_loader.h"
+#include "menu_input_state.h"
 #include "message_format.h"
 #include "system.h"
 #include "text.h"
 #include "touchscreen.h"
 #include "unk_02005D10.h"
-#include "unk_020183F0.h"
 #include "unk_02068F84.h"
 
 typedef enum ViewPhotoTaskState {
@@ -26,7 +26,7 @@ typedef enum ViewPhotoTaskState {
 typedef struct ViewPhotoSysTaskData {
     HeapID heapId;
     int state;
-    int lastInputWasTouch;
+    MenuInputState menuInputState;
     ViewPhotoInputResponse lastInput;
     SaveData *saveData;
     FieldSystem *fieldSystem;
@@ -69,19 +69,19 @@ static void ViewPhotoSysTask_PrintTextOnWindows(ViewPhotoSysTaskData *viewPhoto)
 static u8 Photo_CountValidMons(Photo *a0);
 
 static const WindowTemplate ov19_0225A04E[2] = {
-    { .bgId       = GF_BG_LYR_SUB_1,
-     .left     = 24,
-     .top      = 21,
-     .width    = 8,
-     .height   = 2,
-     .palette  = 1,
+    { .bgId = GF_BG_LYR_SUB_1,
+     .left = 24,
+     .top = 21,
+     .width = 8,
+     .height = 2,
+     .palette = 1,
      .baseTile = 0x1F0 },
-    { .bgId       = GF_BG_LYR_SUB_1,
-     .left     = 1,
-     .top      = 8,
-     .width    = 28,
-     .height   = 8,
-     .palette  = 10,
+    { .bgId = GF_BG_LYR_SUB_1,
+     .left = 1,
+     .top = 8,
+     .width = 28,
+     .height = 8,
+     .palette = 10,
      .baseTile = 0x110 }
 };
 
@@ -135,12 +135,12 @@ static const u8 _0225A03C[3] = { 9, 1, 4 };
 SysTask *FieldSystem_CreateViewPhotoTask(FieldSystem *fieldSystem) {
     ViewPhotoSysTaskData *viewPhoto = AllocFromHeap(HEAP_ID_FIELD, sizeof(ViewPhotoSysTaskData));
     MI_CpuClear8(viewPhoto, sizeof(ViewPhotoSysTaskData));
-    viewPhoto->heapId            = HEAP_ID_FIELD;
-    viewPhoto->fieldSystem       = fieldSystem;
-    viewPhoto->bgConfig          = fieldSystem->bgConfig;
-    viewPhoto->saveData          = fieldSystem->saveData;
-    viewPhoto->parent            = fieldSystem->viewPhotoTask;
-    viewPhoto->lastInputWasTouch = sub_020183F0(&fieldSystem->menuInputState);
+    viewPhoto->heapId = HEAP_ID_FIELD;
+    viewPhoto->fieldSystem = fieldSystem;
+    viewPhoto->bgConfig = fieldSystem->bgConfig;
+    viewPhoto->saveData = fieldSystem->saveData;
+    viewPhoto->parent = fieldSystem->viewPhotoTask;
+    viewPhoto->menuInputState = MenuInputStateMgr_GetState(&fieldSystem->menuInputState);
     FieldViewPhoto_GetAlbumScrollParam(viewPhoto->parent, &viewPhoto->scrollData);
     return SysTask_CreateOnMainQueue(SysTask_ViewPhoto, viewPhoto, 1);
 }
@@ -148,7 +148,7 @@ SysTask *FieldSystem_CreateViewPhotoTask(FieldSystem *fieldSystem) {
 void FieldSystem_DestroyViewPhotoTask(FieldSystem *fieldSystem) {
     ViewPhotoSysTaskData *viewPhoto = (ViewPhotoSysTaskData *)SysTask_GetData(fieldSystem->unk_D8);
 
-    sub_02018410(&fieldSystem->menuInputState, viewPhoto->lastInputWasTouch);
+    MenuInputStateMgr_SetState(&fieldSystem->menuInputState, viewPhoto->menuInputState);
     ViewPhotoSysTask_Teardown(viewPhoto);
     FreeToHeap(viewPhoto);
     SysTask_Destroy(fieldSystem->unk_D8);
@@ -198,10 +198,10 @@ static ViewPhotoInputResponse ViewPhotoSysTask_HandleInput(ViewPhotoSysTaskData 
     if (response == VIEW_PHOTO_INPUT_NOTHING) {
         response = ViewPhotoSysTask_GetKeyInput(viewPhoto);
         if (response == VIEW_PHOTO_INPUT_NOTHING) {
-            viewPhoto->lastInputWasTouch = FALSE;
+            viewPhoto->menuInputState = MENU_INPUT_STATE_BUTTONS;
         }
     } else {
-        viewPhoto->lastInputWasTouch = TRUE;
+        viewPhoto->menuInputState = MENU_INPUT_STATE_TOUCH;
     }
     switch (response) {
     case VIEW_PHOTO_INPUT_END:
@@ -258,18 +258,18 @@ static void ViewPhotoSysTask_InitBgLayers(ViewPhotoSysTaskData *viewPhoto) {
 
     {
         BgTemplate bgTemplate = {
-            .x          = 0,
-            .y          = 0,
+            .x = 0,
+            .y = 0,
             .bufferSize = GF_BG_BUF_SIZE_256x256_4BPP,
-            .baseTile   = 0,
-            .size       = GF_BG_SCR_SIZE_256x256,
-            .colorMode  = GX_BG_COLORMODE_16,
+            .baseTile = 0,
+            .size = GF_BG_SCR_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
             .screenBase = GX_BG_SCRBASE_0x7800,
-            .charBase   = GX_BG_CHARBASE_0x00000,
-            .bgExtPltt  = GX_BG_EXTPLTT_01,
-            .priority   = 0,
-            .areaOver   = GX_BG_AREAOVER_XLU,
-            .mosaic     = 0,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = GX_BG_AREAOVER_XLU,
+            .mosaic = 0,
         };
         InitBgFromTemplate(viewPhoto->bgConfig, GF_BG_LYR_SUB_1, &bgTemplate, GF_BG_TYPE_TEXT);
         BgClearTilemapBufferAndCommit(viewPhoto->bgConfig, GF_BG_LYR_SUB_1);
@@ -277,18 +277,18 @@ static void ViewPhotoSysTask_InitBgLayers(ViewPhotoSysTaskData *viewPhoto) {
 
     {
         BgTemplate bgTemplate = {
-            .x          = 0,
-            .y          = 0,
+            .x = 0,
+            .y = 0,
             .bufferSize = GF_BG_BUF_SIZE_256x256_4BPP,
-            .baseTile   = 0,
-            .size       = GF_BG_SCR_SIZE_256x256,
-            .colorMode  = GX_BG_COLORMODE_16,
+            .baseTile = 0,
+            .size = GF_BG_SCR_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
             .screenBase = GX_BG_SCRBASE_0x7000,
-            .charBase   = GX_BG_CHARBASE_0x00000,
-            .bgExtPltt  = GX_BG_EXTPLTT_01,
-            .priority   = 3,
-            .areaOver   = GX_BG_AREAOVER_XLU,
-            .mosaic     = 0,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 3,
+            .areaOver = GX_BG_AREAOVER_XLU,
+            .mosaic = 0,
         };
         InitBgFromTemplate(viewPhoto->bgConfig, GF_BG_LYR_SUB_2, &bgTemplate, GF_BG_TYPE_TEXT);
         BgClearTilemapBufferAndCommit(viewPhoto->bgConfig, GF_BG_LYR_SUB_2);
@@ -296,18 +296,18 @@ static void ViewPhotoSysTask_InitBgLayers(ViewPhotoSysTaskData *viewPhoto) {
 
     {
         BgTemplate bgTemplate = {
-            .x          = 0,
-            .y          = 0,
+            .x = 0,
+            .y = 0,
             .bufferSize = GF_BG_BUF_SIZE_256x256_4BPP,
-            .baseTile   = 0,
-            .size       = GF_BG_SCR_SIZE_256x256,
-            .colorMode  = GX_BG_COLORMODE_256,
+            .baseTile = 0,
+            .size = GF_BG_SCR_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_256,
             .screenBase = GX_BG_SCRBASE_0x6800,
-            .charBase   = GX_BG_CHARBASE_0x04000,
-            .bgExtPltt  = GX_BG_EXTPLTT_01,
-            .priority   = 2,
-            .areaOver   = GX_BG_AREAOVER_XLU,
-            .mosaic     = 0,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = GX_BG_AREAOVER_XLU,
+            .mosaic = 0,
         };
         InitBgFromTemplate(viewPhoto->bgConfig, GF_BG_LYR_SUB_3, &bgTemplate, GF_BG_TYPE_256x16PLTT);
         BgClearTilemapBufferAndCommit(viewPhoto->bgConfig, GF_BG_LYR_SUB_3);
@@ -336,7 +336,7 @@ static void ViewPhotoSysTask_LoadBgGraphics(ViewPhotoSysTaskData *viewPhoto) {
     NNSG2dCharacterData *pCharData;
     u8 r3;
     ncgrFile = GfGfxLoader_GetCharDataFromOpenNarc(narc, 5, FALSE, &pCharData, viewPhoto->heapId);
-    r3       = viewPhoto->scrollData.photo->iconId + 1;
+    r3 = viewPhoto->scrollData.photo->iconId + 1;
     BG_LoadCharTilesData(viewPhoto->bgConfig, GF_BG_LYR_SUB_3, pCharData->pRawData + ((25 * r3 + 64) * 64), 0x640, 1);
     FreeToHeap(ncgrFile);
     NARC_Delete(narc);
@@ -347,10 +347,10 @@ static void ViewPhotoSysTask_UnloadBgGraphics(ViewPhotoSysTaskData *viewPhoto) {
 
 static void ViewPhotoSysTask_InitMessages(ViewPhotoSysTaskData *viewPhoto) {
     FontID_Alloc(4, viewPhoto->heapId);
-    viewPhoto->msgData   = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, NARC_msgdata_msg, NARC_msg_msg_0000_bin, viewPhoto->heapId);
+    viewPhoto->msgData = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, NARC_msgdata_msg, NARC_msg_msg_0000_bin, viewPhoto->heapId);
     viewPhoto->msgFormat = MessageFormat_New_Custom(6, 22, viewPhoto->heapId);
-    viewPhoto->strBuf    = String_New(128, viewPhoto->heapId);
-    viewPhoto->exitMsg   = NewString_ReadMsgData(viewPhoto->msgData, 0);
+    viewPhoto->strBuf = String_New(128, viewPhoto->heapId);
+    viewPhoto->exitMsg = NewString_ReadMsgData(viewPhoto->msgData, 0);
     for (int i = 0; i < 2; ++i) {
         viewPhoto->photoDescStringTemplates[i] = NewString_ReadMsgData(viewPhoto->msgData, 10 + i);
     }
@@ -420,7 +420,7 @@ static BOOL ViewPhotoSysTask_IsButtonAnimPlaying(ViewPhotoSysTaskData *viewPhoto
 }
 
 static void formatPhotoFlavorText(Photo *photo, MessageFormat *msgFormat, String *strBuf, HeapID heapId, SaveData *saveData) {
-    BufferPlayersName(msgFormat, 0, Save_PlayerData_GetProfileAddr(saveData));
+    BufferPlayersName(msgFormat, 0, Save_PlayerData_GetProfile(saveData));
     sub_02068F98(photo->mapId, heapId, strBuf);
     BufferString(msgFormat, 1, strBuf, 2, 0, 2);
     CopyU16ArrayToString(strBuf, photo->leadMonNick);

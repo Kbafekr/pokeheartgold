@@ -22,7 +22,7 @@
 .public Camera_AdjustPerspectiveAngle
 .public Camera_GetPerspectiveAngle
 .public GF_AssertFail
-.public sub_0203B58C
+.public MapHeader_IsInBuilding
 .public TaskManager_Call
 .public TaskManager_GetFieldSystem
 .public TaskManager_GetEnvironment
@@ -34,8 +34,8 @@
 .public PlayerAvatar_GetFacingDirection
 .public PlayerAvatar_GetMapObject
 .public MapObject_SetVisible
-.public MapObject_GetPrevX
-.public MapObject_GetPrevY
+.public MapObject_GetPreviousX
+.public MapObject_GetPreviousZ
 .public MapObject_AreBitsSetForMovementScriptInit
 .public MapObject_SetHeldMovement
 .public MapObject_IsMovementPaused

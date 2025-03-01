@@ -208,7 +208,7 @@ _02253F84:
 	ldr r0, [r1]
 	ldr r0, [r0, #0x68]
 	bl FieldSystem_GetSaveData
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	ldr r1, _02254050 ; =ov03_022598A0
 	ldr r1, [r1]
 	str r0, [r1, #0x78]
@@ -5889,7 +5889,7 @@ InitMartUI: ; 0x02256D34
 	lsl r1, r1, #2
 	str r0, [r4, r1]
 	ldr r0, [r5, #0xc]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	mov r1, #0x92
 	lsl r1, r1, #2
 	str r0, [r4, r1]
@@ -9615,7 +9615,7 @@ ScrCmd_720: ; 0x02258A18
 	bl GetDeltaXByFacingDirection
 	add r7, r0, #0
 	ldr r0, [r5, #0x40]
-	bl GetPlayerYCoord
+	bl GetPlayerZCoord
 	str r0, [sp, #0x14]
 	add r0, r4, #0
 	bl GetDeltaYByFacingDirection
@@ -9669,7 +9669,7 @@ ScrCmd_720: ; 0x02258A18
 	lsl r0, r0, #2
 	add r4, r1, r0
 	ldr r0, [r5, #0xc]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	bl PlayerProfile_GetTrainerGender
 	add r2, r0, #0
 	lsl r2, r2, #0x18
@@ -9853,7 +9853,7 @@ ScrCmd_791: ; 0x02258C00
 	bl Party_GetCount
 	add r6, r0, #0
 	ldr r0, [r4, #0xc]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	bl PlayerProfile_GetTrainerID
 	str r0, [sp, #0xc]
 	ldr r0, _02258CD8 ; =0x00000165
@@ -10024,7 +10024,7 @@ ov03_02258D88: ; 0x02258D88
 	lsl r0, r0, #2
 	add r0, r1, r0
 	mov r1, #1
-	bl sub_02018410
+	bl MenuInputStateMgr_SetState
 	mov r0, #1
 	pop {r4, pc}
 _02258DAC:
@@ -10038,7 +10038,7 @@ _02258DAC:
 	lsl r0, r0, #2
 	add r0, r1, r0
 	mov r1, #0
-	bl sub_02018410
+	bl MenuInputStateMgr_SetState
 _02258DC4:
 	ldr r0, _02258DE0 ; =gSystem
 	ldr r1, [r0, #0x48]

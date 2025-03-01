@@ -41,7 +41,7 @@ ov31_0225D520: ; 0x0225D520
 	str r0, [r4, r1]
 	ldr r0, [r4, #0x1c]
 	ldr r0, [r0, #0xc]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	mov r1, #0x5a
 	lsl r1, r1, #2
 	str r0, [r4, r1]
@@ -2215,7 +2215,7 @@ ov31_0225E700: ; 0x0225E700
 	ldr r0, [r4, #0x1c]
 	add r2, #0xf2
 	add r0, r0, r2
-	bl sub_020183F0
+	bl MenuInputStateMgr_GetState
 	add r1, sp, #0
 	ldrb r2, [r1, #0x12]
 	mov r3, #0xf

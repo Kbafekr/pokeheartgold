@@ -15,9 +15,9 @@
 .public QueueScript
 .public TaskManager_GetFieldSystem
 .public TaskManager_GetEnvironment
-.public GetMetatileBehaviorAt
+.public GetMetatileBehavior
 .public GetPlayerXCoord
-.public GetPlayerYCoord
+.public GetPlayerZCoord
 .public G2x_SetBlendAlpha_
 .public memset
 .public _s32_div_f

@@ -10,16 +10,16 @@ static BOOL Task_ViewRankingsApp(TaskManager *taskManager);
 
 void FieldSystem_LaunchTask_ViewRankingsApp(FieldSystem *fieldSystem, u8 pageScrollParam, u8 cursorPos) {
     UnkStruct_02097D48 *taskData = AllocFromHeapAtEnd(HEAP_ID_FIELD, sizeof(UnkStruct_02097D48));
-    taskData->state              = 0;
-    taskData->args               = AllocFromHeapAtEnd(HEAP_ID_FIELD, sizeof(ViewRankingsArgs));
-    taskData->args->saveData     = FieldSystem_GetSaveData(fieldSystem);
-    taskData->args->page_scroll  = pageScrollParam;
-    taskData->args->cursorPos    = cursorPos;
+    taskData->state = 0;
+    taskData->args = AllocFromHeapAtEnd(HEAP_ID_FIELD, sizeof(ViewRankingsArgs));
+    taskData->args->saveData = FieldSystem_GetSaveData(fieldSystem);
+    taskData->args->page_scroll = pageScrollParam;
+    taskData->args->cursorPos = cursorPos;
     TaskManager_Call(fieldSystem->taskman, Task_ViewRankingsApp, taskData);
 }
 
 static BOOL Task_ViewRankingsApp(TaskManager *taskManager) {
-    FieldSystem *fieldSystem     = TaskManager_GetFieldSystem(taskManager);
+    FieldSystem *fieldSystem = TaskManager_GetFieldSystem(taskManager);
     UnkStruct_02097D48 *taskData = TaskManager_GetEnvironment(taskManager);
 
     switch (taskData->state) {
@@ -43,7 +43,7 @@ static BOOL Task_ViewRankingsApp(TaskManager *taskManager) {
         }
 
         taskData->state++;
-        sub_020505C0(fieldSystem);
+        FieldSystem_LoadFieldOverlay(fieldSystem);
         break;
     case 3:
         if (sub_020505C8(fieldSystem)) {

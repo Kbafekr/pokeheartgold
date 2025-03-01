@@ -6,7 +6,7 @@
 .public sub_0203DF34
 .public sub_0203DF7C
 .public TaskManager_Call
-.public sub_020505C0
+.public FieldSystem_LoadFieldOverlay
 .public sub_020505C8
 .public TaskManager_GetFieldSystem
 .public TaskManager_GetStatePtr
@@ -16,4 +16,4 @@
 .public CallTask_FadeFromBlack
 .public sub_020553B0
 .public sub_02055408
-.public ov01_021EFAF8
+.public FieldSystem_DrawMapNameAnimation

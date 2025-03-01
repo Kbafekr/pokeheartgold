@@ -3,10 +3,10 @@
   "warps": [
     {
       "x": 21,
-      "y": 14,
-      "header": "MAP_T11R0601",
+      "z": 14,
+      "header": "MAP_SAFFRON_MAGNET_TRAIN_STATION_1F",
       "anchor": 2,
-      "height": 0
+      "y": 0
     }
   ]
 }

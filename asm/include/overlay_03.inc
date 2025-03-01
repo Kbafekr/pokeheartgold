@@ -46,7 +46,7 @@
 .public ListMenuItems_Delete
 .public ListMenuItems_AppendFromMsgData
 .public ListMenuItems_AddItem
-.public sub_02018410
+.public MenuInputStateMgr_SetState
 .public AllocFromHeap
 .public AllocFromHeapAtEnd
 .public FreeToHeap
@@ -94,7 +94,7 @@
 .public String_New
 .public String_Delete
 .public String16_FormatInteger
-.public Save_PlayerData_GetProfileAddr
+.public Save_PlayerData_GetProfile
 .public Save_PlayerData_GetOptionsAddr
 .public Save_PlayerData_GetIGTAddr
 .public PlayerProfile_New
@@ -189,7 +189,7 @@
 .public IsPrintFinished
 .public PlayerAvatar_GetFacingDirection
 .public GetPlayerXCoord
-.public GetPlayerYCoord
+.public GetPlayerZCoord
 .public GetDeltaXByFacingDirection
 .public GetDeltaYByFacingDirection
 .public sub_020669B4

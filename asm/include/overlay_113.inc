@@ -55,8 +55,8 @@
 .public sub_0200FBF4
 .public YesNoPrompt_Create
 .public YesNoPrompt_Destroy
-.public sub_020183F0
-.public sub_02018410
+.public MenuInputStateMgr_GetState
+.public MenuInputStateMgr_SetState
 .public Main_SetVBlankIntrCB
 .public HBlankInterruptDisable
 .public CreateHeap
@@ -98,7 +98,7 @@
 .public TouchscreenHitbox_FindHitboxAtTouchNew
 .public String_New
 .public String_Delete
-.public Save_PlayerData_GetProfileAddr
+.public Save_PlayerData_GetProfile
 .public Save_PlayerData_GetOptionsAddr
 .public PlayerProfile_GetPlayerName_NewString
 .public Pokedex_GetSeenFormByIdx_Unown

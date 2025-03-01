@@ -945,12 +945,12 @@ ov14_021E6048: ; 0x021E6048
 	bne _021E6064
 	ldr r0, [r0, #4]
 	mov r1, #0
-	bl sub_02018410
+	bl MenuInputStateMgr_SetState
 	pop {r4, pc}
 _021E6064:
 	ldr r0, [r0, #4]
 	mov r1, #1
-	bl sub_02018410
+	bl MenuInputStateMgr_SetState
 	pop {r4, pc}
 	.balign 4, 0
 	thumb_func_end ov14_021E6048
@@ -6548,7 +6548,7 @@ _021E8A06:
 	str r0, [r4, #4]
 	ldr r0, [r5]
 	ldr r0, [r0]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	add r1, r0, #0
 	add r0, r4, #0
 	bl sub_0208AD34

@@ -161,7 +161,7 @@ ov27_02259F80: ; 0x02259F80
 	mov r0, #0x43
 	lsl r0, r0, #2
 	add r0, r5, r0
-	bl sub_020183F0
+	bl MenuInputStateMgr_GetState
 	cmp r0, #0
 	bne _0225A102
 	add r0, r5, #0
@@ -425,7 +425,7 @@ ov27_0225A320: ; 0x0225A320
 	bl ov27_0225A89C
 	add r4, r0, #0
 	ldr r0, [r5, #0x10]
-	bl sub_0203E13C
+	bl FieldSystem_IsPlayerMovementAllowed
 	add r6, r0, #0
 	ldr r0, [r5, #0x10]
 	add r0, #0xd2
@@ -604,7 +604,7 @@ ov27_0225A48C: ; 0x0225A48C
 	ldr r0, [r5, #0x10]
 	bl FieldSystem_GetPlayerAvatar
 	add r6, r0, #0
-	bl sub_0205CB38
+	bl PlayerAvatar_CheckRunningShoesLock
 	add r4, r0, #0
 	mov r1, #1
 	eor r4, r1
@@ -613,7 +613,7 @@ ov27_0225A48C: ; 0x0225A48C
 	bl ov27_0225A468
 	add r0, r6, #0
 	add r1, r4, #0
-	bl sub_0205CB40
+	bl PlayerAvatar_SetRunningShoesLock
 _0225A4B6:
 	pop {r4, r5, r6, pc}
 	thumb_func_end ov27_0225A48C
@@ -624,7 +624,7 @@ ov27_0225A4B8: ; 0x0225A4B8
 	add r4, r0, #0
 	ldr r0, [r4, #0x10]
 	bl FieldSystem_GetPlayerAvatar
-	bl sub_0205CB38
+	bl PlayerAvatar_CheckRunningShoesLock
 	add r1, r0, #0
 	add r0, r4, #0
 	bl ov27_0225A468
@@ -745,7 +745,7 @@ ov27_0225A594: ; 0x0225A594
 	pop {r3, r4, r5, r6, r7, pc}
 _0225A5A8:
 	add r0, r4, #0
-	bl sub_0203E13C
+	bl FieldSystem_IsPlayerMovementAllowed
 	cmp r0, #0
 	bne _0225A5E6
 	add r0, r4, #0
@@ -942,7 +942,7 @@ _0225A722:
 	mov r0, #0x43
 	lsl r0, r0, #2
 	add r0, r4, r0
-	bl sub_020183F0
+	bl MenuInputStateMgr_GetState
 	cmp r0, #0
 	bne _0225A74C
 	add r0, r5, #0
@@ -964,7 +964,7 @@ _0225A75C:
 	mov r0, #0x43
 	lsl r0, r0, #2
 	add r0, r4, r0
-	bl sub_020183F0
+	bl MenuInputStateMgr_GetState
 	cmp r0, #1
 	bne _0225A792
 	mov r0, #1
@@ -1145,7 +1145,7 @@ ov27_0225A89C: ; 0x0225A89C
 	lsr r0, r0, #0x1a
 	bne _0225A8E0
 	add r0, r4, #0
-	bl sub_0203E13C
+	bl FieldSystem_IsPlayerMovementAllowed
 	cmp r0, #0
 	beq _0225A8E0
 	add r0, r4, #0
@@ -1722,7 +1722,7 @@ _0225AD36:
 _0225AD52:
 	ldr r0, [r5, #0x10]
 	ldr r0, [r0, #0xc]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	bl PlayerProfile_GetTrainerGender
 	add r7, r0, #0
 	ldr r0, [r5, #0x10]
@@ -3458,7 +3458,7 @@ ov27_0225BB6C: ; 0x0225BB6C
 	add r5, r0, #0
 	ldr r0, [r5, #0x10]
 	ldr r0, [r0, #0xc]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	add r2, r0, #0
 	ldr r0, _0225BC10 ; =0x000004AC
 	mov r1, #0

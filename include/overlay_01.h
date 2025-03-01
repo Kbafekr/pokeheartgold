@@ -28,7 +28,7 @@ typedef struct UnkStruct_field_021F4360 {
 } UnkStruct_field_021F4360;
 
 void ov01_021E636C(int a0);
-void ov01_021EFAF8(FieldSystem *fieldSystem);
+void FieldSystem_DrawMapNameAnimation(FieldSystem *fieldSystem);
 void ov01_021F35C4(FieldSystem *fieldSystem, int a1, int *a2);
 u32 GetHoneySweetScentWorkSize(void);
 BOOL Task_HoneyOrSweetScent(TaskManager *taskManager);
@@ -44,7 +44,7 @@ void ov01_02205790(FieldSystem *fieldSystem, u8 a1);
 void ov01_02205784(LocalMapObject *object);
 BOOL ov01_022057C4(FieldSystem *fieldSystem);
 BOOL ov01_02205D68(FieldSystem *fieldSystem);
-BOOL Field_PlayerCanStartSurfingByStandingAndFacingTileBehaviors(PlayerAvatar *fieldPlayerAvatar, int standingTile, int facingTile);
+BOOL Field_PlayerCanSurfOnTile(PlayerAvatar *fieldPlayerAvatar, int standingTile, int facingTile);
 BOOL MetatileBehavior_IsRockClimbInDirection(int facingTile, int facingDirection);
 BOOL FieldSystem_FacingModelIsHeadbuttTree(FieldSystem *fieldSystem);
 BOOL Task_UseSweetScentInField(TaskManager *taskManager);

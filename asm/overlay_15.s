@@ -655,7 +655,7 @@ BagApp_GetSaveStructPtrs: ; 0x021F98F4
 	sub r0, r1, #4
 	ldr r0, [r4, r0]
 	ldr r0, [r0]
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	mov r1, #0x8f
 	lsl r1, r1, #2
 	str r0, [r4, r1]
@@ -8520,7 +8520,7 @@ ov15_021FD774: ; 0x021FD774
 	ldr r0, [r0, #0x78]
 	cmp r0, #0
 	beq _021FD786
-	bl sub_02018410
+	bl MenuInputStateMgr_SetState
 _021FD786:
 	pop {r3, pc}
 	thumb_func_end ov15_021FD774
